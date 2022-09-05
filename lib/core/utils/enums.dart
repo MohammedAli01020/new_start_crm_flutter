@@ -1,0 +1,12 @@
+
+enum EmployeeTypes {
+  NOT_ASSIGNED,
+  NOT_IN_MEMBER,
+  ALL,
+  TEAM_LEADERS,
+  NOT_TEAM_LEADERS,
+  NOT_TEAM_LEADERS_NOT_IN_TEAM}
+
+enum CustomerTypes { ALL, ME, ME_AND_TEAM, TEAM, NOT_ASSIGNED }
+
+enum EmployeePickerTypes { SELECT_TEAM_LEADER, SELECT_TEAM_MEMBER }
