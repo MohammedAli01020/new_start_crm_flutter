@@ -4,17 +4,19 @@ import 'package:crm_flutter_project/features/employees/data/models/role_model.da
 import '../../domain/entities/employee.dart';
 
 class EmployeeModel extends Employee {
-  const EmployeeModel(
-      {required int employeeId,
-      required String fullName,
-      required String? imageUrl,
-      required int createDateTime,
-      required PhoneNumberModel phoneNumber,
-      required bool enabled,
-      required String username,
-      required String password,
-      required List<RoleModel> roles})
-      : super(
+  const EmployeeModel({
+    required int employeeId,
+    required String fullName,
+    required String? imageUrl,
+    required int createDateTime,
+    required PhoneNumberModel phoneNumber,
+    required bool enabled,
+    required String username,
+    required String password,
+    required RoleModel? role,
+    required int? createdBy,
+    required int? team,
+  }) : super(
             employeeId: employeeId,
             fullName: fullName,
             imageUrl: imageUrl,
@@ -23,7 +25,9 @@ class EmployeeModel extends Employee {
             enabled: enabled,
             username: username,
             password: password,
-            roles: roles);
+            role: role,
+            createdBy: createdBy,
+            team: team);
 
   factory EmployeeModel.fromJson(Map<String, dynamic> json) => EmployeeModel(
         employeeId: json["employeeId"],
@@ -34,8 +38,9 @@ class EmployeeModel extends Employee {
         enabled: json["enabled"],
         username: json["username"],
         password: json["password"],
-        roles: List<RoleModel>.from(
-            json["roles"].map((x) => RoleModel.fromJson(x))),
+        role: json["role"] != null ? RoleModel.fromJson(json["role"]) : null,
+        createdBy: json["createdBy"],
+        team: json["team"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -47,6 +52,8 @@ class EmployeeModel extends Employee {
         "enabled": enabled,
         "username": username,
         "password": password,
-        "roles": List<dynamic>.from(roles.map((x) => x.toJson())),
+        "roles": role?.toJson(),
+        "createdBy": createdBy,
+        "team:": team,
       };
 }

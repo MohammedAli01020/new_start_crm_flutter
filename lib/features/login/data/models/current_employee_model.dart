@@ -8,7 +8,8 @@ class CurrentEmployeeModel extends CurrentEmployee {
       required bool enabled,
       required String token,
       required String username,
-      required int createDateTime})
+      required int createDateTime,
+      required int? teamId})
       : super(
             permissions: permissions,
             fullName: fullName,
@@ -16,7 +17,8 @@ class CurrentEmployeeModel extends CurrentEmployee {
             enabled: enabled,
             token: token,
             username: username,
-            createDateTime: createDateTime);
+            createDateTime: createDateTime,
+            teamId: teamId);
 
   factory CurrentEmployeeModel.fromJson(Map<String, dynamic> json) =>
       CurrentEmployeeModel(
@@ -27,6 +29,7 @@ class CurrentEmployeeModel extends CurrentEmployee {
         token: json["token"],
         username: json["username"],
         createDateTime: json["createDateTime"],
+        teamId: json["teamId"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -37,5 +40,6 @@ class CurrentEmployeeModel extends CurrentEmployee {
         "token": token,
         "username": username,
         "createDateTime": createDateTime,
+        "teamId": teamId,
       };
 }

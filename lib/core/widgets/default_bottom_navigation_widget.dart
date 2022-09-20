@@ -6,6 +6,7 @@ import '../utils/constants.dart';
 class DefaultBottomNavigationWidget extends StatelessWidget {
 
   final bool withDelete;
+  final bool withEdit;
   final VoidCallback onEditTapCallback;
   final Function omDeleteCallback;
 
@@ -13,11 +14,15 @@ class DefaultBottomNavigationWidget extends StatelessWidget {
       {Key? key,
       this.withDelete = true,
       required this.onEditTapCallback,
-      required this.omDeleteCallback})
+      required this.omDeleteCallback,
+        this.withEdit = true})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
+    if (!withEdit && !withDelete) return const SizedBox(height: 0, width: 0);
+
     return Container(
       padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
@@ -29,6 +34,7 @@ class DefaultBottomNavigationWidget extends StatelessWidget {
       ]),
       child: Row(
         children: [
+          if (withEdit)
           Expanded(
               child: ElevatedButton.icon(
             onPressed: onEditTapCallback,

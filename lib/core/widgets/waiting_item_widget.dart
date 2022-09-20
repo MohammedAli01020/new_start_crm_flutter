@@ -9,7 +9,7 @@ class WaitingItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Constants.showToast(msg: "انتظر حتي ينتهي التحميل");
+        Constants.showToast(msg: "انتظر حتي ينتهي التحميل", context: context);
         return false;
       },
       child: Scaffold(

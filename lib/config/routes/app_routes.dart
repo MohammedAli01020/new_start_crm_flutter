@@ -1,20 +1,40 @@
 import 'package:crm_flutter_project/core/utils/wrapper.dart';
+import 'package:crm_flutter_project/features/customer_logs/data/models/customer_log_filters_model.dart';
+import 'package:crm_flutter_project/features/customer_logs/presentation/screens/customer_logs_screen.dart';
+import 'package:crm_flutter_project/features/customers/presentation/screens/customer_datails_screen.dart';
 import 'package:crm_flutter_project/features/customers/presentation/screens/customers_screen.dart';
+import 'package:crm_flutter_project/features/customers/presentation/screens/modify_customer_screen.dart';
+import 'package:crm_flutter_project/features/employees/data/models/role_model.dart';
+import 'package:crm_flutter_project/features/employees/presentation/screens/employee_details_screen.dart';
+import 'package:crm_flutter_project/features/employees/presentation/screens/modify_employee_screen.dart';
+import 'package:crm_flutter_project/features/employees/presentation/screens/modify_role_screen.dart';
+import 'package:crm_flutter_project/features/events/presentation/screens/events_screen.dart';
+import 'package:crm_flutter_project/features/global_reports/presentation/screens/global_reports_screen.dart';
+import 'package:crm_flutter_project/features/sources/presentation/screens/sources_screen.dart';
 import 'package:crm_flutter_project/features/teams/data/models/team_members_filters_model.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/employee_picker_screen.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/modify_team_screen.dart';
+import 'package:crm_flutter_project/features/teams/presentation/screens/team_description_screen.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/team_details_screen.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/teams_screen.dart';
+import 'package:crm_flutter_project/features/unit_types/presentation/screens/unit_types_screen.dart';
 import 'package:crm_flutter_project/injection_container.dart' as di;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/utils/app_strings.dart';
+import '../../features/customer_logs/presentation/cubit/customer_logs_cubit.dart';
+import '../../features/customers/presentation/cubit/customer_cubit.dart';
 import '../../features/employees/presentation/cubit/employee_cubit.dart';
 import '../../features/employees/presentation/screens/employees_screen.dart';
+import '../../features/events/presentation/cubit/event_cubit.dart';
+import '../../features/global_reports/presentation/cubit/global_reports_cubit.dart';
 import '../../features/login/presentation/screens/login_screen.dart';
+import '../../features/permissions/presentation/cubit/permission_cubit.dart';
+import '../../features/sources/presentation/cubit/source_cubit.dart';
 import '../../features/teams/presentation/cubit/team_cubit.dart';
-import '../../features/teams/presentation/cubit/team_mmbers/team_members_cubit.dart';
+import '../../features/teams/presentation/cubit/team_members/team_members_cubit.dart';
+import '../../features/unit_types/presentation/cubit/unit_type_cubit.dart';
 
 class Routes {
   static const String initialRoute = '/';
@@ -34,8 +54,26 @@ class Routes {
   static const String modifyTeamRoute = '/modifyTeamRoute';
   static const String teamsRoute = '/teamsRoute';
   static const String teamsDetailsRoute = '/teamsDetailsRoute';
+  static const String teamDescriptionRoute = '/teamDescriptionRoute';
 
-//
+  // events
+  static const String eventsRoute = '/eventsRoute';
+
+  // sources
+  static const String sourcesRoute = '/sourcesRoute';
+
+  // unit_types
+  static const String unitTypesRoute = '/unitTypesRoute';
+
+  // roles
+  static const String modifyRole = '/modifyRole';
+
+  // customer_logs
+  static const String customerLogsRoute = '/customerLogsRoute';
+
+  // GlobalReports
+  static const String globalReportsRoute = '/globalReportsRoute';
+
 
 }
 
@@ -53,7 +91,80 @@ class AppRoutes {
         return MaterialPageRoute(
             settings: routeSettings,
             builder: ((context) {
-              return const CustomersScreen();
+              return MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) {
+                      return di.sl<CustomerCubit>();
+                    },
+                  ),
+
+                  BlocProvider(
+                    create: (context) {
+                      return di.sl<EmployeeCubit>();
+                    },
+                  ),
+                  BlocProvider(
+                    create: (context) {
+                      return di.sl<TeamMembersCubit>();
+                    },
+                  ),
+                ],
+                child: const CustomersScreen(),
+              );
+            }));
+
+      case Routes.modifyCustomerRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+              final modifyCustomerArgs =
+                  routeSettings.arguments as ModifyCustomerArgs;
+
+              return MultiBlocProvider(
+                providers: [
+                  BlocProvider.value(
+                    value: modifyCustomerArgs.customerCubit,
+                  ),
+                  BlocProvider.value(
+                    value: modifyCustomerArgs.teamMembersCubit,
+                  ),
+                ],
+                child: ModifyCustomerScreen(
+                    modifyCustomerArgs: modifyCustomerArgs),
+              );
+            }));
+
+      case Routes.customersDetailsRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+              final customerDetailsArgs =
+                  routeSettings.arguments as CustomerDetailsArgs;
+
+              return MultiBlocProvider(
+                providers: [
+                  BlocProvider.value(
+                    value: customerDetailsArgs.customerCubit,
+                  ),
+                  BlocProvider.value(
+                    value: customerDetailsArgs.teamMembersCubit,
+                  ),
+
+                  BlocProvider(
+                    create: (context) {
+                      return di.sl<CustomerLogsCubit>()
+                        ..updateFilter(CustomerLogFiltersModel.initial().copyWith(
+                          customerId: Wrapped.value(customerDetailsArgs.customerModel.customerId)))
+
+                        ..fetchCustomerLogs(isWebPagination: false, refresh: true);
+                    }
+                  ),
+
+                ],
+                child: CustomerDetailsScreen(
+                    customerDetailsArgs: customerDetailsArgs),
+              );
             }));
 
       case Routes.employeesRoute:
@@ -65,6 +176,34 @@ class AppRoutes {
                   return di.sl<EmployeeCubit>()..fetchEmployees(refresh: true);
                 },
                 child: const EmployeesScreen(),
+              );
+            }));
+
+
+      case Routes.employeesDetailsRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+
+              final employeeDetailsArgs = routeSettings.arguments as EmployeeDetailsArgs;
+
+              return BlocProvider.value(
+                value: employeeDetailsArgs.employeeCubit,
+                child: EmployeeDetailsScreen(employeeDetailsArgs: employeeDetailsArgs),
+              );
+            }));
+
+      case Routes.modifyEmployeeRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+              final modifyEmployeeArgs =
+                  routeSettings.arguments as ModifyEmployeeArgs;
+
+              return BlocProvider.value(
+                value: modifyEmployeeArgs.employeeCubit,
+                child: ModifyEmployeeScreen(
+                    modifyEmployeeArgs: modifyEmployeeArgs),
               );
             }));
 
@@ -80,6 +219,15 @@ class AppRoutes {
               );
             }));
 
+      case Routes.teamDescriptionRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+              final description = routeSettings.arguments as String;
+
+              return TeamDescriptionScreen(description: description);
+            }));
+
       case Routes.employeePickerRoute:
         return MaterialPageRoute(
             settings: routeSettings,
@@ -87,10 +235,17 @@ class AppRoutes {
               final employeePickerArgs =
                   routeSettings.arguments as EmployeePickerArgs;
 
-              return BlocProvider(
-                create: (context) {
-                  return di.sl<EmployeeCubit>();
-                },
+              return MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) {
+                      return di.sl<EmployeeCubit>();
+                    },
+                  ),
+                  BlocProvider.value(
+                    value: employeePickerArgs.teamMembersCubit,
+                  ),
+                ],
                 child: EmployeePickerScreen(
                     employeePickerArgs: employeePickerArgs),
               );
@@ -100,11 +255,20 @@ class AppRoutes {
         return MaterialPageRoute(
             settings: routeSettings,
             builder: ((context) {
-              return BlocProvider(
-                create: (context) {
-                  return di.sl<TeamCubit>()
-                    ..fetchTeams(refresh: true, isWebPagination: true);
-                },
+              return MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) {
+                      return di.sl<TeamCubit>()
+                        ..fetchTeams(refresh: true, isWebPagination: true);
+                    },
+                  ),
+                  BlocProvider(
+                    create: (context) {
+                      return di.sl<TeamMembersCubit>();
+                    },
+                  ),
+                ],
                 child: const TeamsScreen(),
               );
             }));
@@ -116,28 +280,148 @@ class AppRoutes {
               final teamDetailsArgs =
                   routeSettings.arguments as TeamDetailsArgs;
 
-
-              final teamMembersFiltersModel = TeamMembersFiltersModel.initial().copyWith(
-                teamId: Wrapped.value(teamDetailsArgs.teamModel.teamId)
-              );
+              final teamMembersFiltersModel = TeamMembersFiltersModel.initial()
+                  .copyWith(
+                      teamId: Wrapped.value(teamDetailsArgs.teamModel.teamId));
 
               return MultiBlocProvider(
                 providers: [
                   BlocProvider.value(
                     value: teamDetailsArgs.teamCubit,
-                    child: TeamDetailsScreen(teamDetailsArgs: teamDetailsArgs),
                   ),
                   BlocProvider(
-                      create: (context) => di.sl<TeamMembersCubit>()..updateFilter(teamMembersFiltersModel)
+                      create: (context) => di.sl<TeamMembersCubit>()
+                        ..updateFilter(teamMembersFiltersModel)
                         ..fetchTeamMembers(refresh: true)),
-
                 ],
-
-
                 child: TeamDetailsScreen(teamDetailsArgs: teamDetailsArgs),
               );
             }));
 
+      case Routes.eventsRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+              final eventsArgs = routeSettings.arguments as EventsArgs;
+
+              return BlocProvider(
+                create: (context) {
+                  return di.sl<EventCubit>()
+                    ..updateCurrentSelectedEvent(eventsArgs.eventModel)
+                    ..getAllEventsByNameLike();
+                },
+                child: EventsScreen(eventsArgs: eventsArgs),
+              );
+            }));
+
+      case Routes.sourcesRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+              final sourcesArgs = routeSettings.arguments as SourcesArgs;
+
+              return BlocProvider(
+                create: (context) {
+                  return di.sl<SourceCubit>()
+                    ..setSelectedSources(
+                        sourcesArgs.selectedSourcesNames != null &&
+                                sourcesArgs.selectedSourcesNames!.isNotEmpty
+                            ? sourcesArgs.selectedSourcesNames!
+                            : [])
+                    ..getAllSourcesByNameLike();
+                },
+                child: SourcesScreen(sourcesArgs: sourcesArgs),
+              );
+            }));
+
+      case Routes.unitTypesRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+              final unitTypesArgs = routeSettings.arguments as UnitTypesArgs;
+
+              return BlocProvider(
+                create: (context) {
+                  return di.sl<UnitTypeCubit>()
+                    ..setSelectedUnitTypes(
+                        unitTypesArgs.selectedUnitTypesNames != null &&
+                                unitTypesArgs.selectedUnitTypesNames!.isNotEmpty
+                            ? unitTypesArgs.selectedUnitTypesNames!
+                            : [])
+                    ..getAllUnitTypesByNameLike();
+                },
+                child: UnitTypesScreen(unitTypesArgs: unitTypesArgs),
+              );
+            }));
+
+      case Routes.modifyRole:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+              final roleModel = routeSettings.arguments as RoleModel?;
+
+              return BlocProvider(
+                create: (context) {
+                  return di.sl<PermissionCubit>()
+                    ..getAllPermissionsByNameLike();
+                },
+                child: ModifyRoleScreen(roleModel: roleModel),
+              );
+            }));
+
+      case Routes.customerLogsRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+
+              return MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) {
+                      return di.sl<CustomerLogsCubit>()
+                        ..fetchCustomerLogs(isWebPagination: true, refresh: true);
+                    },
+                  ),
+
+                  BlocProvider(
+                    create: (context) {
+                      return di.sl<TeamMembersCubit>();
+                    },
+                  ),
+
+                  BlocProvider(
+                    create: (context) {
+                      return di.sl<CustomerCubit>();
+                    },
+                  ),
+
+                  BlocProvider(
+                    create: (context) {
+                      return di.sl<EmployeeCubit>();
+                    },
+                  ),
+
+                ],
+                child: const CustomerLogsScreen(),
+              );
+
+            }));
+
+      case Routes.globalReportsRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+
+              return BlocProvider(
+                create: (context) {
+                  return di.sl<GlobalReportsCubit>()
+                    ..fetchGlobalReports();
+                },
+                child: const GlobalReportsScreen(),
+              );
+            }));
+
+        
       default:
         return undefinedRoute();
     }

@@ -18,7 +18,8 @@ class CustomEditText extends StatelessWidget {
       this.label,
       this.onChangedCallback,
         this.maxLines,
-        this.minLines})
+        this.minLines,
+        this.enabled})
       : super(key: key);
 
   final String? hint;
@@ -36,7 +37,7 @@ class CustomEditText extends StatelessWidget {
   final Function? onChangedCallback;
   final int? maxLines;
   final int? minLines;
-
+  final bool? enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +62,7 @@ class CustomEditText extends StatelessWidget {
       maxLines: maxLines,
       minLines: minLines,
       autofocus: autoFocus,
+      enabled: enabled,
     );
   }
 }

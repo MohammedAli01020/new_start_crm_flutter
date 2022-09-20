@@ -9,10 +9,10 @@ class Role extends Equatable {
     required this.permissions,
   });
 
-  final int roleId;
+  final int? roleId;
   final String name;
   final List<PermissionModel> permissions;
 
   @override
-  List<Object> get props => [roleId, name, permissions];
+  List<Object?> get props => [roleId, name, permissions];
 }

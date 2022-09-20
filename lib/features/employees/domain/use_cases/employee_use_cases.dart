@@ -1,5 +1,6 @@
 import 'package:crm_flutter_project/features/employees/data/models/employee_model.dart';
 import 'package:crm_flutter_project/features/employees/data/models/phoneNumber_model.dart';
+import 'package:crm_flutter_project/features/employees/data/models/role_model.dart';
 import 'package:crm_flutter_project/features/employees/domain/entities/employees_data.dart';
 import 'package:crm_flutter_project/features/employees/domain/repositories/employee_repository.dart';
 import 'package:dartz/dartz.dart';
@@ -55,9 +56,9 @@ class ModifyEmployeeParam {
 
   final String username;
 
-  final String password;
+  final String? password;
 
-  final List<int> rolesIds;
+  final RoleModel? role;
 
   final int? createdByEmployeeId;
 
@@ -70,7 +71,7 @@ class ModifyEmployeeParam {
       required this.enabled,
       required this.username,
       required this.password,
-      required this.rolesIds,
+      required this.role,
       required this.createdByEmployeeId});
 
   Map<String, dynamic> toJson() => {
@@ -81,8 +82,29 @@ class ModifyEmployeeParam {
         "phoneNumber": phoneNumber.toJson(),
         "enabled": enabled,
         "username": username,
-        "password": enabled,
-        "rolesIds": rolesIds,
+        "password": password,
+        "role": role?.toJson(),
         "createdByEmployeeId": createdByEmployeeId,
       };
 }
+
+
+// class CreateRoleRequest {
+//
+//   final int? roleId;
+//
+//
+//   final String name;
+//
+//   final List<int> permissionsIds;
+//
+//   CreateRoleRequest({this.roleId, required this.name, required this.permissionsIds});
+//   Map<String, dynamic> toJson() => {
+//     "employeeId": roleId,
+//     "name": name,
+//     "permissionsIds": permissionsIds,
+//
+//   };
+//
+// }
+

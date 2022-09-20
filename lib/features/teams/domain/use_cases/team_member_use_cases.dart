@@ -6,6 +6,7 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/error/failures.dart';
+import '../../data/models/user_team_id_model.dart';
 
 abstract class TeamMemberUseCases {
   Future<Either<Failure, UserTeamsData>> getAllTeamMembersWithFilters(
@@ -15,7 +16,10 @@ abstract class TeamMemberUseCases {
       InsertBulkTeamMembersParam insertBulkTeamMembersParam);
 
   Future<Either<Failure, void>> deleteAllTeamMembersByIds(
-      List<int> userTeamIds);
+      UserTeamIdsWrapper userTeamIdsWrapper);
+
+
+  Future<Either<Failure, List<int>>> fetchAllTeamMembersByTeamId(int teamId);
 }
 
 class TeamMemberUseCasesImpl implements TeamMemberUseCases {
@@ -32,8 +36,8 @@ class TeamMemberUseCasesImpl implements TeamMemberUseCases {
 
   @override
   Future<Either<Failure, void>> deleteAllTeamMembersByIds(
-      List<int> userTeamIds) {
-    return teamMemberRepository.deleteAllTeamMembersByIds(userTeamIds);
+      UserTeamIdsWrapper userTeamIdsWrapper) {
+    return teamMemberRepository.deleteAllTeamMembersByIds(userTeamIdsWrapper);
   }
 
   @override
@@ -41,6 +45,12 @@ class TeamMemberUseCasesImpl implements TeamMemberUseCases {
       InsertBulkTeamMembersParam insertBulkTeamMembersParam) {
     return teamMemberRepository
         .insertBulkTeamMembers(insertBulkTeamMembersParam);
+  }
+
+  @override
+  Future<Either<Failure, List<int>>> fetchAllTeamMembersByTeamId(int teamId) {
+    return teamMemberRepository
+        .fetchAllTeamMembersByTeamId(teamId);
   }
 }
 
@@ -50,13 +60,13 @@ class InsertBulkTeamMembersParam extends Equatable {
   final int insertDateTime;
   final int? insertedByEmployeeId;
 
-  const InsertBulkTeamMembersParam(
-      {required this.employeeIds,
-      required this.teamId,
-      required this.insertDateTime,
-      required this.insertedByEmployeeId});
+  const InsertBulkTeamMembersParam({required this.employeeIds,
+    required this.teamId,
+    required this.insertDateTime,
+    required this.insertedByEmployeeId});
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         "employeeIds": employeeIds,
         "teamId": teamId,
         "insertDateTime": insertDateTime,
@@ -64,10 +74,27 @@ class InsertBulkTeamMembersParam extends Equatable {
       };
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props =>
+      [
         employeeIds,
         teamId,
         insertDateTime,
         insertedByEmployeeId,
       ];
+}
+
+
+class UserTeamIdsWrapper extends Equatable {
+  final List<UserTeamIdModel> userTeamIds;
+
+  const UserTeamIdsWrapper({required this.userTeamIds});
+
+
+  Map<String, dynamic> toJson() =>
+      {
+        "userTeamIds": List<dynamic>.from(userTeamIds.map((e) => e.toJson())),
+      };
+
+  @override
+  List<Object> get props => [userTeamIds];
 }

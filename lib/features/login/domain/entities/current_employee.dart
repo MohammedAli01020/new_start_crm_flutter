@@ -11,6 +11,7 @@ class CurrentEmployee extends Equatable {
     required this.token,
     required this.username,
     required this.createDateTime,
+    required this.teamId,
   });
 
   final List<String> permissions;
@@ -20,7 +21,7 @@ class CurrentEmployee extends Equatable {
   final String token;
   final String username;
   final int createDateTime;
-
+  final int? teamId;
 
   CurrentEmployee copyWith({
     Wrapped<List<String>>? permissions,
@@ -30,6 +31,7 @@ class CurrentEmployee extends Equatable {
     Wrapped<String>? token,
     Wrapped<String>? username,
     Wrapped<int>? createDateTime,
+    Wrapped<int?>? teamId,
 
   }) {
     return CurrentEmployee(
@@ -39,13 +41,14 @@ class CurrentEmployee extends Equatable {
         enabled: enabled != null ? enabled.value : this.enabled,
         token: token != null ? token.value : this.token,
         username: username != null ? username.value : this.username,
-        createDateTime: createDateTime != null ? createDateTime.value : this.createDateTime);
+        createDateTime: createDateTime != null ? createDateTime.value : this.createDateTime,
+        teamId: teamId != null ? teamId.value : this.teamId);
   }
 
 
 
   @override
-  List<Object> get props =>
+  List<Object?> get props =>
       [
         permissions,
         fullName,
@@ -54,6 +57,7 @@ class CurrentEmployee extends Equatable {
         token,
         username,
         createDateTime,
+        teamId
       ];
 }
 

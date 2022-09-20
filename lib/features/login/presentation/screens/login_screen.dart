@@ -11,6 +11,7 @@ import '../../../../core/widgets/custom_button_widget.dart';
 import '../../../../core/widgets/custom_edit_text.dart';
 import '../../../../core/widgets/default_hieght_sized_box.dart';
 import '../../../../core/widgets/employer_not_enabled_widget.dart';
+import '../../../../core/widgets/error_item_widget.dart';
 import '../../domain/use_cases/login_use_cases.dart';
 import '../cubit/login_cubit.dart';
 
@@ -41,6 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
       },
       builder: (context, state) {
+        final loginCubit = LoginCubit.get(context);
+
         if (state is StartLogin || state is StartInit) {
           return Center(
             child: SpinKitFadingCircle(
@@ -52,6 +55,28 @@ class _LoginScreenState extends State<LoginScreen> {
         if (state is EmployeeIsNotEnabled) {
           return EmployeeNotEnabledWidget(message: state.msg);
         }
+
+
+        if (state is LoginError) {
+
+          return ErrorItemWidget(
+            msg: state.msg,
+            onPress: () {
+              loginCubit.init();
+            },
+          );
+        }
+
+        if (state is GettingEmployeeError) {
+
+          return ErrorItemWidget(
+            msg: state.msg,
+            onPress: () {
+              loginCubit.init();
+            },
+          );
+        }
+
 
         return Form(
           key: formKey,

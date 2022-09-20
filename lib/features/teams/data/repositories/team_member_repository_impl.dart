@@ -7,7 +7,9 @@ import 'package:crm_flutter_project/features/teams/domain/use_cases/team_member_
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/exceptions.dart';
+import '../../domain/entities/user_team_id.dart';
 import '../../domain/repositories/team_member_repository.dart';
+import '../models/user_team_id_model.dart';
 
 class TeamMemberRepositoryImpl implements TeamMemberRepository {
   final TeamMemberRemoteDataSource teamMemberRemoteDataSource;
@@ -16,10 +18,10 @@ class TeamMemberRepositoryImpl implements TeamMemberRepository {
 
   @override
   Future<Either<Failure, void>> deleteAllTeamMembersByIds(
-      List<int> userTeamIds) async {
+      UserTeamIdsWrapper userTeamIdsWrapper) async {
     try {
       final response = await teamMemberRemoteDataSource
-          .deleteAllTeamMembersByIds(userTeamIds);
+          .deleteAllTeamMembersByIds(userTeamIdsWrapper);
       return Right(response);
     } on ServerException catch (e) {
       return Left(ServerFailure(msg: e.msg));
@@ -44,6 +46,17 @@ class TeamMemberRepositoryImpl implements TeamMemberRepository {
     try {
       final response = await teamMemberRemoteDataSource
           .insertBulkTeamMembers(insertBulkTeamMembersParam);
+      return Right(response);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(msg: e.msg));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<int>>> fetchAllTeamMembersByTeamId(int teamId) async {
+    try {
+      final response = await teamMemberRemoteDataSource
+          .fetchAllTeamMembersByTeamId(teamId);
       return Right(response);
     } on ServerException catch (e) {
       return Left(ServerFailure(msg: e.msg));

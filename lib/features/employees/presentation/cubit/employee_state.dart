@@ -88,3 +88,14 @@ class DeleteEmployeeError extends EmployeeState {
   List<Object> get props => [msg];
 }
 
+class StartUpdatePhoneNumber extends EmployeeState {}
+
+class EndUpdatePhoneNumber extends EmployeeState {}
+
+class StartUpdateRole extends EmployeeState {}
+
+class EndUpdateRole extends EmployeeState {}
+
+
+class StartUpdateCurrentEmployeeModel extends EmployeeState  {}
+class EndUpdateCurrentEmployeeModel extends EmployeeState  {}

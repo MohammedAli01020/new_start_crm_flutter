@@ -10,6 +10,8 @@ class EmployeeFilters extends Equatable {
   final int? startDateTime;
   final int? endDateTime;
 
+  final int? excludeTeamLeader;
+
   final int? notInThisTeamId;
 
   const EmployeeFilters(
@@ -21,6 +23,7 @@ class EmployeeFilters extends Equatable {
       required this.employeeTypes,
       required this.startDateTime,
       required this.endDateTime,
+        required this.excludeTeamLeader,
         required this.notInThisTeamId
       });
 
@@ -34,6 +37,7 @@ class EmployeeFilters extends Equatable {
         employeeTypes,
         startDateTime,
         endDateTime,
+    excludeTeamLeader,
     notInThisTeamId
       ];
 }

@@ -1,4 +1,7 @@
+import 'package:crm_flutter_project/core/utils/app_strings.dart';
+import 'package:crm_flutter_project/core/utils/enums.dart';
 import 'package:crm_flutter_project/features/employees/data/models/employee_filters_model.dart';
+import 'package:crm_flutter_project/features/employees/data/models/role_model.dart';
 import 'package:crm_flutter_project/features/employees/domain/entities/employees_data.dart';
 import 'package:crm_flutter_project/features/employees/domain/use_cases/employee_use_cases.dart';
 import 'package:dartz/dartz.dart';
@@ -11,6 +14,7 @@ import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/wrapper.dart';
 import '../../data/models/employee_model.dart';
 
+import '../../data/models/phoneNumber_model.dart';
 part 'employee_state.dart';
 
 class EmployeeCubit extends Cubit<EmployeeState> {
@@ -41,7 +45,7 @@ class EmployeeCubit extends Cubit<EmployeeState> {
 
   bool isNoMoreData = false;
 
-  Future<void> fetchEmployees({bool refresh = false}) async {
+  Future<void> fetchEmployees({bool refresh = false, String? employeePickerTypes}) async {
     if (state is StartRefreshEmployees || state is StartLoadingEmployees) {
       return;
     }
@@ -66,7 +70,7 @@ class EmployeeCubit extends Cubit<EmployeeState> {
     if (response.isRight()) {
       setEmployeesData(
           result: response.getOrElse(() => throw Exception()),
-          refresh: refresh);
+          refresh: refresh, employeePickerTypes: employeePickerTypes);
     }
 
     if (refresh) {
@@ -83,16 +87,54 @@ class EmployeeCubit extends Cubit<EmployeeState> {
   }
 
   void setEmployeesData(
-      {required EmployeesData result, required bool refresh}) {
+      {required EmployeesData result, required bool refresh, String? employeePickerTypes}) {
     List<EmployeeModel> newEmployees = result.employees;
 
     employeeCurrentPage++;
     employeeTotalElements = result.totalElements;
     employeePagesCount = result.totalPages;
     if (refresh) {
-      employees = newEmployees;
+
+      if (employeePickerTypes != null && employeePickerTypes == EmployeePickerTypes.ASSIGN_MEMBER.name) {
+        newEmployees = newEmployees.where((element) {
+          return element.role != null;
+        }).toList();
+
+        newEmployees = newEmployees.where((element) {
+          final plist =  element.role!.permissions.map((e) {
+            return e.name;
+          }).toList();
+
+          return plist.contains(AppStrings.availableToAssign);
+        }).toList();
+
+        employees = newEmployees;
+      } else {
+        employees = newEmployees;
+      }
+
     } else {
-      employees.addAll(newEmployees);
+
+      if (employeePickerTypes != null && employeePickerTypes == EmployeePickerTypes.ASSIGN_MEMBER.name) {
+
+        newEmployees = newEmployees.where((element) {
+          return element.role != null;
+        }).toList();
+
+        newEmployees = newEmployees.where((element) {
+          final plist =  element.role!.permissions.map((e) {
+            return e.name;
+          }).toList();
+
+          return plist.contains(AppStrings.availableToAssign);
+        }).toList();
+
+        employees.addAll(newEmployees);
+      } else {
+        employees.addAll(newEmployees);
+      }
+
+
     }
   }
 
@@ -147,4 +189,41 @@ class EmployeeCubit extends Cubit<EmployeeState> {
       return emit(EndModifyEmployee(employeeModel: newLoanModel));
     });
   }
+
+
+
+
+
+
+  RoleModel? currentRole;
+
+
+  void updateRole(RoleModel? newRole) {
+    emit(StartUpdateRole());
+    currentRole = newRole;
+    emit(EndUpdateRole());
+
+  }
+
+
+  PhoneNumberModel? phoneNumber;
+
+  void updatePhoneNumber(PhoneNumberModel? newPhone) {
+    emit(StartUpdatePhoneNumber());
+    phoneNumber = newPhone;
+    emit(EndUpdatePhoneNumber());
+
+  }
+
+
+
+  late EmployeeModel currentEmployee;
+
+  void updateCurrentEmployeeModel(EmployeeModel updated) {
+    emit(StartUpdateCurrentEmployeeModel());
+    currentEmployee = updated;
+    emit(EndUpdateCurrentEmployeeModel());
+
+  }
+
 }

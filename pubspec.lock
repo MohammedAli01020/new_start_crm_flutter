@@ -174,6 +174,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.3.0"
+  flutter_datetime_picker:
+    dependency: "direct main"
+    description:
+      name: flutter_datetime_picker
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.5.1"
   flutter_image_compress:
     dependency: "direct dev"
     description:
@@ -273,13 +280,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.17.0"
-  intl_phone_number_input:
-    dependency: "direct dev"
+  intl_phone_field:
+    dependency: "direct main"
     description:
-      name: intl_phone_number_input
+      name: intl_phone_field
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.7.0+2"
+    version: "3.1.0"
   js:
     dependency: transitive
     description:
@@ -287,34 +294,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.3"
-  libphonenumber:
-    dependency: transitive
+  linkwell:
+    dependency: "direct main"
     description:
-      name: libphonenumber
+      name: linkwell
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.2"
-  libphonenumber_platform_interface:
-    dependency: transitive
-    description:
-      name: libphonenumber_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.1"
-  libphonenumber_plugin:
-    dependency: transitive
-    description:
-      name: libphonenumber_plugin
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.3"
-  libphonenumber_web:
-    dependency: transitive
-    description:
-      name: libphonenumber_web
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.0+1"
+    version: "2.0.6"
   lints:
     dependency: transitive
     description:
@@ -518,6 +504,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.0.3"
+  restart_app:
+    dependency: "direct main"
+    description:
+      name: restart_app
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   rxdart:
     dependency: transitive
     description:

@@ -21,9 +21,9 @@ class EmployeeRemoteDataSourceImpl implements EmployeeRemoteDataSource {
   EmployeeRemoteDataSourceImpl({required this.apiConsumer});
 
   @override
-  Future<void> deleteEmployee(int costId) async {
+  Future<void> deleteEmployee(int employeeId) async {
     return await apiConsumer.delete(
-      EndPoints.deleteEmployee + costId.toString(),
+      EndPoints.deleteEmployee + employeeId.toString(),
     );
   }
 

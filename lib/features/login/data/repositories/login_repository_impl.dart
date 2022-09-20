@@ -37,6 +37,7 @@ class LoginRepositoryImpl implements LoginRepository {
 
   @override
   Future<Either<Failure, CurrentEmployee>> getSavedCurrentEmployee() async {
+
     try {
       final currentEmployerModel =
           await loginLocalDataSource.getCacheEmployee();

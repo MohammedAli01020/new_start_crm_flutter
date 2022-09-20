@@ -39,7 +39,6 @@ class EmployeeIsNotEnabled extends LoginState {
 }
 
 
-
 class StartInit extends LoginState {}
 
 class NoCachedEmployeeFound extends LoginState {
@@ -51,6 +50,8 @@ class NoCachedEmployeeFound extends LoginState {
   List<Object> get props => [msg];
 }
 
+class StartGettingEmployee extends LoginState {}
+
 class GettingEmployeeError extends LoginState {
   final String msg;
 
@@ -59,6 +60,9 @@ class GettingEmployeeError extends LoginState {
   @override
   List<Object> get props => [msg];
 }
+
+
+class EndGettingEmployee extends LoginState {}
 
 class EndInit extends LoginState {
 

@@ -31,14 +31,13 @@ class LoginLocalDataSourceImpl implements LoginLocalDataSource {
   Future<CurrentEmployeeModel> getCacheEmployee() {
     final response =
         sharedPreferences.getString(AppStrings.cachedCurrentEmployee);
-
     if (response != null) {
       try {
         final cacheCurrentEmployee =
             Future.value(CurrentEmployeeModel.fromJson(json.decode(response)));
         return cacheCurrentEmployee;
       } catch (e) {
-        sharedPreferences.remove(AppStrings.cachedCurrentEmployee);
+
         throw CacheException();
       }
     } else {

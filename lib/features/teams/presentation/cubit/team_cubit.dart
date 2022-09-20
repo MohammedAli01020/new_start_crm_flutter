@@ -114,8 +114,6 @@ class TeamCubit extends Cubit<TeamState> {
 
 
 
-
-
   Future<void> deleteTeam(int teamId) async {
     emit(StartDeleteTeam());
 
@@ -147,23 +145,23 @@ class TeamCubit extends Cubit<TeamState> {
     response.fold(
         (failure) =>
             emit(ModifyTeamError(msg: Constants.mapFailureToMsg(failure))),
-        (newLoanModel) {
+        (newTeamModel) {
       if (modifyTeamParam.teamId != null) {
         try {
           int index = teams.indexWhere((team) {
             return team.teamId == modifyTeamParam.teamId;
           });
 
-          teams[index] = newLoanModel;
+          teams[index] = newTeamModel;
         } catch (e) {
           debugPrint(e.toString());
         }
       } else {
-        teams.insert(0, newLoanModel);
+        teams.insert(0, newTeamModel);
         teamTotalElements++;
       }
 
-      return emit(EndModifyTeam(teamModel: newLoanModel));
+      return emit(EndModifyTeam(teamModel: newTeamModel));
     });
   }
 }

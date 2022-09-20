@@ -4,6 +4,7 @@ import 'package:crm_flutter_project/features/employees/data/models/employee_mode
 import 'package:crm_flutter_project/features/teams/data/models/team_model.dart';
 import 'package:crm_flutter_project/features/teams/domain/use_cases/team_use_cases.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_cubit.dart';
+import 'package:crm_flutter_project/features/teams/presentation/cubit/team_members/team_members_cubit.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/employee_picker_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -65,17 +66,17 @@ class _ModifyTeamScreenState extends State<ModifyTeamScreen> {
     return BlocConsumer<TeamCubit, TeamState>(
       listener: (context, state) {
         if (state is ModifyTeamError) {
-          Constants.showToast(msg: "ModifyTeamError: " + state.msg);
+          Constants.showToast(msg: "ModifyTeamError: " + state.msg, context: context);
         }
 
         if (state is EndModifyTeam) {
           // edit
           if (widget.modifyTeamArgs.teamModel != null) {
             Constants.showToast(
-                msg: "تم تعديل التيم بنجاح", color: Colors.green);
+                msg: "تم تعديل التيم بنجاح", color: Colors.green, context: context);
           } else {
             Constants.showToast(
-                msg: "تم أضافة التيم بنجاح", color: Colors.green);
+                msg: "تم أضافة التيم بنجاح", color: Colors.green, context: context);
           }
 
           Navigator.popUntil(
@@ -278,8 +279,11 @@ class _TeamLeaderPickerState extends State<TeamLeaderPicker> {
 
             Navigator.pushNamed(context, Routes.employeePickerRoute,
                 arguments: EmployeePickerArgs(
+                  teamMembersCubit: widget.modifyTeamArgs.teamMembersCubit!,
                     employeePickerTypes: EmployeePickerTypes.SELECT_TEAM_LEADER.name,
 
+                    excludeTeamLeader: widget.modifyTeamArgs.teamModel != null && widget.modifyTeamArgs.teamModel!.teamLeader != null ?
+                    widget.modifyTeamArgs.teamModel!.teamLeader!.employeeId : null,
                     notInThisTeamId: widget.modifyTeamArgs.teamModel != null ?
                     widget.modifyTeamArgs.teamModel!.teamId : null
 
@@ -288,8 +292,6 @@ class _TeamLeaderPickerState extends State<TeamLeaderPicker> {
                 debugPrint(value.toString());
                 EmployeeModel em = EmployeeModel.fromJson(value);
                 leader = em;
-              } else {
-                leader = null;
               }
 
               setState(() {});
@@ -310,11 +312,13 @@ class _TeamLeaderPickerState extends State<TeamLeaderPicker> {
 class ModifyTeamArgs {
   final TeamModel? teamModel;
   final TeamCubit teamCubit;
+  final TeamMembersCubit? teamMembersCubit;
   final String fromRoute;
 
   ModifyTeamArgs(
       {this.teamModel,
         required this.teamCubit,
+        this.teamMembersCubit,
         required this.fromRoute});
 }
 

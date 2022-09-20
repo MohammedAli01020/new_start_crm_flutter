@@ -32,4 +32,124 @@ class AppStrings {
 
 
 
+
+  // permissions
+  // leads
+  //1- view
+  static const String viewAllLeads = 'مشاهده كل العملاء';
+  static const String viewMyAssignedLeads = 'مشاهدة العملاء المعينة لي';
+
+  static const String viewOwnLeads = 'مشاهدة عملائي';
+
+  static const String viewTeamLeads  = 'مشاهدة عملاء فريقي';
+  static const String viewNotAssignedLeads  = 'مشاهدة العملاء الغير معينين';
+
+  static const String viewDuplicatesLeads  = 'مشاهدة المكرر';
+
+  //2- edit
+  static const String editAllLeads = 'تعديل كل العملاء';
+  static const String editMyAssignedLeads = 'تعديل العملاء المعينة لي';
+
+  static const String editOwnLeads = 'تعديل عملائي';
+
+  static const String editTeamLeads  = 'تعديل عملاء فريقي';
+  static const String editNotAssignedLeads  = 'تعديل العملاء الغير معينين';
+
+  // 3- delete
+  static const String deleteAllLeads = 'حذف كل العملاء';
+  static const String deleteMyAssignedLeads = 'حذف العملاء المعينة لي';
+
+  static const String deleteOwnLeads = 'حذف عملائي';
+
+  static const String deleteTeamLeads  = 'حذف عملاء فريقي';
+  static const String deleteNotAssignedLeads  = 'حذف العملاء الغير معينين';
+
+  // 4- inside customers
+  // view
+  static const String viewLeadName  = 'مشاهدة اسم العميل';
+  static const String viewLeadCreator  = 'مشاهدة مدخل العميل';
+  static const String viewLeadPhone  = 'مشاهدة رقم العميل';
+  static const String viewLeadDescription  = 'مشاهدة ملاحظات عن العميل';
+
+
+  // edit
+  static const String editLeadName  = 'تعديل اسم العميل';
+  static const String editLeadCreator  = 'تعديل مدخل العميل';
+  static const String editLeadPhone  = 'تعديل رقم العميل';
+  static const String editLeadDescription  = 'تعديل ملاحظات عن العميل';
+
+  // delete
+  static const String deleteLeadPhone  = 'حذف رقم العميل';
+
+
+  // 5- create
+  static const String creatLead  = 'إضافة العملاء';
+
+  // employees
+
+  static const String createEmployees  = 'إضافة الموظفين';
+  static const String editEmployees  = 'تعديل الموظفين';
+  static const String deleteEmployees  = 'حذف الموظفين';
+  static const String viewEmployees  = 'مشاهدة الموظفين';
+  static const String assignEmployees  = 'تعيين الموظفين';
+
+  static const String availableToAssign  = 'متاح للتعيين';
+
+  // actions
+  static const String createActions  = 'أضافة فعل';
+
+  // bulk operations
+  static const String bulkActions  = 'العمليات المجمعه';
+
+
+  // import & export
+  static const String importLeads  = 'استيرات العملاء';
+  static const String exportLeads  = 'تصدير العملاء';
+
+
+  // events
+  static const String viewEvents  = 'مشاهدة الاحداث';
+  static const String editEvents  = 'تعديل الاحداث';
+  static const String createEvents  = 'إضافة الاحداث';
+  static const String deleteEvents  = 'حذف الاحداث';
+
+
+  // projects
+  static const String viewProjects  = 'مشاهدة المشاريع';
+  static const String editProjects = 'تعديل المشاريع';
+  static const String createProjects  = 'إضافة المشاريع';
+  static const String deleteProjects  = 'حذف المشاريع';
+
+  // unitTypes
+  static const String viewUnitTypes = 'مشاهدة انواع الوحدات';
+  static const String editUnitTypes = 'تعديل انواع الوحدات';
+  static const String createUnitTypes = 'إضافة انواع الوحدات';
+  static const String deleteUnitTypes = 'حذف انواع الوحدات';
+
+  // sources
+  static const String viewSources = 'مشاهدة المصادر';
+  static const String editSources  = 'تعديل المصادر';
+  static const String createSources  = 'إضافة المصادر';
+  static const String deleteSources = 'حذف المصادر';
+
+  // groups
+  static const String viewAllGroups = 'مشاهدة كل المجموعات';
+  static const String viewOwnGroups = 'مشاهدة المجموعات التابعه له';
+
+  static const String createGroups = 'انشاء مجموعة';
+  static const String deleteGroups = 'حذف مجموعة';
+
+  static const String editGroups = 'تعديل مجموعة';
+
+  static const String addGroupMembers = 'اضافة اعضاء لمجموعة';
+  static const String deleteGroupMembers = 'حذف اعضاء لمجموعة';
+
+  // statistics
+  static const String viewAllStatistics = 'مشاهدة كل الاحصائيات';
+  static const String viewOwnStatistics = 'مشاهدة الاحصائيات التابعه له';
+
+
+  // customer_logs
+  static const String viewAllCustomerLogs = 'مشاهدة كل سجلات العملاء';
+
 }

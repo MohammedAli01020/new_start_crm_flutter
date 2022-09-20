@@ -15,6 +15,7 @@ import 'end_points.dart';
 import 'package:crm_flutter_project/injection_container.dart' as di;
 
 class DioConsumer implements ApiConsumer {
+
   final Dio client;
 
   DioConsumer({required this.client}) {
@@ -101,7 +102,6 @@ class DioConsumer implements ApiConsumer {
     }
   }
 
-
   dynamic _handleResponseAsJson(Response<dynamic> response) {
 
     if (response.statusCode != 200) {
@@ -119,7 +119,6 @@ class DioConsumer implements ApiConsumer {
           throw const UnprocessableException();
         case StatusCode.internalServerError:
           throw const InternalServerErrorException();
-
         case StatusCode.temporaryRedirectNetworkError:
           throw const TemporaryRedirectException();
         default: throw const ServerException();
@@ -170,6 +169,4 @@ class DioConsumer implements ApiConsumer {
         throw const NoInternetConnectionException();
     }
   }
-
-
 }

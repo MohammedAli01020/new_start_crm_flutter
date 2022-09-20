@@ -1,9 +1,11 @@
 import 'dart:math';
 
+import 'package:crm_flutter_project/core/utils/app_strings.dart';
 import 'package:crm_flutter_project/core/utils/constants.dart';
 import 'package:crm_flutter_project/core/utils/media_query_values.dart';
 import 'package:crm_flutter_project/core/utils/wrapper.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_cubit.dart';
+import 'package:crm_flutter_project/features/teams/presentation/cubit/team_members/team_members_cubit.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/modify_team_screen.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/team_details_screen.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +53,7 @@ class TeamsScreen extends StatelessWidget {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: colCount,
                     childAspectRatio: 1,
-                    mainAxisExtent: 250.0,
+                    mainAxisExtent: 300.0,
                     mainAxisSpacing: 20.0,
                     crossAxisSpacing: 20.0
                 ),
@@ -75,7 +77,10 @@ class TeamsScreen extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text(currentTeam.title,style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                          Text(currentTeam.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold,),
                           textAlign: TextAlign.center,),
                           const Divider(),
 
@@ -124,9 +129,7 @@ class TeamsScreen extends StatelessWidget {
                 cubit.updateFilter(cubit.teamFiltersModel.copyWith(
                   pageNumber: Wrapped.value(index)
                 ));
-
                 _getPageTeams(context: context, refresh: true);
-
               },
 
               initialPage: cubit.teamCurrentPage,
@@ -140,22 +143,21 @@ class TeamsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<TeamCubit, TeamState>(
-      listener: (context, state) {
-        // TODO: implement listener
-      },
+    return BlocBuilder<TeamCubit, TeamState>(
       builder: (context, state) {
         final teamCubit = TeamCubit.get(context);
         return Scaffold(
           appBar: AppBar(title: const Text("المجموعات"),
           actions: [
-
+            if (Constants.currentEmployee!.permissions.contains(AppStrings.createGroups))
             IconButton(onPressed: () {
 
-              Navigator.pushNamed(context, Routes.modifyTeamRoute,
+                Navigator.pushNamed(context, Routes.modifyTeamRoute,
                   arguments: ModifyTeamArgs(
+                      teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context),
                       teamCubit: teamCubit,
                       fromRoute: Routes.teamsRoute),);
+
             }, icon: const Icon(Icons.group_add))
           ],),
           body: _buildBody(context: context, state: state, cubit: teamCubit),

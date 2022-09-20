@@ -13,7 +13,9 @@ class Employee extends Equatable {
     required this.enabled,
     required this.username,
     required this.password,
-    required this.roles,
+    required this.role,
+    required this.createdBy,
+    required this.team,
   });
 
   final int employeeId;
@@ -24,7 +26,10 @@ class Employee extends Equatable {
   final bool enabled;
   final String username;
   final String password;
-  final List<RoleModel> roles;
+  final RoleModel? role;
+
+  final int? createdBy;
+  final int? team;
 
   @override
   List<Object?> get props => [
@@ -36,6 +41,8 @@ class Employee extends Equatable {
         enabled,
         username,
         password,
-        roles,
+        role,
+        createdBy,
+        team
       ];
 }
