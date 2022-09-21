@@ -16,14 +16,14 @@ class GlobalReportsCubit extends Cubit<GlobalReportsState> {
       : super(GlobalReportsInitial());
 
   static GlobalReportsCubit get(context) => BlocProvider.of(context);
+
   List<EmployeeAssignsReportModel> assignsReports = [];
   int assignsReportCurrentPage = 0;
   int assignsReportTotalElements = 0;
   late int assignsReportPagesCount;
 
   bool isNoMoreData = false;
-  FetchEmployeesAssignReportParam filters =
-      FetchEmployeesAssignReportParam.initial();
+  FetchEmployeesAssignReportParam filters = FetchEmployeesAssignReportParam.initial();
 
   void updateFilter(FetchEmployeesAssignReportParam newFilter) {
     emit(StartUpdateFilter());

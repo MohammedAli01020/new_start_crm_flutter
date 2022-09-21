@@ -1,3 +1,4 @@
+import 'package:crm_flutter_project/core/utils/date_values.dart';
 import 'package:crm_flutter_project/features/global_reports/data/models/employee_assigns_report_model.dart';
 import 'package:crm_flutter_project/features/global_reports/domain/repositories/global_reports_repository.dart';
 import 'package:dartz/dartz.dart';
@@ -46,9 +47,9 @@ class FetchEmployeesAssignReportParam extends Equatable {
   }
 
   factory FetchEmployeesAssignReportParam.initial() {
-    return const FetchEmployeesAssignReportParam(
-      startDate: null,
-      endDate: null,
+    return  FetchEmployeesAssignReportParam(
+      startDate: DateTime.now().firstTimOfCurrentDayMillis,
+      endDate: DateTime.now().lastTimOfCurrentDayMillis,
     );
   }
 

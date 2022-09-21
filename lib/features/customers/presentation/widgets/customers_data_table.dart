@@ -74,7 +74,7 @@ class CustomersDataTable extends DataTableSource {
                       icon: const Icon(Icons.call),
                       onPressed: () {
                         try {
-                          Constants.launchCaller(currentCustomer.phoneNumber);
+                          // Constants.launchCaller(currentCustomer.phoneNumber);
                         } catch (e) {
                           debugPrint(e.toString());
                           Constants.showToast(msg: "تعذر الاتصال", context: context);
@@ -90,7 +90,7 @@ class CustomersDataTable extends DataTableSource {
                       icon: const Icon(Icons.whatsapp),
                       onPressed: () {
                         try {
-                          Constants.launchWhatsApp(currentCustomer.phoneNumber, "message");
+                          // Constants.launchWhatsApp(currentCustomer.phoneNumber, "message");
                         } catch (e) {
                           debugPrint(e.toString());
                           Constants.showToast(msg: "تعذر فتح الواتس اب", context: context);
@@ -124,7 +124,7 @@ class CustomersDataTable extends DataTableSource {
                   ],
                 ));
               },
-              child: Text(currentCustomer.phoneNumber.phone)) : const Text("مخفي")  ),
+              child: Text("currentCustomer.phoneNumber.phone")) : const Text("مخفي")  ),
           DataCell(Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -300,7 +300,8 @@ class CustomersDataTable extends DataTableSource {
           DataCell(Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(currentCustomer.duplicateNo.toString()),
+              if (Constants.currentEmployee!.permissions.contains(AppStrings.viewDuplicatesLeads))
+                Text(currentCustomer.duplicateNo.toString()),
               const SizedBox(width: 10.0,),
               IconButton(
                 onPressed: () {
@@ -322,7 +323,7 @@ class CustomersDataTable extends DataTableSource {
                      customerCubit: customerCubit, employeeCubit: employeeCubit,));
 
                 },
-                icon:  Icon(Icons.visibility_outlined, color: currentCustomer.duplicateNo == 0 ? Colors.grey : AppColors.primary,),
+                icon:  Icon(Icons.visibility_outlined, color: currentCustomer.duplicateNo == 0 || !Constants.currentEmployee!.permissions.contains(AppStrings.viewDuplicatesLeads) ? Colors.grey : AppColors.primary,),
               ),
             ],
           ))

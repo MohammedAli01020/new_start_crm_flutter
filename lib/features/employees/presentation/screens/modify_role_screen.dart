@@ -1,13 +1,17 @@
+import 'dart:math';
+
 import 'package:crm_flutter_project/core/utils/media_query_values.dart';
 import 'package:crm_flutter_project/core/widgets/default_hieght_sized_box.dart';
 import 'package:crm_flutter_project/features/employees/data/models/role_model.dart';
 import 'package:crm_flutter_project/features/permissions/presentation/cubit/permission_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/utils/app_strings.dart';
 import '../../../../core/utils/constants.dart';
+import '../../../../core/utils/responsive.dart';
 import '../../../../core/widgets/custom_edit_text.dart';
 import '../../../../core/widgets/default_button_widget.dart';
 import '../../../../core/widgets/error_item_widget.dart';
@@ -15,7 +19,27 @@ import '../../../../core/widgets/error_item_widget.dart';
 class ModifyRoleScreen extends StatefulWidget {
   final RoleModel? roleModel;
 
-  const ModifyRoleScreen({Key? key, this.roleModel}) : super(key: key);
+  final _scrollController = ScrollController();
+  static const _extraScrollSpeed = 80;
+
+
+  ModifyRoleScreen({Key? key, this.roleModel}) : super(key: key) {
+    if (Responsive.isWindows || Responsive.isLinux || Responsive.isMacOS) {
+      _scrollController.addListener(() {
+        ScrollDirection scrollDirection =
+            _scrollController.position.userScrollDirection;
+        if (scrollDirection != ScrollDirection.idle) {
+          double scrollEnd = _scrollController.offset +
+              (scrollDirection == ScrollDirection.reverse
+                  ? _extraScrollSpeed
+                  : -_extraScrollSpeed);
+          scrollEnd = min(_scrollController.position.maxScrollExtent,
+              max(_scrollController.position.minScrollExtent, scrollEnd));
+          _scrollController.jumpTo(scrollEnd);
+        }
+      });
+    }
+  }
 
   @override
   State<ModifyRoleScreen> createState() => _ModifyRoleScreenState();
@@ -76,6 +100,12 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    widget._scrollController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<PermissionCubit, PermissionState>(
       builder: (context, state) {
@@ -105,6 +135,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: CustomScrollView(
+                controller: widget._scrollController,
                 slivers: [
                   SliverToBoxAdapter(
                     child: CustomEditText(

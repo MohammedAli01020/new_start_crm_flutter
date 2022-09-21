@@ -11,6 +11,7 @@ import 'package:crm_flutter_project/features/teams/presentation/cubit/team_membe
 import 'package:crm_flutter_project/features/teams/presentation/screens/employee_picker_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:linkwell/linkwell.dart';
 import 'package:number_paginator/number_paginator.dart';
 
 import '../../../../config/routes/app_routes.dart';
@@ -67,8 +68,8 @@ class CustomerLogsScreen extends StatelessWidget {
                 color: Colors.blueGrey[100],
                 child: ListTile(
                   leading:
-                      Text(Constants.timeAgoSinceDate(currentLog.dateTime)),
-                  title: Text(
+                      Text(Constants.timeAgoSinceDate(currentLog.dateTime), style: const TextStyle(fontSize: 14.0),),
+                  title: LinkWell(
                     currentLog.description != null
                         ? (currentLog.description!)
                         : "لا يوجد",
@@ -80,10 +81,9 @@ class CustomerLogsScreen extends StatelessWidget {
                   subtitle: Row(
                     mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
+                    Flexible(
                       child: InkWell(
                         onTap: () {
-
                           if (currentLog.customer != null) {
                             Navigator.pushNamed(context, Routes.customersDetailsRoute,
                                 arguments: CustomerDetailsArgs(
@@ -95,23 +95,29 @@ class CustomerLogsScreen extends StatelessWidget {
 
                         },
                         child: Text(getCustomerName(
-                            currentLog.customer)),
+                            currentLog.customer), style: const TextStyle(
+                            fontSize: 14.0
+                        )),
                       ),
                     ),
 
                     const SizedBox(width: 5.0,),
-                    Expanded(child: InkWell(
-                        onTap: () {
-                          if (currentLog.employee != null) {
-                            Navigator.pushNamed(context, Routes.employeesDetailsRoute,
-                                arguments: EmployeeDetailsArgs(
-                                    employeeModel: currentLog.employee!,
-                                    employeeCubit: BlocProvider.of<EmployeeCubit>(context),
-                                    fromRoute: Routes.customerLogsRoute));
-                          }
-                        },
+                    Flexible(
+                      child: InkWell(
+                          onTap: () {
+                            if (currentLog.employee != null) {
+                              Navigator.pushNamed(context, Routes.employeesDetailsRoute,
+                                  arguments: EmployeeDetailsArgs(
+                                      employeeModel: currentLog.employee!,
+                                      employeeCubit: BlocProvider.of<EmployeeCubit>(context),
+                                      fromRoute: Routes.customerLogsRoute));
+                            }
+                          },
 
-                        child: Text(getEmployeeName(currentLog.employee)))),
+                          child: Text(getEmployeeName(currentLog.employee), style: const TextStyle(
+                            fontSize: 14.0
+                          ),)),
+                    ),
                   ],
                   ),
 
@@ -133,9 +139,11 @@ class CustomerLogsScreen extends StatelessWidget {
             child: NumberPaginator(
                 onPageChange: (index) {
                   customerLogsCubit.setCurrentPage(index);
+
                   customerLogsCubit.updateFilter(customerLogsCubit
                       .customerLogFiltersModel
                       .copyWith(pageNumber: Wrapped.value(index)));
+
                   _getPageCustomerLogs(context: context, refresh: true);
                 },
                 initialPage: customerLogsCubit.customerLogCurrentPage,
@@ -218,15 +226,20 @@ class CustomerLogsScreen extends StatelessWidget {
                             .customerLogFiltersModel
                             .copyWith(employeeId: Wrapped.value(employeeId)));
 
+                        customerLogsCubit.resetData();
+
                         customerLogsCubit.fetchCustomerLogs(
                             isWebPagination: true, refresh: true);
-
 
                       }, onClearTapCallback: () {
 
                       customerLogsCubit.updateFilter(customerLogsCubit
                           .customerLogFiltersModel
-                          .copyWith(employeeId: const Wrapped.value(null)));
+                          .copyWith(
+                          employeeId: const Wrapped.value(null)));
+
+
+                      customerLogsCubit.resetData();
 
                       customerLogsCubit.fetchCustomerLogs(
                           isWebPagination: true, refresh: true);

@@ -15,6 +15,7 @@ import '../widgets/modify_source_widget.dart';
 
 class SourcesScreen extends StatelessWidget {
   final SourcesArgs sourcesArgs;
+
   final _scrollController = ScrollController();
   static const _extraScrollSpeed = 80;
 

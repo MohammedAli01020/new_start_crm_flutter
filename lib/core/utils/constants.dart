@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:crm_flutter_project/core/utils/date_values.dart';
 import 'package:crm_flutter_project/core/utils/responsive.dart';
+import 'package:crm_flutter_project/core/utils/wrapper.dart';
 import 'package:crm_flutter_project/features/employees/data/models/permission_model.dart';
 import 'package:crm_flutter_project/features/employees/data/models/phoneNumber_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,10 +13,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../features/customers/presentation/cubit/customer_cubit.dart';
 import '../../features/login/domain/entities/current_employee.dart';
 import '../error/failures.dart';
 import 'app_colors.dart';
 import 'app_strings.dart';
+import 'enums.dart';
 
 class Constants {
   static void showErrorDialog(
@@ -303,6 +306,46 @@ class Constants {
     }
   }
 
+
+
+  static void refreshCustomers(CustomerCubit cubit) {
+
+    if (Constants.currentEmployee!.permissions.contains(AppStrings.viewAllLeads)) {
+
+      cubit.updateFilter( cubit.customerFiltersModel.copyWith(
+          customerTypes: Wrapped.value(CustomerTypes.ALL.name)));
+
+      cubit.fetchCustomers(refresh: true);
+    }
+    else if (Constants.currentEmployee!.permissions.contains(AppStrings.viewTeamLeads) && Constants.currentEmployee!.teamId != null) {
+
+      cubit.updateFilter(cubit.customerFiltersModel.copyWith(
+          teamId: Wrapped.value(Constants.currentEmployee?.teamId),
+          employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
+          customerTypes: Wrapped.value(CustomerTypes.ME_AND_TEAM.name)));
+
+      cubit.fetchCustomers(refresh: true);
+
+    } else if (Constants.currentEmployee!.permissions.contains(AppStrings.viewMyAssignedLeads)) {
+      cubit.updateFilter(cubit.customerFiltersModel.copyWith(
+          teamId: const Wrapped.value(null),
+          employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
+          customerTypes: Wrapped.value(CustomerTypes.ME.name)));
+      cubit.fetchCustomers(refresh: true);
+
+    }
+    else if (Constants.currentEmployee!.permissions.contains(AppStrings.viewNotAssignedLeads)) {
+      cubit.updateFilter(cubit.customerFiltersModel.copyWith(
+          teamId: const Wrapped.value(null),
+          employeeId: const Wrapped.value(null),
+          customerTypes: Wrapped.value(CustomerTypes.NOT_ASSIGNED.name)));
+
+      cubit.fetchCustomers(refresh: true);
+    } else {
+      cubit.updateCustomers([]);
+    }
+  }
+
   static CurrentEmployee? currentEmployee;
 
   // (25, 'إضافة الموظفين'),
@@ -311,7 +354,7 @@ class Constants {
   // (28, 'مشاهدة الموظفين'),
   // (29, 'تعيين الموظفين'),
   // (34, 'متاح للتعيين'),
-
+  // (63, 'مشاهدة موظفين اضفتهم'),
   static List<PermissionModel> employeesPermissions = [
     const PermissionModel(permissionId: 25, name: AppStrings.createEmployees),
     const PermissionModel(permissionId: 26, name: AppStrings.editEmployees),
@@ -319,6 +362,9 @@ class Constants {
     const PermissionModel(permissionId: 28, name: AppStrings.viewEmployees),
     const PermissionModel(permissionId: 29, name: AppStrings.assignEmployees),
     const PermissionModel(permissionId: 34, name: AppStrings.availableToAssign),
+
+    const PermissionModel(permissionId: 63, name: AppStrings.viewCreatedEmployees),
+
   ];
 
 
@@ -383,15 +429,26 @@ class Constants {
     const PermissionModel(permissionId: 18, name: AppStrings.viewLeadPhone),
     const PermissionModel(permissionId: 19, name: AppStrings.viewLeadDescription),
 
+    const PermissionModel(permissionId: 67, name: AppStrings.viewLeadLog),
+
     // edit
     // (20, 'تعديل اسم العميل'),
     // (21, 'تعديل مدخل العميل'),
     // (22, 'تعديل رقم العميل'),
     // (23, 'تعديل ملاحظات عن العميل'),
+    // (64, 'تعديل مصادر العميل'),
+    // (65, 'تعديل مشاريع العميل'),
+    // (66, 'تعديل اهتمامات العميل')
     const PermissionModel(permissionId: 20, name: AppStrings.editLeadName),
     const PermissionModel(permissionId: 21, name: AppStrings.editLeadCreator),
     const PermissionModel(permissionId: 22, name: AppStrings.editLeadPhone),
     const PermissionModel(permissionId: 23, name: AppStrings.editLeadDescription),
+
+    const PermissionModel(permissionId: 64, name: AppStrings.editLeadSources),
+    const PermissionModel(permissionId: 65, name: AppStrings.editLeadProjects),
+    const PermissionModel(permissionId: 66, name: AppStrings.editLeadUnitTyps),
+
+
   ];
 
 

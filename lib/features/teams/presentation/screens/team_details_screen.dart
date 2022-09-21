@@ -257,7 +257,7 @@ class TeamDetailsScreen extends StatelessWidget {
     return BlocConsumer<TeamCubit, TeamState>(
       listener: (context, state) {
         if (state is DeleteTeamError) {
-          Constants.showToast(msg: "DeleteLoanError: " + state.msg, context: context);
+          Constants.showToast(msg: "DeleteTeamError: " + state.msg, context: context);
         }
 
         if (state is EndDeleteTeam) {

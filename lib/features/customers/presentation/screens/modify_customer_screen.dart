@@ -207,7 +207,9 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
                       onPickedUnitTypesCallback: (List<String> newUnitTypes) {
                         unitTypes = newUnitTypes;
                       },
-                      unitTypes: unitTypes,
+                      unitTypes: unitTypes, onRemoveCallback: () {
+                      unitTypes = [];
+                    },
                     ),
                     const DefaultHeightSizedBox(),
                     Card(
@@ -222,17 +224,28 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
                       onPickedSourcesCallback: (List<String> newSources) {
                         sources = newSources;
                       },
-                      sources: sources,
+                      sources: sources, onRemoveCallback: () {
+                      sources = [];
+                    },
                     ),
                     const DefaultHeightSizedBox(),
                     AssignToEmployee(
                       currentEmployee: assignedEmployee,
                       onAssignedCallback: (EmployeeModel? newAssignedEmployee) {
+
                         assignedEmployeeId = newAssignedEmployee?.employeeId;
                         assignedEmployee = newAssignedEmployee;
+                        assignedByEmployeeId = Constants.currentEmployee?.employeeId;
+                        assignedDateTime = DateTime.now().millisecondsSinceEpoch;
+
                       },
                       teamMembersCubit:
-                          widget.modifyCustomerArgs.teamMembersCubit,
+                          widget.modifyCustomerArgs.teamMembersCubit, onRemoveCallback: () {
+                      assignedEmployeeId = null;
+                      assignedEmployee = null;
+                      assignedByEmployeeId = null;
+                      assignedDateTime = null;
+                    },
                     ),
                     const DefaultHeightSizedBox(),
                     Text(

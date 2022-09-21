@@ -48,6 +48,19 @@ class CustomerLogsCubit extends Cubit<CustomerLogsState> {
     emit(EndChangeCurrentPage());
   }
 
+
+  void resetData() {
+    emit(StartResetData());
+
+     customerLogs = [];
+     customerLogCurrentPage = 0;
+     customerLogTotalElements = 0;
+     isNoMoreData = false;
+
+    emit(EndResetData());
+
+  }
+
   Future<void> fetchCustomerLogs(
       {bool refresh = false, required bool isWebPagination}) async {
     if (state is StartRefreshCustomerLogs ||

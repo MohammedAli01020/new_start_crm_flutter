@@ -13,20 +13,22 @@ class CustomListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children:  [
-        ListTile(
-          title: Text(title),
-          onTap: onTapCallback,
-          subtitle: subTitle != null ? Text(subTitle!) : null,
-          trailing: trailing,
-          selected: isSelected ?? false,
-        ),
-        const Divider(),
+    return SizedBox(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children:  [
+          ListTile(
+            title: Text(title),
+            onTap: onTapCallback,
+            subtitle: subTitle != null ? Text(subTitle!) : null,
+            trailing: trailing,
+            selected: isSelected ?? false,
+          ),
+          const Divider(),
 
-      ],
+        ],
+      ),
     );
   }
 }

@@ -104,8 +104,9 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                     widget.customerCubit.updateSelectedSources([]);
                     widget.customerCubit.updateSelectedUnitTypes([]);
 
+                    Constants.refreshCustomers(widget.customerCubit);
 
-                    widget.customerCubit.fetchCustomers(refresh: true);
+
                   },
                   child: const FilterField(
                     text: Text("حذف الفلاتر"),
@@ -129,6 +130,8 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                             employeeId: Wrapped.value(
                                 Constants.currentEmployee?.employeeId),
                           ));
+
+
                           widget.customerCubit.fetchCustomers(refresh: true);
                         },
                       ),
@@ -168,7 +171,7 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                                 .copyWith(
                               reminderTypes: Wrapped.value(reminderTypes),
                             ));
-                            widget.customerCubit.fetchCustomers(refresh: true);
+                            Constants.refreshCustomers(widget.customerCubit);
                           },
 
                         )
@@ -216,7 +219,8 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                           widget.customerCubit.updateSelectedEvents(
                               selected.isEmpty ? null : selected);
 
-                          widget.customerCubit.fetchCustomers(refresh: true);
+                          Constants.refreshCustomers(widget.customerCubit);
+
                           Navigator.of(context).pop(false);
 
 
@@ -272,7 +276,7 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                               endDateTime: Wrapped.value(end),
                             ));
 
-                            widget.customerCubit.fetchCustomers(refresh: true);
+                            Constants.refreshCustomers(widget.customerCubit);
                           },
 
                         )
@@ -318,7 +322,7 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                             widget.customerCubit.updateSelectedUnitTypes(
                                 selectedUnitTypes.isEmpty ? null : selectedUnitTypes);
 
-                            widget.customerCubit.fetchCustomers(refresh: true);
+                            Constants.refreshCustomers(widget.customerCubit);
                             Navigator.of(context).pop(false);
                           },
 
@@ -372,7 +376,7 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                             widget.customerCubit.updateSelectedSources(
                                 selectedSources.isEmpty ? null : selectedSources);
 
-                            widget.customerCubit.fetchCustomers(refresh: true);
+                            Constants.refreshCustomers(widget.customerCubit);
                             Navigator.of(context).pop(false);
                           },
 
@@ -412,6 +416,9 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
       ),
     );
   }
+
+
+
 
   String _getCustomerType(String? customerTypes) {
     if (customerTypes == CustomerTypes.ME.name) {

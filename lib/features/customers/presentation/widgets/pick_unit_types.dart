@@ -8,8 +8,10 @@ import '../../../../core/utils/enums.dart';
 class PickUnitTypes extends StatefulWidget {
   final List<String> unitTypes;
   final Function onPickedUnitTypesCallback;
+  final VoidCallback onRemoveCallback;
   const PickUnitTypes({Key? key, required this.unitTypes,
-    required this.onPickedUnitTypesCallback}) : super(key: key);
+    required this.onPickedUnitTypesCallback,
+    required this.onRemoveCallback}) : super(key: key);
 
   @override
   State<PickUnitTypes> createState() => _PickUnitTypesState();
@@ -28,29 +30,46 @@ class _PickUnitTypesState extends State<PickUnitTypes> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        onTap: () async {
-          final pickedSources = await Navigator.pushNamed(context, Routes.unitTypesRoute,
-              arguments: UnitTypesArgs(unitTypesType: UnitTypesType.SELECT_UNIT_TYPES.name,
-                  selectedUnitTypesNames: selectedUnitTypes));
+    return Row(
+      children: [
+        Expanded(
+          child: Card(
+            child: ListTile(
+              onTap: () async {
+                final pickedSources = await Navigator.pushNamed(context, Routes.unitTypesRoute,
+                    arguments: UnitTypesArgs(unitTypesType: UnitTypesType.SELECT_UNIT_TYPES.name,
+                        selectedUnitTypesNames: selectedUnitTypes));
 
-          if (pickedSources != null && pickedSources is List<String>) {
+                if (pickedSources != null && pickedSources is List<String>) {
 
-            selectedUnitTypes = pickedSources;
+                  selectedUnitTypes = pickedSources;
 
-            setState(() {
-            });
+                  setState(() {
+                  });
 
-            widget.onPickedUnitTypesCallback(pickedSources);
-          }
-        },
-        title: Text(selectedUnitTypes.isNotEmpty ? "عدل الاهتمامات" : "احتر الاهتمامات"),
-        subtitle: Text(selectedUnitTypes.toString(),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,),
-        trailing: const Icon(Icons.arrow_forward_ios),
-      ),
+                  widget.onPickedUnitTypesCallback(pickedSources);
+                }
+              },
+              title: Text(selectedUnitTypes.isNotEmpty ? "عدل الاهتمامات" : "احتر الاهتمامات"),
+              subtitle: Text(selectedUnitTypes.toString(),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,),
+              trailing: const Icon(Icons.arrow_forward_ios),
+            ),
+          ),
+        ),
+        if (selectedUnitTypes.isNotEmpty)
+        IconButton(
+          onPressed: () {
+            selectedUnitTypes = [];
+
+            setState(() {});
+
+            widget.onRemoveCallback();
+          },
+          icon: const Icon(Icons.delete),
+        ),
+      ],
     );
   }
 }

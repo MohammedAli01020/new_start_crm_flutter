@@ -111,7 +111,7 @@ class CustomerFiltersModel extends CustomerFilters {
   factory CustomerFiltersModel.initial() {
     return const CustomerFiltersModel(
         pageNumber: 0,
-        pageSize: 12,
+        pageSize: 100,
         sortDirection: "DESC",
         sortBy: "assignedDateTime",
         fullNameOrPhoneNumber: null,

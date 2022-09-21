@@ -1,7 +1,9 @@
 class EndPoints {
   // static const String baseUrl = 'http://192.168.1.38:5000/';
 
-  static const String baseUrl = 'http://construction-env.eba-ttpmkd5p.us-east-1.elasticbeanstalk.com/';
+  // static const String baseUrl = 'http://construction-env.eba-ttpmkd5p.us-east-1.elasticbeanstalk.com/';
+
+  static const String baseUrl = 'http://newstart-env.eba-xhzfkni9.us-east-1.elasticbeanstalk.com/';
 
   static const String login = '${baseUrl}login';
 
@@ -26,7 +28,7 @@ class EndPoints {
 
   static const String updateCustomerAssignedEmployee = '${baseUrl}api/customers/update_assigned_employee';
   static const String deleteCustomerAssignedEmployee = '${baseUrl}api/customers/delete_assigned_employee';
-
+  static const String updateCustomerPhoneNumber = '${baseUrl}api/customers/update_phone_number';
   // teams
   static const String modifyTeam = '${baseUrl}api/teams/modify';
   static const String pageTeam = '${baseUrl}api/teams/all';
@@ -40,8 +42,6 @@ class EndPoints {
 
   // email
   static const String sendEmail = '${baseUrl}api/email/send';
-
-
 
   // roles
   static const String modifyRole = '${baseUrl}api/roles/modify';
@@ -72,7 +72,4 @@ class EndPoints {
 
   // employees assigns_report
   static const String allEmployeeAssignsReports = '${baseUrl}api/employees/assigns_report';
-
-
-
 }

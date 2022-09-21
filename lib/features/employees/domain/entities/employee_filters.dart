@@ -14,6 +14,9 @@ class EmployeeFilters extends Equatable {
 
   final int? notInThisTeamId;
 
+  final int? createdById;
+
+
   const EmployeeFilters(
       {required this.pageNumber,
       required this.pageSize,
@@ -24,7 +27,9 @@ class EmployeeFilters extends Equatable {
       required this.startDateTime,
       required this.endDateTime,
         required this.excludeTeamLeader,
-        required this.notInThisTeamId
+        required this.notInThisTeamId,
+        required this.createdById,
+
       });
 
   @override
@@ -38,6 +43,7 @@ class EmployeeFilters extends Equatable {
         startDateTime,
         endDateTime,
     excludeTeamLeader,
-    notInThisTeamId
+    notInThisTeamId,
+    createdById
       ];
 }

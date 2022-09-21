@@ -283,3 +283,28 @@ class DeleteCustomerAssignedEmployeeError extends CustomerState  {
   @override
   List<Object> get props => [msg];
 }
+
+
+
+class StartUpdateCustomerPhone extends CustomerState  {}
+class EndUpdateCustomerPhone extends CustomerState  {
+  final CustomerModel customerModel;
+
+  EndUpdateCustomerPhone({required this.customerModel});
+
+  @override
+  List<Object> get props => [customerModel];
+}
+class UpdateCustomerPhoneError extends CustomerState  {
+  final String msg;
+
+  UpdateCustomerPhoneError({required this.msg});
+
+  @override
+  List<Object> get props => [msg];
+}
+
+
+
+class StartUpdateCustomers extends CustomerState  {}
+class EndUpdateCustomers extends CustomerState  {}

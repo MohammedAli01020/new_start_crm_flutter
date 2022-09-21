@@ -58,8 +58,10 @@ class LoginCubit extends Cubit<LoginState> {
       Either<Failure, Employee> response =
           await loginUseCases.getEmployeeById(currentEmployee.employeeId);
       response.fold(
-          (failure) => emit(
-              GettingEmployeeError(msg: Constants.mapFailureToMsg(failure))),
+          (failure) {
+            loginUseCases.logout();
+           return emit(GettingEmployeeError(msg: Constants.mapFailureToMsg(failure)));
+          },
           (newEmployee) {
         if (!newEmployee.enabled) {
           return emit(

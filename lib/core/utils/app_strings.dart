@@ -70,13 +70,18 @@ class AppStrings {
   static const String viewLeadCreator  = 'مشاهدة مدخل العميل';
   static const String viewLeadPhone  = 'مشاهدة رقم العميل';
   static const String viewLeadDescription  = 'مشاهدة ملاحظات عن العميل';
-
+  static const String viewLeadLog  = 'مشاهدة سجل العميل';
 
   // edit
   static const String editLeadName  = 'تعديل اسم العميل';
   static const String editLeadCreator  = 'تعديل مدخل العميل';
   static const String editLeadPhone  = 'تعديل رقم العميل';
   static const String editLeadDescription  = 'تعديل ملاحظات عن العميل';
+
+
+  static const String editLeadSources  = 'تعديل مصادر العميل';
+  static const String editLeadProjects  = 'تعديل مشاريع العميل';
+  static const String editLeadUnitTyps  = 'تعديل اهتمامات العميل';
 
   // delete
   static const String deleteLeadPhone  = 'حذف رقم العميل';
@@ -94,6 +99,9 @@ class AppStrings {
   static const String assignEmployees  = 'تعيين الموظفين';
 
   static const String availableToAssign  = 'متاح للتعيين';
+
+  static const String viewCreatedEmployees  = 'مشاهدة موظفين اضفتهم';
+
 
   // actions
   static const String createActions  = 'أضافة فعل';
@@ -151,5 +159,11 @@ class AppStrings {
 
   // customer_logs
   static const String viewAllCustomerLogs = 'مشاهدة كل سجلات العملاء';
+
+
+
+
+
+
 
 }

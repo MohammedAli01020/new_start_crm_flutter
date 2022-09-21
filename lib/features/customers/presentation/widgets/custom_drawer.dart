@@ -9,7 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../config/routes/app_routes.dart';
 import '../../../../core/utils/constants.dart';
-import 'package:restart_app/restart_app.dart';
 import '../../../../core/widgets/custom_list_tile.dart';
 import '../../../login/presentation/cubit/login_cubit.dart';
 import '../../../sources/presentation/screens/sources_screen.dart';
@@ -33,9 +32,6 @@ class CustomDrawer extends StatelessWidget {
               currentAccountPicture: BlocConsumer<LoginCubit, LoginState>(
                 listener: (context, state) {
                   if (state is EndGettingEmployee) {
-
-
-                    // Restart.restartApp();
 
                     if (Constants.currentEmployee!.permissions.contains(AppStrings.viewAllLeads)) {
                       customerCubit.updateFilter(customerCubit.customerFiltersModel.copyWith(
@@ -72,6 +68,8 @@ class CustomDrawer extends StatelessWidget {
                           lastEventIds: const Wrapped.value(null),
                           customerTypes: Wrapped.value(CustomerTypes.NOT_ASSIGNED.name)));
                       _getPageCustomers(refresh: true, context: context);
+                    } else {
+                      customerCubit.updateCustomers([]);
                     }
 
                     Navigator.pop(context);
@@ -107,7 +105,8 @@ class CustomDrawer extends StatelessWidget {
               accountName: Text(Constants.currentEmployee!.fullName),
               accountEmail: Text(Constants.currentEmployee!.username)),
 
-          if (Constants.currentEmployee!.permissions.contains(AppStrings.viewEmployees))
+          if (Constants.currentEmployee!.permissions.contains(AppStrings.viewEmployees) ||
+              Constants.currentEmployee!.permissions.contains(AppStrings.viewCreatedEmployees)  )
             CustomListTile(
               title: 'الموظفون',
               trailing: const Icon(Icons.people),
@@ -145,7 +144,7 @@ class CustomDrawer extends StatelessWidget {
               Navigator.popAndPushNamed(context, Routes.sourcesRoute,
                   arguments:
                   SourcesArgs(sourceType: SourceType.VIEW_SOURCES.name));
-            },   
+            },
           ),
 
           if (Constants.currentEmployee!.permissions.contains(AppStrings.viewUnitTypes))

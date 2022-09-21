@@ -53,6 +53,10 @@ abstract class CustomerUseCases {
   Future<Either<Failure, CustomerModel>> deleteCustomerAssignedEmployee(
       DeleteCustomerAssignedEmployeeParam deleteCustomerAssignedEmployeeParam);
 
+
+  Future<Either<Failure, CustomerModel>> updateCustomerPhoneNumber(
+      UpdateCustomerPhoneNumberParam updateCustomerPhoneNumberParam);
+
 }
 
 class CustomerUseCasesImpl implements CustomerUseCases {
@@ -127,6 +131,12 @@ class CustomerUseCasesImpl implements CustomerUseCases {
   @override
   Future<Either<Failure, CustomerModel>> updateCustomerAssignedEmployee(UpdateCustomerAssignedEmployeeParam updateCustomerAssignedEmployeeParam) {
     return customerRepository.updateCustomerAssignedEmployee(updateCustomerAssignedEmployeeParam);
+
+  }
+
+  @override
+  Future<Either<Failure, CustomerModel>> updateCustomerPhoneNumber(UpdateCustomerPhoneNumberParam updateCustomerPhoneNumberParam) {
+    return customerRepository.updateCustomerPhoneNumber(updateCustomerPhoneNumberParam);
 
   }
 }
@@ -320,5 +330,28 @@ class DeleteCustomerAssignedEmployeeParam {
   Map<String, dynamic> toJson() => {
     "updatedByEmployeeId": updatedByEmployeeId,
     "customerId" :customerId
+  };
+}
+
+
+class UpdateCustomerPhoneNumberParam {
+  final int updatedByEmployeeId;
+
+  final int customerId;
+
+  
+  final PhoneNumberModel phoneNumber;
+
+  UpdateCustomerPhoneNumberParam({
+    required this.updatedByEmployeeId,
+    required this.customerId,
+  required this.phoneNumber});
+
+
+
+  Map<String, dynamic> toJson() => {
+    "updatedByEmployeeId": updatedByEmployeeId,
+    "customerId" :customerId,
+    "phoneNumber": phoneNumber.toJson()
   };
 }

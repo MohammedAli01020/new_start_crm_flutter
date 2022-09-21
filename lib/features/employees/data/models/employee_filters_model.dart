@@ -14,6 +14,9 @@ class EmployeeFiltersModel extends EmployeeFilters {
       required int? endDateTime,
         required int? excludeTeamLeader,
         required int? notInThisTeamId,
+        required int? createdById,
+
+
       })
       : super(
             pageNumber: pageNumber,
@@ -25,7 +28,8 @@ class EmployeeFiltersModel extends EmployeeFilters {
             startDateTime: startDateTime,
             endDateTime: endDateTime,
       excludeTeamLeader: excludeTeamLeader,
-      notInThisTeamId: notInThisTeamId);
+      notInThisTeamId: notInThisTeamId,
+      createdById: createdById);
 
   factory EmployeeFiltersModel.fromJson(Map<String, dynamic> json) =>
       EmployeeFiltersModel(
@@ -39,6 +43,8 @@ class EmployeeFiltersModel extends EmployeeFilters {
         endDateTime: json["endDateTime"],
           excludeTeamLeader: json["excludeTeamLeader"],
           notInThisTeamId: json["notInThisTeamId"],
+
+          createdById: json["createdById"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -51,7 +57,8 @@ class EmployeeFiltersModel extends EmployeeFilters {
         "startDateTime": startDateTime,
         "endDateTime": endDateTime,
     "excludeTeamLeader": excludeTeamLeader,
-    "notInThisTeamId": notInThisTeamId
+    "notInThisTeamId": notInThisTeamId,
+    "createdById": createdById
   };
 
   EmployeeFiltersModel copyWith({
@@ -65,6 +72,9 @@ class EmployeeFiltersModel extends EmployeeFilters {
     Wrapped<int?>? endDateTime,
     Wrapped<int?>? excludeTeamLeader,
     Wrapped<int?>? notInThisTeamId,
+    Wrapped<int?>? createdById,
+
+
 
 
   }) {
@@ -85,6 +95,7 @@ class EmployeeFiltersModel extends EmployeeFilters {
       excludeTeamLeader: excludeTeamLeader != null ? excludeTeamLeader.value : this.excludeTeamLeader,
 
       notInThisTeamId: notInThisTeamId != null ? notInThisTeamId.value : this.notInThisTeamId,
+      createdById: createdById != null ? createdById.value : this.createdById,
 
     );
   }
@@ -101,6 +112,7 @@ class EmployeeFiltersModel extends EmployeeFilters {
         employeeTypes: null,
        excludeTeamLeader: null,
        notInThisTeamId: null,
+       createdById: null
     );
   }
 }

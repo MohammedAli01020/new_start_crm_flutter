@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:crm_flutter_project/core/utils/app_strings.dart';
 import 'package:crm_flutter_project/core/utils/media_query_values.dart';
 import 'package:crm_flutter_project/core/widgets/default_bottom_navigation_widget.dart';
+import 'package:crm_flutter_project/core/widgets/default_button_widget.dart';
 import 'package:crm_flutter_project/core/widgets/default_hieght_sized_box.dart';
 import 'package:crm_flutter_project/features/customer_logs/data/models/customer_log_model.dart';
 import 'package:crm_flutter_project/features/customer_logs/presentation/cubit/customer_logs_cubit.dart';
@@ -10,12 +11,14 @@ import 'package:crm_flutter_project/features/customers/data/models/customer_mode
 import 'package:crm_flutter_project/features/customers/domain/use_cases/customer_use_cases.dart';
 import 'package:crm_flutter_project/features/customers/presentation/cubit/customer_cubit.dart';
 import 'package:crm_flutter_project/features/customers/presentation/widgets/modify_customer_desc_widget.dart';
+import 'package:crm_flutter_project/features/employees/data/models/phoneNumber_model.dart';
 import 'package:crm_flutter_project/features/employees/presentation/cubit/employee_cubit.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_members/team_members_cubit.dart';
 import 'package:crm_flutter_project/features/unit_types/presentation/screens/unit_types_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:linkwell/linkwell.dart';
 
 import '../../../../config/routes/app_routes.dart';
@@ -115,7 +118,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
         }
 
 
-
         if (state is EndUpdateCustomerFullName) {
           Constants.showToast(
               msg: "تم تحديث اسم العميل بنجاح",
@@ -125,7 +127,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
 
         if (state is UpdateCustomerFullNameError) {
           Constants.showToast(
-              msg: "UpdateCustomerFullNameError: " + state.msg, context: context);
+              msg: "UpdateCustomerFullNameError: " + state.msg,
+              context: context);
         }
 
 
@@ -138,7 +141,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
 
         if (state is UpdateCustomerDescriptionError) {
           Constants.showToast(
-              msg: "UpdateCustomerDescriptionError: " + state.msg, context: context);
+              msg: "UpdateCustomerDescriptionError: " + state.msg,
+              context: context);
         }
 
         if (state is EndUpdateCustomerSources) {
@@ -151,7 +155,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
 
         if (state is UpdateCustomerSourcesError) {
           Constants.showToast(
-              msg: "UpdateCustomerSourcesError: " + state.msg, context: context);
+              msg: "UpdateCustomerSourcesError: " + state.msg,
+              context: context);
         }
 
 
@@ -164,7 +169,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
 
         if (state is DeleteCustomerAssignedEmployeeError) {
           Constants.showToast(
-              msg: "DeleteCustomerAssignedEmployeeError: " + state.msg, context: context);
+              msg: "DeleteCustomerAssignedEmployeeError: " + state.msg,
+              context: context);
         }
 
         if (state is EndUpdateCustomerAssignedEmployee) {
@@ -176,7 +182,22 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
 
         if (state is UpdateCustomerAssignedEmployeeError) {
           Constants.showToast(
-              msg: "UpdateCustomerAssignedEmployeeError: " + state.msg, context: context);
+              msg: "UpdateCustomerAssignedEmployeeError: " + state.msg,
+              context: context);
+        }
+
+
+        if (state is EndUpdateCustomerPhone) {
+          Constants.showToast(
+              msg: "تم تغير رقم الموظف بنجاح",
+              color: Colors.green,
+              context: context);
+        }
+
+        if (state is UpdateCustomerPhoneError) {
+          Constants.showToast(
+              msg: "UpdateCustomerPhoneError: " + state.msg,
+              context: context);
         }
       },
       builder: (context, state) {
@@ -209,38 +230,38 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                             .contains(AppStrings.editLeadName))
                           state is StartUpdateCustomerFullName
                               ? const SizedBox(
-                                  height: 20.0,
-                                  width: 20.0,
-                                  child: Center(
-                                    child: CircularProgressIndicator(),
-                                  ))
+                              height: 20.0,
+                              width: 20.0,
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ))
                               : IconButton(
-                                  onPressed: () {
-                                    Constants.showDialogBox(
-                                        context: context,
-                                        title: "عدل الاسم",
-                                        content: ModifyCustomerNameWidget(
-                                            customerModel:
-                                                cubit.currentCustomer,
-                                            customerCubit: cubit,
-                                            onTapCallBack:
-                                                (String updatedName) {
-                                              cubit.updateCustomerFullName(
-                                                  UpdateCustomerNameOrDescParam(
-                                                      updatedByEmployeeId:
-                                                          Constants
-                                                              .currentEmployee!
-                                                              .employeeId,
-                                                      customerId: cubit
-                                                          .currentCustomer
-                                                          .customerId,
-                                                      updatedFullNameOrDesc:
-                                                          updatedName));
+                              onPressed: () {
+                                Constants.showDialogBox(
+                                    context: context,
+                                    title: "عدل الاسم",
+                                    content: ModifyCustomerNameWidget(
+                                        customerModel:
+                                        cubit.currentCustomer,
+                                        customerCubit: cubit,
+                                        onTapCallBack:
+                                            (String updatedName) {
+                                          cubit.updateCustomerFullName(
+                                              UpdateCustomerNameOrDescParam(
+                                                  updatedByEmployeeId:
+                                                  Constants
+                                                      .currentEmployee!
+                                                      .employeeId,
+                                                  customerId: cubit
+                                                      .currentCustomer
+                                                      .customerId,
+                                                  updatedFullNameOrDesc:
+                                                  updatedName));
 
-                                              Navigator.pop(context);
-                                            }));
-                                  },
-                                  icon: const Icon(Icons.edit))
+                                          Navigator.pop(context);
+                                        }));
+                              },
+                              icon: const Icon(Icons.edit))
                       ],
                     ),
                   const DefaultHeightSizedBox(),
@@ -254,11 +275,35 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                         const Spacer(),
                         if (Constants.currentEmployee!.permissions
                             .contains(AppStrings.editLeadPhone))
+
+
+                          state is StartUpdateCustomerPhone
+                              ? const SizedBox(
+                              height: 20.0,
+                              width: 20.0,
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ))
+                              :
                           IconButton(
                               onPressed: () {
-                                // todo implement edit phone
+
+                                Constants.showDialogBox(
+                                    context: context, title: "تعديل رقم الهاتف",
+                                    content: EditCustomerPhoneNumber(
+                                      phoneNumberModel: cubit.currentCustomer.phoneNumber,
+                                      onDoneCallback: (PhoneNumberModel updatedPhone) {
+
+                                        cubit.updateCustomerPhone(UpdateCustomerPhoneNumberParam(
+                                            phoneNumber: updatedPhone,
+                                            updatedByEmployeeId: Constants.currentEmployee!.employeeId,
+                                            customerId: cubit.currentCustomer.customerId
+                                        ));
+                                      },
+                                    ));
                               },
                               icon: const Icon(Icons.edit))
+
                       ],
                     ),
                   const DefaultHeightSizedBox(),
@@ -268,14 +313,22 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Expanded(
-                          child: LinkWell("ملاحظات عن العميل: " +
-                              (cubit.currentCustomer.description != null
-                                  ? cubit.currentCustomer.description!
-                                  : "لا يوجد")),
+                          child: Container(
+                            padding: const EdgeInsets.all(16.0),
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 2.0, color: Colors.grey)
+                            ),
+                            child: LinkWell("ملاحظات عن العميل: " +
+                                (cubit.currentCustomer.description != null
+                                    ? cubit.currentCustomer.description!
+                                    : "لا يوجد")),
+                          ),
                         ),
+
+
                         if (Constants.currentEmployee!.permissions
                             .contains(AppStrings.editLeadDescription))
-
                           state is StartUpdateCustomerDescription
                               ? const SizedBox(
                               height: 20.0,
@@ -314,36 +367,45 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                       ],
                     ),
                   const DefaultHeightSizedBox(),
-                  
+
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Expanded(child: Text("المصدر: " + cubit.currentCustomer.sources.toString())),
+                      Expanded(child: Text("المصدر: " + cubit.currentCustomer
+                          .sources.toString())),
 
-                      state is StartUpdateCustomerSources
-                          ? const SizedBox(
-                          height: 20.0,
-                          width: 20.0,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ))
-                          :
-                      IconButton(
-                          onPressed: () async {
+                      if (Constants.currentEmployee!.permissions
+                          .contains(AppStrings.editLeadSources))
+                        state is StartUpdateCustomerSources
+                            ? const SizedBox(
+                            height: 20.0,
+                            width: 20.0,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ))
+                            :
+                        IconButton(
+                            onPressed: () async {
+                              final pickedSources = await Navigator.pushNamed(
+                                  context, Routes.sourcesRoute,
+                                  arguments: SourcesArgs(
+                                      sourceType: SourceType.SELECT_SOURCES
+                                          .name,
+                                      selectedSourcesNames: cubit
+                                          .currentCustomer.sources));
 
-                            final pickedSources = await Navigator.pushNamed(context, Routes.sourcesRoute,
-                                arguments: SourcesArgs(sourceType: SourceType.SELECT_SOURCES.name,
-                                    selectedSourcesNames: cubit.currentCustomer.sources));
-
-                            if (pickedSources != null && pickedSources is List<String>) {
-                              cubit.updateCustomerSources(UpdateCustomerSourcesOrUnitTypesParam(
-                                  updatedByEmployeeId: Constants.currentEmployee!.employeeId,
-                                  customerId: cubit.currentCustomer.customerId,
-                                  updatedData: pickedSources));
-                            }
-
-                          },
-                          icon: const Icon(Icons.edit))
+                              if (pickedSources != null &&
+                                  pickedSources is List<String>) {
+                                cubit.updateCustomerSources(
+                                    UpdateCustomerSourcesOrUnitTypesParam(
+                                        updatedByEmployeeId: Constants
+                                            .currentEmployee!.employeeId,
+                                        customerId: cubit.currentCustomer
+                                            .customerId,
+                                        updatedData: pickedSources));
+                              }
+                            },
+                            icon: const Icon(Icons.edit))
                     ],
                   ),
 
@@ -357,25 +419,36 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                             cubit.currentCustomer.unitTypes.toString()),
                       ),
 
-                      state is StartUpdateCustomerUnitTypes
-                          ? const SizedBox(
-                          height: 20.0,
-                          width: 20.0,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ))
-                          :
+
+                      if (Constants.currentEmployee!.permissions
+                          .contains(AppStrings.editLeadUnitTyps))
+                        state is StartUpdateCustomerUnitTypes
+                            ? const SizedBox(
+                            height: 20.0,
+                            width: 20.0,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ))
+                            :
                         IconButton(
                             onPressed: () async {
-                              final pickedUnitTypes = await Navigator.pushNamed(context, Routes.unitTypesRoute,
-                                  arguments: UnitTypesArgs(unitTypesType: UnitTypesType.SELECT_UNIT_TYPES.name,
-                                  selectedUnitTypesNames: cubit.currentCustomer.sources));
+                              final pickedUnitTypes = await Navigator.pushNamed(
+                                  context, Routes.unitTypesRoute,
+                                  arguments: UnitTypesArgs(
+                                      unitTypesType: UnitTypesType
+                                          .SELECT_UNIT_TYPES.name,
+                                      selectedUnitTypesNames: cubit
+                                          .currentCustomer.unitTypes));
 
-                              if (pickedUnitTypes != null && pickedUnitTypes is List<String>) {
-                                cubit.updateCustomerUnitTypes(UpdateCustomerSourcesOrUnitTypesParam(
-                                    updatedByEmployeeId: Constants.currentEmployee!.employeeId,
-                                    customerId: cubit.currentCustomer.customerId,
-                                    updatedData: pickedUnitTypes));
+                              if (pickedUnitTypes != null &&
+                                  pickedUnitTypes is List<String>) {
+                                cubit.updateCustomerUnitTypes(
+                                    UpdateCustomerSourcesOrUnitTypesParam(
+                                        updatedByEmployeeId: Constants
+                                            .currentEmployee!.employeeId,
+                                        customerId: cubit.currentCustomer
+                                            .customerId,
+                                        updatedData: pickedUnitTypes));
                               }
                             },
                             icon: const Icon(Icons.edit))
@@ -391,7 +464,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                             ? cubit.currentCustomer.createdBy!.fullName
                             : "لا يوجد")),
                   const DefaultHeightSizedBox(),
-                  
+
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -413,29 +486,35 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                             :
                         IconButton(
                             onPressed: () async {
-                              final pickedEmployee = await Navigator.pushNamed(context, Routes.employeePickerRoute,
+                              final pickedEmployee = await Navigator.pushNamed(
+                                  context, Routes.employeePickerRoute,
                                   arguments: EmployeePickerArgs(
-                                    teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context),
-                                    employeePickerTypes: EmployeePickerTypes.ASSIGN_MEMBER.name,
+                                    teamMembersCubit: BlocProvider.of<
+                                        TeamMembersCubit>(context),
+                                    employeePickerTypes: EmployeePickerTypes
+                                        .ASSIGN_MEMBER.name,
                                   ));
 
-                                if (pickedEmployee != null && pickedEmployee is Map<String, dynamic>) {
+                              if (pickedEmployee != null &&
+                                  pickedEmployee is Map<String, dynamic>) {
+                                EmployeeModel employeeModel = EmployeeModel
+                                    .fromJson(pickedEmployee);
 
-                                  EmployeeModel employeeModel =  EmployeeModel.fromJson(pickedEmployee);
-
-                                  cubit.updateCustomerAssignedEmployee(UpdateCustomerAssignedEmployeeParam(
-                                      updatedByEmployeeId: Constants.currentEmployee!.employeeId,
-                                      customerId: cubit.currentCustomer.customerId,
-                                      assignedEmployee: employeeModel.employeeId));
-
-                                }
-
+                                cubit.updateCustomerAssignedEmployee(
+                                    UpdateCustomerAssignedEmployeeParam(
+                                        updatedByEmployeeId: Constants
+                                            .currentEmployee!.employeeId,
+                                        customerId: cubit.currentCustomer
+                                            .customerId,
+                                        assignedEmployee: employeeModel
+                                            .employeeId));
+                              }
                             },
                             icon: const Icon(Icons.edit)),
 
+                      if (cubit.currentCustomer.assignedEmployee != null)
                       if (Constants.currentEmployee!.permissions
                           .contains(AppStrings.assignEmployees))
-
                         state is StartDeleteCustomerAssignedEmployee
                             ? const SizedBox(
                             height: 20.0,
@@ -444,23 +523,24 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                               child: CircularProgressIndicator(),
                             ))
                             :
-                      IconButton(
-                          onPressed: () async {
+                        IconButton(
+                            onPressed: () async {
+                              final result = await Constants.showConfirmDialog(
+                                  context: context,
+                                  msg: "هل تريد تأكيد الغاء تعيين هذا الموظف");
 
-                            final result = await Constants.showConfirmDialog(context: context, msg: "هل تريد تأكيد الغاء تعيين هذا الموظف");
+                              if (result) {
+                                cubit.deleteCustomerAssignedEmployee(
+                                    DeleteCustomerAssignedEmployeeParam(
+                                        customerId: cubit.currentCustomer
+                                            .customerId,
+                                        updatedByEmployeeId: Constants
+                                            .currentEmployee!.employeeId
 
-                            if (result) {
-
-                              cubit.deleteCustomerAssignedEmployee(DeleteCustomerAssignedEmployeeParam(
-                                  customerId: cubit.currentCustomer.customerId,
-                                  updatedByEmployeeId: Constants.currentEmployee!.employeeId
-
-                              ));
-
-                            }
-
-                          },
-                          icon: const Icon(Icons.delete)),
+                                    ));
+                              }
+                            },
+                            icon: const Icon(Icons.delete)),
 
                     ],
                   ),
@@ -474,6 +554,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                       Constants.dateFromMilliSeconds(
                           cubit.currentCustomer.createDateTime)),
                   const DefaultHeightSizedBox(),
+
                   Card(
                     color: Colors.blueGrey[100],
                     child: Padding(
@@ -484,10 +565,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                         children: [
                           Text(" اخر حدث: " +
                               (cubit.currentCustomer.lastAction != null &&
-                                      cubit.currentCustomer.lastAction!.event !=
-                                          null
+                                  cubit.currentCustomer.lastAction!.event !=
+                                      null
                                   ? cubit
-                                      .currentCustomer.lastAction!.event!.name
+                                  .currentCustomer.lastAction!.event!.name
                                   : "لا يوجد")),
                           const DefaultHeightSizedBox(),
                           Text(" تاريخ اخر اكشن: " +
@@ -496,31 +577,31 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                           const DefaultHeightSizedBox(),
                           Text("تعليق: " +
                               (cubit.currentCustomer.lastAction != null &&
-                                      cubit.currentCustomer.lastAction!
-                                              .actionDescription !=
-                                          null
+                                  cubit.currentCustomer.lastAction!
+                                      .actionDescription !=
+                                      null
                                   ? cubit.currentCustomer.lastAction!
-                                      .actionDescription!
+                                  .actionDescription!
                                   : "لا يوجد")),
                           const DefaultHeightSizedBox(),
                           Text("تاريخ المتابعه: " +
                               (cubit.currentCustomer.lastAction != null &&
-                                      cubit.currentCustomer.lastAction!
-                                              .postponeDateTime !=
-                                          null
+                                  cubit.currentCustomer.lastAction!
+                                      .postponeDateTime !=
+                                      null
                                   ? Constants.dateFromMilliSeconds(cubit
-                                      .currentCustomer
-                                      .lastAction!
-                                      .postponeDateTime!)
+                                  .currentCustomer
+                                  .lastAction!
+                                  .postponeDateTime!)
                                   : "لا يوجد")),
                           const DefaultHeightSizedBox(),
                           Text("بواسطة: " +
                               (cubit.currentCustomer.lastAction != null &&
-                                      cubit.currentCustomer.lastAction!
-                                              .lastActionBy !=
-                                          null
+                                  cubit.currentCustomer.lastAction!
+                                      .lastActionBy !=
+                                      null
                                   ? cubit.currentCustomer.lastAction!
-                                      .lastActionBy!.fullName
+                                  .lastActionBy!.fullName
                                   : "لا يوجد")),
                         ],
                       ),
@@ -531,25 +612,28 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                     color: Colors.blueGrey,
                     margin: const EdgeInsets.symmetric(vertical: 16.0),
                   ),
-                  _buildCustomerLogs(),
+
+                  if (Constants.currentEmployee!.permissions.contains(
+                      AppStrings.viewLeadLog))
+                    _buildCustomerLogs(),
                 ],
               ),
             ),
           ),
           bottomNavigationBar: DefaultBottomNavigationWidget(
             withDelete: Constants.currentEmployee!.permissions
-                    .contains(AppStrings.deleteAllLeads) ||
+                .contains(AppStrings.deleteAllLeads) ||
                 (Constants.currentEmployee!.permissions
-                        .contains(AppStrings.deleteMyAssignedLeads) &&
+                    .contains(AppStrings.deleteMyAssignedLeads) &&
                     cubit.currentCustomer.assignedEmployee?.employeeId ==
                         Constants.currentEmployee!.employeeId) ||
                 (Constants.currentEmployee!.permissions
-                        .contains(AppStrings.deleteNotAssignedLeads) &&
+                    .contains(AppStrings.deleteNotAssignedLeads) &&
                     cubit.currentCustomer.assignedEmployee?.employeeId ==
                         null) ||
                 (Constants.currentEmployee!.permissions
-                        .contains(AppStrings.deleteOwnLeads) &&
-                    cubit.currentCustomer.assignedEmployee?.createdBy ==
+                    .contains(AppStrings.deleteOwnLeads) &&
+                    cubit.currentCustomer.createdBy?.employeeId ==
                         Constants.currentEmployee!.employeeId),
             omDeleteCallback: () {},
 
@@ -578,7 +662,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                       fromRoute: widget.customerDetailsArgs.fromRoute,
                       customerModel: cubit.currentCustomer,
                       teamMembersCubit:
-                          widget.customerDetailsArgs.teamMembersCubit));
+                      widget.customerDetailsArgs.teamMembersCubit));
             },
           ),
         );
@@ -641,12 +725,87 @@ class CustomerDetailsArgs {
   final TeamMembersCubit teamMembersCubit;
   final String fromRoute;
 
-  CustomerDetailsArgs(
-      {required this.customerModel,
-      required this.customerCubit,
-      required this.teamMembersCubit,
-      required this.fromRoute});
+  CustomerDetailsArgs({required this.customerModel,
+    required this.customerCubit,
+    required this.teamMembersCubit,
+    required this.fromRoute});
 }
+
+
+class EditCustomerPhoneNumber extends StatefulWidget {
+  final PhoneNumberModel phoneNumberModel;
+  final Function onDoneCallback;
+
+  const EditCustomerPhoneNumber({Key? key, required this.phoneNumberModel,
+    required this.onDoneCallback})
+      : super(key: key);
+
+  @override
+  State<EditCustomerPhoneNumber> createState() =>
+      _EditCustomerPhoneNumberState();
+}
+
+class _EditCustomerPhoneNumberState extends State<EditCustomerPhoneNumber> {
+  final formKey = GlobalKey<FormState>();
+  late PhoneNumberModel currentPhone;
+
+  @override
+  void initState() {
+    super.initState();
+
+    currentPhone = PhoneNumberModel(
+      phone: widget.phoneNumberModel.phone.substring(1),
+      isoCode: widget.phoneNumberModel.isoCode,
+      countryCode: widget.phoneNumberModel.countryCode,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: formKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IntlPhoneField(
+            decoration: const InputDecoration(
+              labelText: 'رقم الهاتف',
+              border: OutlineInputBorder(
+                borderSide: BorderSide(),
+              ),
+            ),
+            validator: (v) {
+              if (v != null) {
+                return AppStrings.required;
+              }
+
+              return null;
+            },
+            invalidNumberMessage: "هذا الرقم غير صحيح",
+            initialValue: currentPhone.phone,
+            initialCountryCode: currentPhone.isoCode,
+            onChanged: (phone) {
+              currentPhone = PhoneNumberModel(
+                  phone: phone.number,
+                  isoCode: phone.countryISOCode,
+                  countryCode: phone.countryCode);
+            },
+          ),
+          DefaultButtonWidget(onTap: () {
+
+            if (formKey.currentState!.validate()) {
+
+              widget.onDoneCallback(currentPhone);
+              Navigator.pop(context);
+            }
+
+          }, text: "تأكيد")
+        ],
+      ),
+    );
+  }
+}
+
 
 class CustomerLogsDataTable extends DataTableSource {
   final CustomerLogsCubit customerLogsCubit;

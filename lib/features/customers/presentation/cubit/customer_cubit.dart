@@ -36,6 +36,16 @@ class CustomerCubit extends Cubit<CustomerState> {
     emit(EndResetFilter());
   }
 
+
+  void updateCustomers(List<CustomerModel> newCustomers ) {
+    emit(StartUpdateCustomers());
+    customers = newCustomers;
+    customerCurrentPage = 0;
+    customerTotalElements = 0;
+    customerPagesCount = 0;
+    emit(EndUpdateCustomers());
+  }
+
   List<CustomerModel> customers = [];
   int customerCurrentPage = 0;
   int customerTotalElements = 0;
@@ -430,6 +440,33 @@ class CustomerCubit extends Cubit<CustomerState> {
           }
 
           return emit(EndDeleteCustomerAssignedEmployee(customerModel: newCustomerModel));
+        });
+  }
+
+
+
+  Future<void> updateCustomerPhone(UpdateCustomerPhoneNumberParam updateCustomerPhoneNumberParam) async {
+
+    emit(StartUpdateCustomerPhone());
+    Either<Failure, CustomerModel> response =
+    await customerUseCases.updateCustomerPhoneNumber(updateCustomerPhoneNumberParam);
+
+    response.fold(
+            (failure) =>
+            emit(UpdateCustomerPhoneError(msg: Constants.mapFailureToMsg(failure))),
+            (newCustomerModel) {
+
+          try {
+            int index = customers.indexWhere((element) {
+              return element.customerId == updateCustomerPhoneNumberParam.customerId;
+            });
+            customers[index] = newCustomerModel;
+            currentCustomer = newCustomerModel;
+          } catch (e) {
+            debugPrint(e.toString());
+          }
+
+          return emit(EndUpdateCustomerPhone(customerModel: newCustomerModel));
         });
   }
 

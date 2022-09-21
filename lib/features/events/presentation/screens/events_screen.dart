@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:crm_flutter_project/core/utils/app_strings.dart';
 import 'package:crm_flutter_project/core/utils/constants.dart';
 import 'package:crm_flutter_project/core/utils/enums.dart';
 import 'package:crm_flutter_project/features/events/presentation/widgets/event_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/utils/responsive.dart';
 import '../../../../core/widgets/error_item_widget.dart';
 import '../../../customers/data/models/event_model.dart';
 import '../cubit/event_cubit.dart';
@@ -12,8 +16,27 @@ import '../widgets/modify_event_widget.dart';
 class EventsScreen extends StatelessWidget {
   final EventsArgs eventsArgs;
 
-  const EventsScreen({Key? key, required this.eventsArgs}) : super(key: key);
+  final _scrollController = ScrollController();
+  static const _extraScrollSpeed = 80;
 
+
+  EventsScreen({Key? key, required this.eventsArgs}) : super(key: key) {
+    if (Responsive.isWindows || Responsive.isLinux || Responsive.isMacOS) {
+      _scrollController.addListener(() {
+        ScrollDirection scrollDirection =
+            _scrollController.position.userScrollDirection;
+        if (scrollDirection != ScrollDirection.idle) {
+          double scrollEnd = _scrollController.offset +
+              (scrollDirection == ScrollDirection.reverse
+                  ? _extraScrollSpeed
+                  : -_extraScrollSpeed);
+          scrollEnd = min(_scrollController.position.maxScrollExtent,
+              max(_scrollController.position.minScrollExtent, scrollEnd));
+          _scrollController.jumpTo(scrollEnd);
+        }
+      });
+    }
+  }
 
   Widget _buildBody(EventCubit eventCubit, EventState state) {
 
@@ -32,6 +55,7 @@ class EventsScreen extends StatelessWidget {
 
     return Scrollbar(
       child: ListView.separated(
+        controller: _scrollController,
         itemBuilder: (context, index) {
           final currentEvent = eventCubit.events[index];
           return ListTile(

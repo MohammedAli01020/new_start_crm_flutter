@@ -1,5 +1,6 @@
+import 'dart:math';
+
 import 'package:crm_flutter_project/core/utils/app_strings.dart';
-import 'package:crm_flutter_project/core/utils/enums.dart';
 import 'package:crm_flutter_project/core/utils/media_query_values.dart';
 import 'package:crm_flutter_project/core/utils/wrapper.dart';
 import 'package:crm_flutter_project/features/customers/data/models/customer_model.dart';
@@ -8,9 +9,11 @@ import 'package:crm_flutter_project/features/customers/presentation/widgets/cust
 import 'package:crm_flutter_project/features/employees/presentation/cubit/employee_cubit.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_members/team_members_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/utils/constants.dart';
+import '../../../../core/utils/responsive.dart';
 import '../../../../core/widgets/error_item_widget.dart';
 import '../cubit/customer_cubit.dart';
 import '../widgets/bulk_actions_widget.dart';
@@ -18,7 +21,27 @@ import '../widgets/custom_drawer.dart';
 import '../widgets/customers_app_bar.dart';
 
 class CustomersScreen extends StatefulWidget {
-  const CustomersScreen({Key? key}) : super(key: key);
+
+  final _scrollController = ScrollController();
+  static const _extraScrollSpeed = 80;
+
+  CustomersScreen({Key? key}) : super(key: key) {
+    if (Responsive.isWindows || Responsive.isLinux || Responsive.isMacOS) {
+      _scrollController.addListener(() {
+        ScrollDirection scrollDirection =
+            _scrollController.position.userScrollDirection;
+        if (scrollDirection != ScrollDirection.idle) {
+          double scrollEnd = _scrollController.offset +
+              (scrollDirection == ScrollDirection.reverse
+                  ? _extraScrollSpeed
+                  : -_extraScrollSpeed);
+          scrollEnd = min(_scrollController.position.maxScrollExtent,
+              max(_scrollController.position.minScrollExtent, scrollEnd));
+          _scrollController.jumpTo(scrollEnd);
+        }
+      });
+    }
+  }
 
   @override
   State<CustomersScreen> createState() => _CustomersScreenState();
@@ -36,59 +59,30 @@ class _CustomersScreenState extends State<CustomersScreen> {
 
     final customerCubit = BlocProvider.of<CustomerCubit>(context);
 
-    if (Constants.currentEmployee!.permissions.contains(AppStrings.viewAllLeads)) {
-      customerCubit.updateFilter(customerCubit.customerFiltersModel.copyWith(
-          teamId: const Wrapped.value(null),
-          employeeId: const Wrapped.value(null),
-          lastEventIds: const Wrapped.value(null),
-          customerTypes: Wrapped.value(CustomerTypes.ALL.name)));
-
-      _getPageCustomers(refresh: true);
-    }
-    else if (Constants.currentEmployee!.permissions.contains(AppStrings.viewTeamLeads) && Constants.currentEmployee!.teamId != null) {
-
-      customerCubit.updateFilter(customerCubit.customerFiltersModel.copyWith(
-          teamId: Wrapped.value(Constants.currentEmployee?.teamId),
-          employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
-          lastEventIds: const Wrapped.value(null),
-          customerTypes: Wrapped.value(CustomerTypes.ME_AND_TEAM.name)));
-      _getPageCustomers(refresh: true);
-    } else if (Constants.currentEmployee!.permissions.contains(AppStrings.viewMyAssignedLeads)) {
-      customerCubit.updateFilter(customerCubit.customerFiltersModel.copyWith(
-          teamId: const Wrapped.value(null),
-          employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
-          lastEventIds: const Wrapped.value(null),
-          customerTypes: Wrapped.value(CustomerTypes.ME.name)));
-      _getPageCustomers(refresh: true);
-    }
-    else if (Constants.currentEmployee!.permissions.contains(AppStrings.viewNotAssignedLeads)) {
-      customerCubit.updateFilter(customerCubit.customerFiltersModel.copyWith(
-          teamId: const Wrapped.value(null),
-          employeeId: const Wrapped.value(null),
-          lastEventIds: const Wrapped.value(null),
-          customerTypes: Wrapped.value(CustomerTypes.NOT_ASSIGNED.name)));
-      _getPageCustomers(refresh: true);
-    }
+    Constants.refreshCustomers(customerCubit);
 
   }
+
+
 
   Widget _buildBodyTable(
       {required CustomerCubit cubit, required CustomerState state}) {
 
-    // if (state is StartRefreshCustomers || state is StartLoadingCustomers) {
-    //   return const Center(child: CircularProgressIndicator());
-    // }
+    if (state is StartRefreshCustomers || state is StartLoadingCustomers) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     if (state is RefreshCustomersError) {
       return ErrorItemWidget(
         msg: state.msg,
         onPress: () {
-          _getPageCustomers(refresh: true);
+          Constants.refreshCustomers(cubit);
         },
       );
     }
 
     return SingleChildScrollView(
+      controller: widget._scrollController,
       child: SizedBox(
         width: context.width,
         child: PaginatedDataTable(
@@ -107,7 +101,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
               DataColumn(label: Text('موعد التذكير')),
               DataColumn(label: Text('عدد التكرارات')),
             ],
-            rowsPerPage: 10,
+            rowsPerPage: 50,
             header: Text("العملاء: " + cubit.customerTotalElements.toString() ),
             actions: [
 
@@ -173,41 +167,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                 child: CircularProgressIndicator(),),)
               :IconButton(onPressed: () {
 
-
-                if (Constants.currentEmployee!.permissions.contains(AppStrings.viewAllLeads)) {
-                  cubit.updateFilter(cubit.customerFiltersModel.copyWith(
-                      teamId: const Wrapped.value(null),
-                      employeeId: const Wrapped.value(null),
-                      lastEventIds: const Wrapped.value(null),
-                      customerTypes: Wrapped.value(CustomerTypes.ALL.name)));
-
-                  _getPageCustomers(refresh: true);
-                }
-                else if (Constants.currentEmployee!.permissions.contains(AppStrings.viewTeamLeads) && Constants.currentEmployee!.teamId != null) {
-
-                  cubit.updateFilter(cubit.customerFiltersModel.copyWith(
-                      teamId: Wrapped.value(Constants.currentEmployee?.teamId),
-                      employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
-                      lastEventIds: const Wrapped.value(null),
-                      customerTypes: Wrapped.value(CustomerTypes.ME_AND_TEAM.name)));
-                  _getPageCustomers(refresh: true);
-                } else if (Constants.currentEmployee!.permissions.contains(AppStrings.viewMyAssignedLeads)) {
-                  cubit.updateFilter(cubit.customerFiltersModel.copyWith(
-                      teamId: const Wrapped.value(null),
-                      employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
-                      lastEventIds: const Wrapped.value(null),
-                      customerTypes: Wrapped.value(CustomerTypes.ME.name)));
-                  _getPageCustomers(refresh: true);
-                }
-                else if (Constants.currentEmployee!.permissions.contains(AppStrings.viewNotAssignedLeads)) {
-                  cubit.updateFilter(cubit.customerFiltersModel.copyWith(
-                      teamId: const Wrapped.value(null),
-                      employeeId: const Wrapped.value(null),
-                      lastEventIds: const Wrapped.value(null),
-                      customerTypes: Wrapped.value(CustomerTypes.NOT_ASSIGNED.name)));
-                  _getPageCustomers(refresh: true);
-                }
-
+                Constants.refreshCustomers(cubit);
 
               }, icon: const Icon(Icons.refresh))
             ],
@@ -216,7 +176,8 @@ class _CustomersScreenState extends State<CustomersScreen> {
               cubit.updateFilter(cubit.customerFiltersModel
                   .copyWith(pageNumber: Wrapped.value(pageIndex)));
 
-              _getPageCustomers();
+              cubit.fetchCustomers();
+
             },
             onSelectAll: (val) {
 
@@ -288,7 +249,10 @@ class _CustomersScreenState extends State<CustomersScreen> {
             onSearchChangeCallback: (search) {
               customerCubit.updateFilter(customerCubit.customerFiltersModel
                   .copyWith(fullNameOrPhoneNumber: Wrapped.value(search)));
-              _getPageCustomers(refresh: true);
+
+
+              Constants.refreshCustomers(customerCubit);
+
             },
             onCancelTapCallback: (isSearch) {
               if (!isSearch) {
@@ -296,7 +260,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                     .copyWith(
                         fullNameOrPhoneNumber: const Wrapped.value(null)));
 
-                _getPageCustomers(refresh: true);
+                Constants.refreshCustomers(customerCubit);
               }
             }, teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context),
           ),
@@ -305,6 +269,12 @@ class _CustomersScreenState extends State<CustomersScreen> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    widget._scrollController.dispose();
   }
 }
 

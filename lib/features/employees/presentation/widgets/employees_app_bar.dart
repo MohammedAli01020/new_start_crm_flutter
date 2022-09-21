@@ -80,18 +80,39 @@ class _EmployeesAppBarState extends State<EmployeesAppBar> {
             const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
             scrollDirection: Axis.horizontal,
             children: [
+          if (Constants.currentEmployee!.permissions.contains(AppStrings.viewEmployees))
               FilterItem(
                 currentValue:
                 widget.employeeCubit.employeeFiltersModel.employeeTypes,
                 onTapCallback: () {
                   widget.employeeCubit.updateFilter(widget
                       .employeeCubit.employeeFiltersModel
-                      .copyWith(employeeTypes: const Wrapped.value(null)));
+                      .copyWith(employeeTypes: Wrapped.value(EmployeeTypes.ALL.name)));
                   widget.employeeCubit.fetchEmployees(refresh: true);
                 },
                 text: 'الكل',
-                value: null,
+                value: EmployeeTypes.ALL.name,
               ),
+
+
+              if (Constants.currentEmployee!.permissions.contains(AppStrings.viewCreatedEmployees) ||
+                  Constants.currentEmployee!.permissions.contains(AppStrings.viewEmployees))
+              FilterItem(
+                currentValue:
+                widget.employeeCubit.employeeFiltersModel.employeeTypes,
+                onTapCallback: () {
+                  widget.employeeCubit.updateFilter(widget
+                      .employeeCubit.employeeFiltersModel
+                      .copyWith(
+                      createdById: Wrapped.value(Constants.currentEmployee!.employeeId),
+                      employeeTypes: Wrapped.value(EmployeeTypes.I_CREATED.name)));
+                  widget.employeeCubit.fetchEmployees(refresh: true);
+                },
+                text: 'اللي ضفتهم',
+                value: EmployeeTypes.I_CREATED.name
+              ),
+
+              if (Constants.currentEmployee!.permissions.contains(AppStrings.viewEmployees))
               FilterItem(
                 currentValue:
                 widget.employeeCubit.employeeFiltersModel.employeeTypes,
@@ -105,6 +126,7 @@ class _EmployeesAppBarState extends State<EmployeesAppBar> {
                 text: 'ليس له عميل',
                 value: EmployeeTypes.NOT_ASSIGNED.name,
               ),
+              if (Constants.currentEmployee!.permissions.contains(AppStrings.viewEmployees))
               FilterItem(
                 currentValue:
                 widget.employeeCubit.employeeFiltersModel.employeeTypes,
@@ -118,6 +140,8 @@ class _EmployeesAppBarState extends State<EmployeesAppBar> {
                 text: 'تيم ليدرز',
                 value: EmployeeTypes.TEAM_LEADERS.name,
               ),
+
+              if (Constants.currentEmployee!.permissions.contains(AppStrings.viewEmployees))
               FilterItem(
                 currentValue:
                 widget.employeeCubit.employeeFiltersModel.employeeTypes,

@@ -50,3 +50,10 @@ class LoadNoMoreCustomerLogs extends CustomerLogsState {}
 
 class StartChangeCurrentPage extends CustomerLogsState{}
 class EndChangeCurrentPage extends CustomerLogsState{}
+
+
+
+
+class StartResetData extends CustomerLogsState{}
+class EndResetData extends CustomerLogsState{}
+

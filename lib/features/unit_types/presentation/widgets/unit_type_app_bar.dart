@@ -1,3 +1,5 @@
+import 'package:crm_flutter_project/core/utils/app_strings.dart';
+import 'package:crm_flutter_project/core/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/utils/enums.dart';
@@ -60,6 +62,7 @@ class _UnitTypesAppBarState extends State<UnitTypesAppBar> {
               icon: const Icon(Icons.done)),
 
 
+        if (Constants.currentEmployee!.permissions.contains(AppStrings.createUnitTypes))
         if (widget.sourceType == UnitTypesType.VIEW_UNIT_TYPES.name)
         IconButton(onPressed: widget.onNewTapCallback,
             icon: const Icon(Icons.add))

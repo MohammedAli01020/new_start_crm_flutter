@@ -42,4 +42,7 @@ abstract class CustomerRepository {
 
   Future<Either<Failure, CustomerModel>> deleteCustomerAssignedEmployee(
       DeleteCustomerAssignedEmployeeParam deleteCustomerAssignedEmployeeParam);
+
+  Future<Either<Failure, CustomerModel>> updateCustomerPhoneNumber(
+      UpdateCustomerPhoneNumberParam updateCustomerPhoneNumberParam);
 }

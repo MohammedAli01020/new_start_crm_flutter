@@ -1,9 +1,12 @@
+import 'package:crm_flutter_project/core/utils/constants.dart';
+import 'package:crm_flutter_project/core/utils/enums.dart';
 import 'package:crm_flutter_project/core/utils/wrapper.dart';
 import 'package:crm_flutter_project/features/customer_logs/data/models/customer_log_filters_model.dart';
 import 'package:crm_flutter_project/features/customer_logs/presentation/screens/customer_logs_screen.dart';
 import 'package:crm_flutter_project/features/customers/presentation/screens/customer_datails_screen.dart';
 import 'package:crm_flutter_project/features/customers/presentation/screens/customers_screen.dart';
 import 'package:crm_flutter_project/features/customers/presentation/screens/modify_customer_screen.dart';
+import 'package:crm_flutter_project/features/employees/data/models/employee_filters_model.dart';
 import 'package:crm_flutter_project/features/employees/data/models/role_model.dart';
 import 'package:crm_flutter_project/features/employees/presentation/screens/employee_details_screen.dart';
 import 'package:crm_flutter_project/features/employees/presentation/screens/modify_employee_screen.dart';
@@ -110,7 +113,7 @@ class AppRoutes {
                     },
                   ),
                 ],
-                child: const CustomersScreen(),
+                child: CustomersScreen(),
               );
             }));
 
@@ -173,9 +176,14 @@ class AppRoutes {
             builder: ((context) {
               return BlocProvider(
                 create: (context) {
-                  return di.sl<EmployeeCubit>()..fetchEmployees(refresh: true);
+                  return di.sl<EmployeeCubit>()..updateFilter(EmployeeFiltersModel.initial().copyWith(
+
+                    createdById: Wrapped.value(Constants.currentEmployee!.employeeId),
+                    employeeTypes: Constants.currentEmployee!.permissions.contains(AppStrings.viewEmployees) ?
+                    Wrapped.value(EmployeeTypes.ALL.name) : Wrapped.value(EmployeeTypes.I_CREATED.name),
+                  ))..fetchEmployees(refresh: true);
                 },
-                child: const EmployeesScreen(),
+                child:  EmployeesScreen(),
               );
             }));
 
