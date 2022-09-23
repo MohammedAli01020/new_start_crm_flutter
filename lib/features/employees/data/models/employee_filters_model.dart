@@ -74,9 +74,6 @@ class EmployeeFiltersModel extends EmployeeFilters {
     Wrapped<int?>? notInThisTeamId,
     Wrapped<int?>? createdById,
 
-
-
-
   }) {
     return EmployeeFiltersModel(
       pageNumber: pageNumber != null ? pageNumber.value : this.pageNumber,

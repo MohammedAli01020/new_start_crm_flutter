@@ -3,9 +3,11 @@ import 'package:crm_flutter_project/core/utils/enums.dart';
 import 'package:crm_flutter_project/core/utils/wrapper.dart';
 import 'package:crm_flutter_project/features/customer_logs/data/models/customer_log_filters_model.dart';
 import 'package:crm_flutter_project/features/customer_logs/presentation/screens/customer_logs_screen.dart';
+import 'package:crm_flutter_project/features/customer_table_config/presentation/screens/customer_table_config_screen.dart';
 import 'package:crm_flutter_project/features/customers/presentation/screens/customer_datails_screen.dart';
 import 'package:crm_flutter_project/features/customers/presentation/screens/customers_screen.dart';
 import 'package:crm_flutter_project/features/customers/presentation/screens/modify_customer_screen.dart';
+import 'package:crm_flutter_project/features/developers_and_projects/presentation/screens/developers_screen.dart';
 import 'package:crm_flutter_project/features/employees/data/models/employee_filters_model.dart';
 import 'package:crm_flutter_project/features/employees/data/models/role_model.dart';
 import 'package:crm_flutter_project/features/employees/presentation/screens/employee_details_screen.dart';
@@ -78,7 +80,14 @@ class Routes {
   static const String globalReportsRoute = '/globalReportsRoute';
 
 
+  // CustomerTableConfig
+  static const String customerTableConfigRoute = '/customerTableConfigRoute';
+
+  // developers_and_projects
+  static const String developersRoute = '/developersRoute';
+  static const String projectsRoute = '/projectsRoute';
 }
+
 
 class AppRoutes {
   static Route? onGenerateRoute(RouteSettings routeSettings) {
@@ -429,7 +438,29 @@ class AppRoutes {
               );
             }));
 
-        
+
+      case Routes.customerTableConfigRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+
+              final customerCubit = routeSettings.arguments as CustomerCubit;
+
+              return BlocProvider.value(
+                value: customerCubit,
+                child:  CustomerTableConfigScreen(customerCubit: customerCubit,),
+              );
+            }));
+
+
+      case Routes.developersRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+
+              return const DevelopersScreen();
+            }));
+
       default:
         return undefinedRoute();
     }

@@ -1,3 +1,4 @@
+import 'package:crm_flutter_project/features/customer_table_config/data/models/customer_table_config_model.dart';
 import 'package:crm_flutter_project/core/utils/wrapper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
@@ -45,6 +46,10 @@ class LoginCubit extends Cubit<LoginState> {
   Future<void> init() async {
 
     emit(StartInit());
+
+    // load customer table config
+    await loadLastCustomerTableConfig();
+
     Either<Failure, CurrentEmployee> response =
         await loginUseCases.getSavedCurrentEmployee();
 
@@ -85,6 +90,19 @@ class LoginCubit extends Cubit<LoginState> {
 
         return emit(EndInit());
       });
+    });
+  }
+
+
+  Future<void> loadLastCustomerTableConfig() async {
+
+    Either<Failure, CustomerTableConfigModel> response =
+    await loginUseCases.loadLastCustomerTableConfig();
+
+    response.fold((failure) {
+      return null;
+    }, (savedCustomerTableConfig) {
+      Constants.customerTableConfigModel = savedCustomerTableConfig;
     });
   }
 

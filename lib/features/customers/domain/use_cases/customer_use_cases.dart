@@ -1,9 +1,10 @@
+import 'package:crm_flutter_project/features/customer_table_config/data/models/customer_table_config_model.dart';
 import 'package:crm_flutter_project/features/customers/data/models/create_action_request_model.dart';
 import 'package:crm_flutter_project/features/customers/data/models/customer_filters_model.dart';
 import 'package:crm_flutter_project/features/customers/domain/repositories/customer_repository.dart';
 import 'package:crm_flutter_project/features/employees/data/models/phoneNumber_model.dart';
 import 'package:dartz/dartz.dart';
-
+import 'package:equatable/equatable.dart';
 import '../../../../core/error/failures.dart';
 import '../../data/models/customer_model.dart';
 import '../entities/customers_data.dart';
@@ -34,8 +35,8 @@ abstract class CustomerUseCases {
   Future<Either<Failure, CustomerModel>> updateCustomerDescription(
       UpdateCustomerNameOrDescParam updateCustomerNameOrDescParam);
 
-  Future<Either<Failure, List<CustomerModel>>> findDistinctCustomersByPhoneNumber(
-      PhoneNumberModel phoneNumberModel);
+  Future<Either<Failure, List<CustomerModel>>> findDistinctCustomersByPhoneNumbers(
+      PhoneNumbersWrapper phoneNumbersWrapper);
 
 
 
@@ -56,6 +57,9 @@ abstract class CustomerUseCases {
 
   Future<Either<Failure, CustomerModel>> updateCustomerPhoneNumber(
       UpdateCustomerPhoneNumberParam updateCustomerPhoneNumberParam);
+
+
+  Future<Either<Failure, void>> cacheCustomerTableConfig(CustomerTableConfigModel customerTableConfigModel);
 
 }
 
@@ -101,8 +105,8 @@ class CustomerUseCasesImpl implements CustomerUseCases {
   }
 
   @override
-  Future<Either<Failure, List<CustomerModel>>> findDistinctCustomersByPhoneNumber(PhoneNumberModel phoneNumberModel) {
-    return customerRepository.findDistinctCustomersByPhoneNumber(phoneNumberModel);
+  Future<Either<Failure, List<CustomerModel>>> findDistinctCustomersByPhoneNumbers(PhoneNumbersWrapper phoneNumbersWrapper) {
+    return customerRepository.findDistinctCustomersByPhoneNumber(phoneNumbersWrapper);
   }
 
   @override
@@ -139,12 +143,21 @@ class CustomerUseCasesImpl implements CustomerUseCases {
     return customerRepository.updateCustomerPhoneNumber(updateCustomerPhoneNumberParam);
 
   }
+
+  @override
+  Future<Either<Failure, void>> cacheCustomerTableConfig(CustomerTableConfigModel customerTableConfigModel) {
+    return customerRepository.cacheCustomerTableConfig(customerTableConfigModel);
+
+  }
+
+
 }
 
 class ModifyCustomerParam {
   final int? customerId;
   final String fullName;
-  final PhoneNumberModel phoneNumber;
+
+  final List<String> phoneNumbers;
   final int createDateTime;
   final String? description;
   final List<String> projects;
@@ -162,7 +175,7 @@ class ModifyCustomerParam {
   ModifyCustomerParam({
     required this.customerId,
     required this.fullName,
-    required this.phoneNumber,
+    required this.phoneNumbers,
     required this.createDateTime,
     required this.description,
     required this.projects,
@@ -179,7 +192,7 @@ class ModifyCustomerParam {
   Map<String, dynamic> toJson() => {
         "customerId": customerId,
         "fullName": fullName,
-        "phoneNumber": phoneNumber,
+        "phoneNumbers": phoneNumbers,
         "createDateTime": createDateTime,
         "description": description,
         "projects": projects,
@@ -271,7 +284,6 @@ class UpdateCustomerNameOrDescParam {
   };
 }
 
-
 class UpdateCustomerSourcesOrUnitTypesParam {
   final int updatedByEmployeeId;
 
@@ -292,7 +304,6 @@ class UpdateCustomerSourcesOrUnitTypesParam {
     "updatedData": updatedData
   };
 }
-
 
 class UpdateCustomerAssignedEmployeeParam {
   final int updatedByEmployeeId;
@@ -339,19 +350,36 @@ class UpdateCustomerPhoneNumberParam {
 
   final int customerId;
 
-  
-  final PhoneNumberModel phoneNumber;
+  final List<String> phoneNumbers;
 
   UpdateCustomerPhoneNumberParam({
     required this.updatedByEmployeeId,
     required this.customerId,
-  required this.phoneNumber});
-
+  required this.phoneNumbers});
 
 
   Map<String, dynamic> toJson() => {
     "updatedByEmployeeId": updatedByEmployeeId,
     "customerId" :customerId,
-    "phoneNumber": phoneNumber.toJson()
+    "phoneNumbers": phoneNumbers
   };
 }
+
+
+
+class PhoneNumbersWrapper extends Equatable {
+  final List<String> phoneNumbers;
+
+  const PhoneNumbersWrapper({required this.phoneNumbers});
+
+
+  Map<String, dynamic> toJson() =>
+      {
+        "phoneNumbers": phoneNumbers,
+      };
+
+  @override
+  List<Object> get props => [phoneNumbers];
+}
+
+

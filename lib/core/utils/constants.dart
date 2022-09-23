@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:crm_flutter_project/features/customer_table_config/data/models/customer_table_config_model.dart';
 import 'package:crm_flutter_project/core/utils/date_values.dart';
 import 'package:crm_flutter_project/core/utils/responsive.dart';
 import 'package:crm_flutter_project/core/utils/wrapper.dart';
@@ -144,6 +145,33 @@ class Constants {
     }
   }
 
+
+  static void launchCallerV2(String phone) async {
+    final url = Uri(
+        scheme: "tel",
+        path: phone);
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  static void launchWhatsAppV2(
+      String phone, String message) async {
+    // final url = "https://wa.me/${number.phoneNumber}?text=$message";
+    final url = _getUrl(
+        phone,
+        message);
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   static String _getUrl(String completePhone, String message) {
     if (Platform.isAndroid || Platform.isWindows) {
       // add the [https]
@@ -224,13 +252,8 @@ class Constants {
         " جنية";
   }
 
-
   static Future<void> copyText(String text) async {
-    await Clipboard.setData(
-        ClipboardData(
-            text: text
-        )
-    );
+    await Clipboard.setData(ClipboardData(text: text));
   }
 
   static String getDateType(int? startDateTime, int? endDateTime) {
@@ -306,35 +329,31 @@ class Constants {
     }
   }
 
-
-
   static void refreshCustomers(CustomerCubit cubit) {
-
-    if (Constants.currentEmployee!.permissions.contains(AppStrings.viewAllLeads)) {
-
-      cubit.updateFilter( cubit.customerFiltersModel.copyWith(
-          customerTypes: Wrapped.value(CustomerTypes.ALL.name)));
+    if (Constants.currentEmployee!.permissions
+        .contains(AppStrings.viewAllLeads)) {
+      cubit.updateFilter(cubit.customerFiltersModel
+          .copyWith(customerTypes: Wrapped.value(CustomerTypes.ALL.name)));
 
       cubit.fetchCustomers(refresh: true);
-    }
-    else if (Constants.currentEmployee!.permissions.contains(AppStrings.viewTeamLeads) && Constants.currentEmployee!.teamId != null) {
-
+    } else if (Constants.currentEmployee!.permissions
+            .contains(AppStrings.viewTeamLeads) &&
+        Constants.currentEmployee!.teamId != null) {
       cubit.updateFilter(cubit.customerFiltersModel.copyWith(
           teamId: Wrapped.value(Constants.currentEmployee?.teamId),
           employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
           customerTypes: Wrapped.value(CustomerTypes.ME_AND_TEAM.name)));
 
       cubit.fetchCustomers(refresh: true);
-
-    } else if (Constants.currentEmployee!.permissions.contains(AppStrings.viewMyAssignedLeads)) {
+    } else if (Constants.currentEmployee!.permissions
+        .contains(AppStrings.viewMyAssignedLeads)) {
       cubit.updateFilter(cubit.customerFiltersModel.copyWith(
           teamId: const Wrapped.value(null),
           employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
           customerTypes: Wrapped.value(CustomerTypes.ME.name)));
       cubit.fetchCustomers(refresh: true);
-
-    }
-    else if (Constants.currentEmployee!.permissions.contains(AppStrings.viewNotAssignedLeads)) {
+    } else if (Constants.currentEmployee!.permissions
+        .contains(AppStrings.viewNotAssignedLeads)) {
       cubit.updateFilter(cubit.customerFiltersModel.copyWith(
           teamId: const Wrapped.value(null),
           employeeId: const Wrapped.value(null),
@@ -347,6 +366,9 @@ class Constants {
   }
 
   static CurrentEmployee? currentEmployee;
+
+  static CustomerTableConfigModel customerTableConfigModel =
+      CustomerTableConfigModel.initial();
 
   // (25, 'إضافة الموظفين'),
   // (26, 'تعديل الموظفين'),
@@ -362,11 +384,9 @@ class Constants {
     const PermissionModel(permissionId: 28, name: AppStrings.viewEmployees),
     const PermissionModel(permissionId: 29, name: AppStrings.assignEmployees),
     const PermissionModel(permissionId: 34, name: AppStrings.availableToAssign),
-
-    const PermissionModel(permissionId: 63, name: AppStrings.viewCreatedEmployees),
-
+    const PermissionModel(
+        permissionId: 63, name: AppStrings.viewCreatedEmployees),
   ];
-
 
   // (1, 'مشاهده كل العملاء'),
   // (2, 'مشاهدة العملاء المعينة لي'),
@@ -376,15 +396,16 @@ class Constants {
 
   // 1- view
   static List<PermissionModel> leadsViewPermissions = [
-  const PermissionModel(permissionId: 1, name: AppStrings.viewAllLeads),
-  const PermissionModel(permissionId: 2, name: AppStrings.viewMyAssignedLeads),
-  const PermissionModel(permissionId: 3, name: AppStrings.viewOwnLeads),
-  const PermissionModel(permissionId: 4, name: AppStrings.viewTeamLeads),
-  const PermissionModel(permissionId: 5, name: AppStrings.viewNotAssignedLeads),
-  const PermissionModel(permissionId: 62, name: AppStrings.viewDuplicatesLeads),
-
+    const PermissionModel(permissionId: 1, name: AppStrings.viewAllLeads),
+    const PermissionModel(
+        permissionId: 2, name: AppStrings.viewMyAssignedLeads),
+    const PermissionModel(permissionId: 3, name: AppStrings.viewOwnLeads),
+    const PermissionModel(permissionId: 4, name: AppStrings.viewTeamLeads),
+    const PermissionModel(
+        permissionId: 5, name: AppStrings.viewNotAssignedLeads),
+    const PermissionModel(
+        permissionId: 62, name: AppStrings.viewDuplicatesLeads),
   ];
-
 
   //2- edit
   // (6, 'تعديل كل العملاء'),
@@ -393,12 +414,14 @@ class Constants {
   // (9, 'تعديل عملاء فريقي'),
   // (10, 'تعديل العملاء الغير معينين'),
   // (47, 'إضافة العملاء'),
-  static List<PermissionModel> leadsEditPermissions  = [
+  static List<PermissionModel> leadsEditPermissions = [
     const PermissionModel(permissionId: 6, name: AppStrings.editAllLeads),
-    const PermissionModel(permissionId: 7, name: AppStrings.editMyAssignedLeads),
+    const PermissionModel(
+        permissionId: 7, name: AppStrings.editMyAssignedLeads),
     const PermissionModel(permissionId: 8, name: AppStrings.editOwnLeads),
     const PermissionModel(permissionId: 9, name: AppStrings.editTeamLeads),
-    const PermissionModel(permissionId: 10, name: AppStrings.editNotAssignedLeads),
+    const PermissionModel(
+        permissionId: 10, name: AppStrings.editNotAssignedLeads),
     const PermissionModel(permissionId: 47, name: AppStrings.creatLead),
   ];
 
@@ -410,12 +433,13 @@ class Constants {
   // (15, 'حذف العملاء الغير معينين'),
   static List<PermissionModel> leadsDeletePermissions = [
     const PermissionModel(permissionId: 11, name: AppStrings.deleteAllLeads),
-    const PermissionModel(permissionId: 12, name: AppStrings.deleteMyAssignedLeads),
+    const PermissionModel(
+        permissionId: 12, name: AppStrings.deleteMyAssignedLeads),
     const PermissionModel(permissionId: 13, name: AppStrings.deleteOwnLeads),
     const PermissionModel(permissionId: 14, name: AppStrings.deleteTeamLeads),
-    const PermissionModel(permissionId: 15, name: AppStrings.deleteNotAssignedLeads),
+    const PermissionModel(
+        permissionId: 15, name: AppStrings.deleteNotAssignedLeads),
   ];
-
 
   // 4- inside customers
   // view
@@ -423,11 +447,12 @@ class Constants {
   // (17, 'مشاهدة مدخل العميل'),
   // (18, 'مشاهدة رقم العميل'),
   // (19, 'مشاهدة ملاحظات عن العميل'),
-  static List<PermissionModel> leadsInsidePermissions  = [
+  static List<PermissionModel> leadsInsidePermissions = [
     const PermissionModel(permissionId: 16, name: AppStrings.viewLeadName),
     const PermissionModel(permissionId: 17, name: AppStrings.viewLeadCreator),
     const PermissionModel(permissionId: 18, name: AppStrings.viewLeadPhone),
-    const PermissionModel(permissionId: 19, name: AppStrings.viewLeadDescription),
+    const PermissionModel(
+        permissionId: 19, name: AppStrings.viewLeadDescription),
 
     const PermissionModel(permissionId: 67, name: AppStrings.viewLeadLog),
 
@@ -442,16 +467,13 @@ class Constants {
     const PermissionModel(permissionId: 20, name: AppStrings.editLeadName),
     const PermissionModel(permissionId: 21, name: AppStrings.editLeadCreator),
     const PermissionModel(permissionId: 22, name: AppStrings.editLeadPhone),
-    const PermissionModel(permissionId: 23, name: AppStrings.editLeadDescription),
+    const PermissionModel(
+        permissionId: 23, name: AppStrings.editLeadDescription),
 
     const PermissionModel(permissionId: 64, name: AppStrings.editLeadSources),
     const PermissionModel(permissionId: 65, name: AppStrings.editLeadProjects),
     const PermissionModel(permissionId: 66, name: AppStrings.editLeadUnitTyps),
-
-
   ];
-
-
 
   // actions
   // (30, 'أضافة فعل'),
@@ -464,7 +486,6 @@ class Constants {
     const PermissionModel(permissionId: 32, name: AppStrings.importLeads),
     const PermissionModel(permissionId: 33, name: AppStrings.exportLeads),
   ];
-
 
   // events
   // (35, 'مشاهدة الاحداث'),
@@ -490,7 +511,6 @@ class Constants {
     const PermissionModel(permissionId: 42, name: AppStrings.deleteProjects),
   ];
 
-
   // unit types
   // (43, 'مشاهدة انواع الوحدات'),
   // (44, 'تعديل انواع الوحدات'),
@@ -502,8 +522,6 @@ class Constants {
     const PermissionModel(permissionId: 45, name: AppStrings.createUnitTypes),
     const PermissionModel(permissionId: 46, name: AppStrings.deleteUnitTypes),
   ];
-
-
 
   // sources
   // (48, 'مشاهدة المصادر'),
@@ -533,9 +551,9 @@ class Constants {
     const PermissionModel(permissionId: 57, name: AppStrings.deleteGroups),
     const PermissionModel(permissionId: 58, name: AppStrings.editGroups),
     const PermissionModel(permissionId: 59, name: AppStrings.addGroupMembers),
-    const PermissionModel(permissionId: 60, name: AppStrings.deleteGroupMembers),
+    const PermissionModel(
+        permissionId: 60, name: AppStrings.deleteGroupMembers),
   ];
-
 
   // reports
   // (54, 'مشاهدة كل الاحصائيات'),
@@ -544,15 +562,12 @@ class Constants {
   static List<PermissionModel> reportsPermissions = [
     const PermissionModel(permissionId: 54, name: AppStrings.viewAllStatistics),
     const PermissionModel(permissionId: 55, name: AppStrings.viewOwnStatistics),
-
   ];
-
 
   // logs
   // (61, 'مشاهدة كل سجلات العملاء')
   static List<PermissionModel> logsPermissions = [
-    const PermissionModel(permissionId: 61, name: AppStrings.viewAllCustomerLogs),
-
+    const PermissionModel(
+        permissionId: 61, name: AppStrings.viewAllCustomerLogs),
   ];
-
 }

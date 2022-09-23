@@ -1,9 +1,10 @@
-import 'package:crm_flutter_project/core/utils/app_colors.dart';
+
+
 import 'package:crm_flutter_project/features/customers/data/models/customer_model.dart';
+
 import 'package:crm_flutter_project/features/customers/presentation/cubit/customer_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
 
 import '../../../../core/utils/app_strings.dart';
 import '../../../../core/utils/constants.dart';
@@ -12,7 +13,6 @@ import '../../../../core/widgets/default_button_widget.dart';
 import '../../../../core/widgets/default_hieght_sized_box.dart';
 import '../../../../core/widgets/waiting_item_widget.dart';
 import '../../../employees/data/models/employee_model.dart';
-import '../../../employees/data/models/phoneNumber_model.dart';
 import '../../../teams/presentation/cubit/team_members/team_members_cubit.dart';
 import '../../data/models/create_action_request_model.dart';
 import '../../domain/use_cases/customer_use_cases.dart';
@@ -41,9 +41,14 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
 
   final _descriptionController = TextEditingController();
 
+  final _firstPhoneController = TextEditingController();
+  final _secondPhoneController = TextEditingController();
+
   List<String> projects = [];
   List<String> unitTypes = [];
   List<String> sources = [];
+
+  late List<String> phoneNumbers;
 
   int? createdByEmployeeId = Constants.currentEmployee?.employeeId;
 
@@ -54,6 +59,15 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
   int? assignedEmployeeId;
   int? assignedByEmployeeId;
   int? assignedDateTime;
+
+  @override
+  void dispose() {
+    super.dispose();
+    _fullNameController.dispose();
+    _descriptionController.dispose();
+    _firstPhoneController.dispose();
+    _secondPhoneController.dispose();
+  }
 
   @override
   void initState() {
@@ -90,13 +104,14 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
               ? widget.modifyCustomerArgs.customerModel!.description!
               : "";
 
-      cubit.updateCustomerPhoneNumber(PhoneNumberModel(
-        phone: widget.modifyCustomerArgs.customerModel!.phoneNumber.phone
-            .substring(1),
-        isoCode: widget.modifyCustomerArgs.customerModel!.phoneNumber.isoCode,
-        countryCode:
-            widget.modifyCustomerArgs.customerModel!.phoneNumber.countryCode,
-      ));
+      phoneNumbers = widget.modifyCustomerArgs.customerModel!.phoneNumbers;
+
+      if (phoneNumbers.length == 1) {
+        _firstPhoneController.text = phoneNumbers.first;
+      } else if (phoneNumbers.length == 2) {
+        _firstPhoneController.text = phoneNumbers.first;
+        _secondPhoneController.text = phoneNumbers.elementAt(1);
+      }
 
       createActionRequest = CreateActionRequestModel(
         dateTime: widget.modifyCustomerArgs.customerModel!.lastAction?.dateTime,
@@ -109,9 +124,6 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
         actionDescription: widget
             .modifyCustomerArgs.customerModel!.lastAction?.actionDescription,
       );
-    } else {
-      cubit.updateCustomerPhoneNumber(
-          const PhoneNumberModel(phone: "", isoCode: "EG", countryCode: '+20'));
     }
   }
 
@@ -164,7 +176,6 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     CustomEditText(
                         controller: _fullNameController,
                         hint: "الاسم بالكامل",
@@ -207,9 +218,10 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
                       onPickedUnitTypesCallback: (List<String> newUnitTypes) {
                         unitTypes = newUnitTypes;
                       },
-                      unitTypes: unitTypes, onRemoveCallback: () {
-                      unitTypes = [];
-                    },
+                      unitTypes: unitTypes,
+                      onRemoveCallback: () {
+                        unitTypes = [];
+                      },
                     ),
                     const DefaultHeightSizedBox(),
                     Card(
@@ -224,74 +236,92 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
                       onPickedSourcesCallback: (List<String> newSources) {
                         sources = newSources;
                       },
-                      sources: sources, onRemoveCallback: () {
-                      sources = [];
-                    },
+                      sources: sources,
+                      onRemoveCallback: () {
+                        sources = [];
+                      },
                     ),
                     const DefaultHeightSizedBox(),
                     AssignToEmployee(
                       currentEmployee: assignedEmployee,
                       onAssignedCallback: (EmployeeModel? newAssignedEmployee) {
-
                         assignedEmployeeId = newAssignedEmployee?.employeeId;
                         assignedEmployee = newAssignedEmployee;
-                        assignedByEmployeeId = Constants.currentEmployee?.employeeId;
-                        assignedDateTime = DateTime.now().millisecondsSinceEpoch;
-
+                        assignedByEmployeeId =
+                            Constants.currentEmployee?.employeeId;
+                        assignedDateTime =
+                            DateTime.now().millisecondsSinceEpoch;
                       },
                       teamMembersCubit:
-                          widget.modifyCustomerArgs.teamMembersCubit, onRemoveCallback: () {
-                      assignedEmployeeId = null;
-                      assignedEmployee = null;
-                      assignedByEmployeeId = null;
-                      assignedDateTime = null;
-                    },
+                          widget.modifyCustomerArgs.teamMembersCubit,
+                      onRemoveCallback: () {
+                        assignedEmployeeId = null;
+                        assignedEmployee = null;
+                        assignedByEmployeeId = null;
+                        assignedDateTime = null;
+                      },
                     ),
                     const DefaultHeightSizedBox(),
-                    Text(
-                      "ملحوطة عند ادخل الرقم تجاهل اول رقم مثلا 010XXXXXXXXX اكتبها من غير الصفر الاول",
-                      style: TextStyle(color: AppColors.hint, fontSize: 16.0),
-                    ),
-                    const DefaultHeightSizedBox(),
-                    IntlPhoneField(
-                      decoration: const InputDecoration(
-                        labelText: 'رقم الهاتف',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(),
-                        ),
-                      ),
-                      validator: (v) {
-                        if (v != null) {
-                          return AppStrings.required;
-                        }
 
-                        return null;
-                      },
-                      invalidNumberMessage: "هذا الرقم غير صحيح",
-                      initialValue: cubit.phoneNumber?.phone,
-                      initialCountryCode: cubit.phoneNumber?.isoCode,
-                      onChanged: (phone) {
-                        cubit.updateCustomerPhoneNumber(PhoneNumberModel(
-                            phone: phone.number,
-                            isoCode: phone.countryISOCode,
-                            countryCode: phone.countryCode));
-                      },
-                    ),
+                    CustomEditText(
+                        controller: _firstPhoneController,
+                        hint: "رقم الهاتف الأول",
+                        maxLength: 50,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) {
+                            return AppStrings.required;
+                          }
+
+                          if (v.length > 50) {
+                            return "اقصي عدد احرف 50";
+                          }
+
+                          return null;
+                        },
+                        inputType: TextInputType.phone),
                     const DefaultHeightSizedBox(),
+                    CustomEditText(
+                        controller: _secondPhoneController,
+                        hint: "رقم الهاتف الأول",
+                        maxLength: 50,
+                        validator: (v) {
+
+                          if (v != null && v.length > 50) {
+                            return "اقصي عدد احرف 50";
+                          }
+
+                          return null;
+                        },
+                        inputType: TextInputType.phone),
+                    const DefaultHeightSizedBox(),
+
+
                     const DefaultHeightSizedBox(),
                     const DefaultHeightSizedBox(),
                     DefaultButtonWidget(
                         onTap: () async {
                           if (formKey.currentState!.validate()) {
-                            if (cubit.phoneNumber == null) {
-                              Constants.showToast(
-                                  msg: "رقم الهاتف مطلوب!", context: context);
+
+                            if (_firstPhoneController.text.trim() == _secondPhoneController.text.trim() ) {
+                              Constants.showToast(msg: "الرقمين متشابهين", context: context);
                               return;
                             }
+
+                            if (_firstPhoneController.text.isNotEmpty && _secondPhoneController.text.isNotEmpty) {
+                              phoneNumbers = [
+                                _firstPhoneController.text.trim(),
+                                _secondPhoneController.text.trim()
+                              ];
+                            } else {
+                              phoneNumbers = [
+                                _firstPhoneController.text.trim()
+                              ];
+                            }
+
                             cubit.modifyCustomer(ModifyCustomerParam(
                                 customerId: customerId,
                                 fullName: _fullNameController.text,
-                                phoneNumber: cubit.phoneNumber!,
+                                phoneNumbers: phoneNumbers,
                                 createDateTime: createDateTime,
                                 description: _descriptionController.text,
                                 projects: projects,

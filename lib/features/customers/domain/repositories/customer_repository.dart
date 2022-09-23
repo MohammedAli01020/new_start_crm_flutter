@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failures.dart';
+import '../../../customer_table_config/data/models/customer_table_config_model.dart';
 import '../../../employees/data/models/phoneNumber_model.dart';
 import '../../data/models/customer_filters_model.dart';
 import '../../data/models/customer_model.dart';
@@ -25,7 +26,7 @@ abstract class CustomerRepository {
       UpdateCustomerNameOrDescParam updateCustomerNameOrDescParam);
 
   Future<Either<Failure, List<CustomerModel>>> findDistinctCustomersByPhoneNumber(
-      PhoneNumberModel phoneNumberModel);
+      PhoneNumbersWrapper phoneNumbersWrapper);
 
   Future<Either<Failure, CustomerModel>> updateCustomerDescription(
       UpdateCustomerNameOrDescParam updateCustomerNameOrDescParam);
@@ -45,4 +46,6 @@ abstract class CustomerRepository {
 
   Future<Either<Failure, CustomerModel>> updateCustomerPhoneNumber(
       UpdateCustomerPhoneNumberParam updateCustomerPhoneNumberParam);
+
+  Future<Either<Failure, void>> cacheCustomerTableConfig(CustomerTableConfigModel customerTableConfigModel);
 }

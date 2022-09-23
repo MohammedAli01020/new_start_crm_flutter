@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/wrapper.dart';
+import '../../../customer_table_config/data/models/customer_table_config_model.dart';
 import '../../../employees/data/models/phoneNumber_model.dart';
 import '../../data/models/customer_model.dart';
 import '../../data/models/event_model.dart';
@@ -36,8 +37,7 @@ class CustomerCubit extends Cubit<CustomerState> {
     emit(EndResetFilter());
   }
 
-
-  void updateCustomers(List<CustomerModel> newCustomers ) {
+  void updateCustomers(List<CustomerModel> newCustomers) {
     emit(StartUpdateCustomers());
     customers = newCustomers;
     customerCurrentPage = 0;
@@ -141,7 +141,6 @@ class CustomerCubit extends Cubit<CustomerState> {
         (failure) =>
             emit(ModifyCustomerError(msg: Constants.mapFailureToMsg(failure))),
         (newCustomerModel) {
-
       if (modifyCustomerParam.customerId != null) {
         try {
           int index = customers.indexWhere((element) {
@@ -196,7 +195,6 @@ class CustomerCubit extends Cubit<CustomerState> {
     emit(EndUpdateSources());
   }
 
-
   List<String>? selectedUnitTypes = [];
 
   void updateSelectedUnitTypes(List<String>? newUnitTypes) {
@@ -210,7 +208,6 @@ class CustomerCubit extends Cubit<CustomerState> {
   Future<void> updateCustomerLastAction(
       UpdateCustomerLastActionParam updateCustomerLastActionParam,
       int index) async {
-
     currentUpdateActions.add(index);
     emit(StartUpdateCustomerLastAction());
 
@@ -234,39 +231,34 @@ class CustomerCubit extends Cubit<CustomerState> {
 
       return emit(EndUpdateCustomerLastAction(customerModel: newCustomerModel));
     });
-
-
   }
 
-  Future<void> updateBulkCustomers(UpdateCustomerParam updateCustomerParam) async {
+  Future<void> updateBulkCustomers(
+      UpdateCustomerParam updateCustomerParam) async {
     emit(StartUpdateBulkCustomers());
 
-    Either<Failure, List<CustomerModel>> response = await customerUseCases
-        .updateBulkCustomers(updateCustomerParam);
+    Either<Failure, List<CustomerModel>> response =
+        await customerUseCases.updateBulkCustomers(updateCustomerParam);
 
     response.fold(
-            (failure) => emit(UpdateBulkCustomersError(
-            msg: Constants.mapFailureToMsg(failure))), (newCustomersModels) {
+        (failure) => emit(
+            UpdateBulkCustomersError(msg: Constants.mapFailureToMsg(failure))),
+        (newCustomersModels) {
+      for (int i = 0; i < newCustomersModels.length; i++) {
+        try {
+          int index = customers.indexWhere((element) {
+            return element.customerId == newCustomersModels[i].customerId;
+          });
 
-
-            for(int i = 0 ; i < newCustomersModels.length ; i ++) {
-
-              try {
-                int index = customers.indexWhere((element) {
-                  return element.customerId == newCustomersModels[i].customerId;
-                });
-
-                customers[index] = newCustomersModels[i];
-              } catch(e) {
-                debugPrint(e.toString());
-              }
-
-            }
+          customers[index] = newCustomersModels[i];
+        } catch (e) {
+          debugPrint(e.toString());
+        }
+      }
 
       return emit(EndUpdateBulkCustomers(updatedCustomers: newCustomersModels));
     });
   }
-
 
   PhoneNumberModel? phoneNumber;
 
@@ -274,7 +266,6 @@ class CustomerCubit extends Cubit<CustomerState> {
     emit(StartUpdateCustomerPhoneNumber());
     phoneNumber = newPhone;
     emit(EndUpdateCustomerPhoneNumber());
-
   }
 
   late CustomerModel currentCustomer;
@@ -283,191 +274,193 @@ class CustomerCubit extends Cubit<CustomerState> {
     emit(StartUpdateCurrentCustomerModel());
     currentCustomer = updated;
     emit(EndUpdateCurrentCustomerModel());
-
   }
 
-
-  Future<void> updateCustomerFullName(UpdateCustomerNameOrDescParam updateCustomerFullNameParam) async {
+  Future<void> updateCustomerFullName(
+      UpdateCustomerNameOrDescParam updateCustomerFullNameParam) async {
     emit(StartUpdateCustomerFullName());
-    Either<Failure, CustomerModel> response =
-        await customerUseCases.updateCustomerFullName(updateCustomerFullNameParam);
+    Either<Failure, CustomerModel> response = await customerUseCases
+        .updateCustomerFullName(updateCustomerFullNameParam);
 
     response.fold(
-            (failure) =>
-            emit(UpdateCustomerFullNameError(msg: Constants.mapFailureToMsg(failure))),
-            (newCustomerModel) {
-
-            try {
-              int index = customers.indexWhere((element) {
-                return element.customerId == updateCustomerFullNameParam.customerId;
-              });
-              customers[index] = newCustomerModel;
-              currentCustomer = newCustomerModel;
-            } catch (e) {
-              debugPrint(e.toString());
-            }
-
-          return emit(EndUpdateCustomerFullName(customerModel: newCustomerModel));
+        (failure) => emit(UpdateCustomerFullNameError(
+            msg: Constants.mapFailureToMsg(failure))), (newCustomerModel) {
+      try {
+        int index = customers.indexWhere((element) {
+          return element.customerId == updateCustomerFullNameParam.customerId;
         });
+        customers[index] = newCustomerModel;
+        currentCustomer = newCustomerModel;
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+
+      return emit(EndUpdateCustomerFullName(customerModel: newCustomerModel));
+    });
   }
 
-
-  Future<void> updateCustomerDescription(UpdateCustomerNameOrDescParam updateCustomerFullNameParam) async {
+  Future<void> updateCustomerDescription(
+      UpdateCustomerNameOrDescParam updateCustomerFullNameParam) async {
     emit(StartUpdateCustomerDescription());
-    Either<Failure, CustomerModel> response =
-    await customerUseCases.updateCustomerDescription(updateCustomerFullNameParam);
+    Either<Failure, CustomerModel> response = await customerUseCases
+        .updateCustomerDescription(updateCustomerFullNameParam);
 
     response.fold(
-            (failure) =>
-            emit(UpdateCustomerDescriptionError(msg: Constants.mapFailureToMsg(failure))),
-            (newCustomerModel) {
-
-          try {
-            int index = customers.indexWhere((element) {
-              return element.customerId == updateCustomerFullNameParam.customerId;
-            });
-            customers[index] = newCustomerModel;
-            currentCustomer = newCustomerModel;
-          } catch (e) {
-            debugPrint(e.toString());
-          }
-
-          return emit(EndUpdateCustomerDescription(customerModel: newCustomerModel));
+        (failure) => emit(UpdateCustomerDescriptionError(
+            msg: Constants.mapFailureToMsg(failure))), (newCustomerModel) {
+      try {
+        int index = customers.indexWhere((element) {
+          return element.customerId == updateCustomerFullNameParam.customerId;
         });
+        customers[index] = newCustomerModel;
+        currentCustomer = newCustomerModel;
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+
+      return emit(
+          EndUpdateCustomerDescription(customerModel: newCustomerModel));
+    });
   }
 
-
-  Future<void> updateCustomerSources(UpdateCustomerSourcesOrUnitTypesParam updateCustomerSourcesOrUnitTypesParam) async {
-
+  Future<void> updateCustomerSources(
+      UpdateCustomerSourcesOrUnitTypesParam
+          updateCustomerSourcesOrUnitTypesParam) async {
     emit(StartUpdateCustomerSources());
-    Either<Failure, CustomerModel> response =
-    await customerUseCases.updateCustomerSources(updateCustomerSourcesOrUnitTypesParam);
+    Either<Failure, CustomerModel> response = await customerUseCases
+        .updateCustomerSources(updateCustomerSourcesOrUnitTypesParam);
 
     response.fold(
-            (failure) =>
-            emit(UpdateCustomerSourcesError(msg: Constants.mapFailureToMsg(failure))),
-            (newCustomerModel) {
-
-          try {
-            int index = customers.indexWhere((element) {
-              return element.customerId == updateCustomerSourcesOrUnitTypesParam.customerId;
-            });
-            customers[index] = newCustomerModel;
-            currentCustomer = newCustomerModel;
-          } catch (e) {
-            debugPrint(e.toString());
-          }
-
-          return emit(EndUpdateCustomerSources(customerModel: newCustomerModel));
+        (failure) => emit(UpdateCustomerSourcesError(
+            msg: Constants.mapFailureToMsg(failure))), (newCustomerModel) {
+      try {
+        int index = customers.indexWhere((element) {
+          return element.customerId ==
+              updateCustomerSourcesOrUnitTypesParam.customerId;
         });
+        customers[index] = newCustomerModel;
+        currentCustomer = newCustomerModel;
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+
+      return emit(EndUpdateCustomerSources(customerModel: newCustomerModel));
+    });
   }
 
-
-  Future<void> updateCustomerUnitTypes(UpdateCustomerSourcesOrUnitTypesParam updateCustomerSourcesOrUnitTypesParam) async {
-
+  Future<void> updateCustomerUnitTypes(
+      UpdateCustomerSourcesOrUnitTypesParam
+          updateCustomerSourcesOrUnitTypesParam) async {
     emit(StartUpdateCustomerUnitTypes());
-    Either<Failure, CustomerModel> response =
-    await customerUseCases.updateCustomerUnitTypes(updateCustomerSourcesOrUnitTypesParam);
+    Either<Failure, CustomerModel> response = await customerUseCases
+        .updateCustomerUnitTypes(updateCustomerSourcesOrUnitTypesParam);
 
     response.fold(
-            (failure) =>
-            emit(UpdateCustomerUnitTypesError(msg: Constants.mapFailureToMsg(failure))),
-            (newCustomerModel) {
-
-          try {
-            int index = customers.indexWhere((element) {
-              return element.customerId == updateCustomerSourcesOrUnitTypesParam.customerId;
-            });
-            customers[index] = newCustomerModel;
-            currentCustomer = newCustomerModel;
-          } catch (e) {
-            debugPrint(e.toString());
-          }
-
-          return emit(EndUpdateCustomerUnitTypes(customerModel: newCustomerModel));
+        (failure) => emit(UpdateCustomerUnitTypesError(
+            msg: Constants.mapFailureToMsg(failure))), (newCustomerModel) {
+      try {
+        int index = customers.indexWhere((element) {
+          return element.customerId ==
+              updateCustomerSourcesOrUnitTypesParam.customerId;
         });
+        customers[index] = newCustomerModel;
+        currentCustomer = newCustomerModel;
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+
+      return emit(EndUpdateCustomerUnitTypes(customerModel: newCustomerModel));
+    });
   }
 
-
-
-
-  Future<void> updateCustomerAssignedEmployee(UpdateCustomerAssignedEmployeeParam updateCustomerAssignedEmployeeParam) async {
-
+  Future<void> updateCustomerAssignedEmployee(
+      UpdateCustomerAssignedEmployeeParam
+          updateCustomerAssignedEmployeeParam) async {
     emit(StartUpdateCustomerAssignedEmployee());
-    Either<Failure, CustomerModel> response =
-    await customerUseCases.updateCustomerAssignedEmployee(updateCustomerAssignedEmployeeParam);
+    Either<Failure, CustomerModel> response = await customerUseCases
+        .updateCustomerAssignedEmployee(updateCustomerAssignedEmployeeParam);
 
     response.fold(
-            (failure) =>
-            emit(UpdateCustomerAssignedEmployeeError(msg: Constants.mapFailureToMsg(failure))),
-            (newCustomerModel) {
-
-          try {
-            int index = customers.indexWhere((element) {
-              return element.customerId == updateCustomerAssignedEmployeeParam.customerId;
-            });
-            customers[index] = newCustomerModel;
-            currentCustomer = newCustomerModel;
-          } catch (e) {
-            debugPrint(e.toString());
-          }
-
-          return emit(EndUpdateCustomerAssignedEmployee(customerModel: newCustomerModel));
+        (failure) => emit(UpdateCustomerAssignedEmployeeError(
+            msg: Constants.mapFailureToMsg(failure))), (newCustomerModel) {
+      try {
+        int index = customers.indexWhere((element) {
+          return element.customerId ==
+              updateCustomerAssignedEmployeeParam.customerId;
         });
+        customers[index] = newCustomerModel;
+        currentCustomer = newCustomerModel;
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+
+      return emit(
+          EndUpdateCustomerAssignedEmployee(customerModel: newCustomerModel));
+    });
   }
 
-
-
-  Future<void> deleteCustomerAssignedEmployee(DeleteCustomerAssignedEmployeeParam deleteCustomerAssignedEmployeeParam) async {
-
+  Future<void> deleteCustomerAssignedEmployee(
+      DeleteCustomerAssignedEmployeeParam
+          deleteCustomerAssignedEmployeeParam) async {
     emit(StartDeleteCustomerAssignedEmployee());
-    Either<Failure, CustomerModel> response =
-    await customerUseCases.deleteCustomerAssignedEmployee(deleteCustomerAssignedEmployeeParam);
+    Either<Failure, CustomerModel> response = await customerUseCases
+        .deleteCustomerAssignedEmployee(deleteCustomerAssignedEmployeeParam);
 
     response.fold(
-            (failure) =>
-            emit(DeleteCustomerAssignedEmployeeError(msg: Constants.mapFailureToMsg(failure))),
-            (newCustomerModel) {
-
-          try {
-            int index = customers.indexWhere((element) {
-              return element.customerId == deleteCustomerAssignedEmployeeParam.customerId;
-            });
-            customers[index] = newCustomerModel;
-            currentCustomer = newCustomerModel;
-          } catch (e) {
-            debugPrint(e.toString());
-          }
-
-          return emit(EndDeleteCustomerAssignedEmployee(customerModel: newCustomerModel));
+        (failure) => emit(DeleteCustomerAssignedEmployeeError(
+            msg: Constants.mapFailureToMsg(failure))), (newCustomerModel) {
+      try {
+        int index = customers.indexWhere((element) {
+          return element.customerId ==
+              deleteCustomerAssignedEmployeeParam.customerId;
         });
+        customers[index] = newCustomerModel;
+        currentCustomer = newCustomerModel;
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+
+      return emit(
+          EndDeleteCustomerAssignedEmployee(customerModel: newCustomerModel));
+    });
   }
 
-
-
-  Future<void> updateCustomerPhone(UpdateCustomerPhoneNumberParam updateCustomerPhoneNumberParam) async {
-
+  Future<void> updateCustomerPhone(
+      UpdateCustomerPhoneNumberParam updateCustomerPhoneNumberParam) async {
     emit(StartUpdateCustomerPhone());
-    Either<Failure, CustomerModel> response =
-    await customerUseCases.updateCustomerPhoneNumber(updateCustomerPhoneNumberParam);
+    Either<Failure, CustomerModel> response = await customerUseCases
+        .updateCustomerPhoneNumber(updateCustomerPhoneNumberParam);
 
     response.fold(
-            (failure) =>
-            emit(UpdateCustomerPhoneError(msg: Constants.mapFailureToMsg(failure))),
-            (newCustomerModel) {
-
-          try {
-            int index = customers.indexWhere((element) {
-              return element.customerId == updateCustomerPhoneNumberParam.customerId;
-            });
-            customers[index] = newCustomerModel;
-            currentCustomer = newCustomerModel;
-          } catch (e) {
-            debugPrint(e.toString());
-          }
-
-          return emit(EndUpdateCustomerPhone(customerModel: newCustomerModel));
+        (failure) => emit(
+            UpdateCustomerPhoneError(msg: Constants.mapFailureToMsg(failure))),
+        (newCustomerModel) {
+      try {
+        int index = customers.indexWhere((element) {
+          return element.customerId ==
+              updateCustomerPhoneNumberParam.customerId;
         });
+        customers[index] = newCustomerModel;
+        currentCustomer = newCustomerModel;
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+
+      return emit(EndUpdateCustomerPhone(customerModel: newCustomerModel));
+    });
   }
 
+  Future<void> cacheCustomerTableConfig(
+      CustomerTableConfigModel customerTableConfigModel) async {
+    emit(StartCacheCustomerTableConfig());
+
+    Either<Failure, void> response = await customerUseCases
+        .cacheCustomerTableConfig(customerTableConfigModel);
+
+    emit(response.fold(
+        (failure) => CacheCustomerTableConfigError(
+            msg: Constants.mapFailureToMsg(failure)),
+        (r) => EndCacheCustomerTableConfig(
+            cachedCustomerTableConfig: customerTableConfigModel)));
+  }
 }

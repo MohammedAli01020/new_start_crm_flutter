@@ -3,7 +3,6 @@ import 'package:crm_flutter_project/core/utils/app_colors.dart';
 import 'package:crm_flutter_project/core/utils/app_strings.dart';
 import 'package:crm_flutter_project/core/widgets/default_hieght_sized_box.dart';
 import 'package:crm_flutter_project/features/customers/presentation/cubit/customer_cubit.dart';
-import 'package:crm_flutter_project/features/customers/presentation/cubit/duplicates/duplicates_cubit.dart';
 import 'package:crm_flutter_project/features/customers/presentation/screens/customer_datails_screen.dart';
 import 'package:crm_flutter_project/features/employees/presentation/cubit/employee_cubit.dart';
 import 'package:crm_flutter_project/features/employees/presentation/screens/employee_details_screen.dart';
@@ -12,15 +11,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/utils/constants.dart';
 import '../../../../core/widgets/default_user_avatar_widget.dart';
-import '../../../../core/widgets/error_item_widget.dart';
-import '../../../employees/data/models/phoneNumber_model.dart';
 import '../../domain/use_cases/customer_use_cases.dart';
 import 'create_new_action_dailog.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:crm_flutter_project/injection_container.dart' as di;
-
 import 'duplicate_customers_widget.dart';
-
 
 class CustomersDataTable extends DataTableSource {
   final CustomerCubit customerCubit;
@@ -29,7 +22,7 @@ class CustomersDataTable extends DataTableSource {
   final Function onSelect;
   final BuildContext context;
 
-  CustomersDataTable( {
+  CustomersDataTable({
     required this.customerCubit,
     required this.teamMembersCubit,
     required this.employeeCubit,
@@ -49,82 +42,182 @@ class CustomersDataTable extends DataTableSource {
           onSelect(val, currentCustomer);
         },
         cells: [
-          DataCell(
 
-              InkWell(
+          if (Constants.customerTableConfigModel.showName)
+          DataCell(InkWell(
               onTap: () {
                 Navigator.pushNamed(context, Routes.customersDetailsRoute,
-                arguments: CustomerDetailsArgs(
-                    customerModel: currentCustomer,
-                    customerCubit: customerCubit,
-                    fromRoute: Routes.customersRoute,
-                    teamMembersCubit: teamMembersCubit));
+                    arguments: CustomerDetailsArgs(
+                        customerModel: currentCustomer,
+                        customerCubit: customerCubit,
+                        fromRoute: Routes.customersRoute,
+                        teamMembersCubit: teamMembersCubit));
               },
-              child: Constants.currentEmployee!.permissions.contains(AppStrings.viewLeadName) ?
-              Text(currentCustomer.fullName) : const Text("عرض التفاصيل")) ),
-          DataCell( Constants.currentEmployee!.permissions.contains(AppStrings.viewLeadPhone)  ? TextButton(
-              onPressed: () {
-                Constants.showDialogBox(context: context, title: "رقم الهاتف",
-                content: Column(
+              child: Constants.currentEmployee!.permissions
+                      .contains(AppStrings.viewLeadName)
+                  ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(currentCustomer.fullName),
+                  )
+                  :  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child:  Text("عرض التفاصيل"),
+                  ))),
+          if (Constants.customerTableConfigModel.showPhone)
+          DataCell(Constants.currentEmployee!.permissions
+                  .contains(AppStrings.viewLeadPhone)
+              ? Row(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextButton.icon(
-                      label: const Text("اتصال"),
-                      icon: const Icon(Icons.call),
+                children: [
+
+                  TextButton(
                       onPressed: () {
-                        try {
-                          // Constants.launchCaller(currentCustomer.phoneNumber);
-                        } catch (e) {
-                          debugPrint(e.toString());
-                          Constants.showToast(msg: "تعذر الاتصال", context: context);
-                        }
+                        Constants.showDialogBox(
+                            context: context,
+                            title: "رقم الهاتف",
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextButton.icon(
+                                  label: const Text("اتصال"),
+                                  icon: const Icon(Icons.call),
+                                  onPressed: () {
 
+                                    try {
+                                      Constants.launchCallerV2(
+                                          currentCustomer.phoneNumbers[0]);
+                                    } catch (e) {
+                                      debugPrint(e.toString());
+                                      Constants.showToast(
+                                          msg: "تعذر الاتصال", context: context);
+                                    }
+
+
+                                  },
+                                ),
+                                const DefaultHeightSizedBox(),
+                                TextButton.icon(
+                                  label: const Text("رسالة واتس"),
+                                  icon: const Icon(Icons.whatsapp),
+                                  onPressed: () {
+                                    try {
+                                      Constants.launchWhatsAppV2(
+                                          currentCustomer.phoneNumbers[0], "message");
+                                    } catch (e) {
+                                      debugPrint(e.toString());
+                                      Constants.showToast(
+                                          msg: "تعذر فتح الواتس اب",
+                                          context: context);
+                                    }
+                                  },
+                                ),
+                                const DefaultHeightSizedBox(),
+                                TextButton.icon(
+                                  label: const Text("نسخ الرقم"),
+                                  icon: const Icon(
+                                    Icons.copy,
+                                  ),
+                                  onPressed: () {
+
+                                    try {
+                                      Constants.copyText(currentCustomer.phoneNumbers.first)
+                                          .then((value) {
+                                        Constants.showToast(
+                                            msg: "تم النسخ", context: context);
+                                      });
+                                    } catch (e) {
+                                      debugPrint(e.toString());
+                                      Constants.showToast(
+                                          msg: "تعذر الاتصال", context: context);
+                                    }
+
+
+                                  },
+                                ),
+                              ],
+                            ));
                       },
+                      child: Text(currentCustomer.phoneNumbers[0])),
 
-                    ),
-                    const DefaultHeightSizedBox(),
+                  if (currentCustomer.phoneNumbers.length > 1)
+                    const Text(" - "),
 
-                    TextButton.icon(
-                      label: const Text("رسالة واتس"),
-                      icon: const Icon(Icons.whatsapp),
-                      onPressed: () {
-                        try {
-                          // Constants.launchWhatsApp(currentCustomer.phoneNumber, "message");
-                        } catch (e) {
-                          debugPrint(e.toString());
-                          Constants.showToast(msg: "تعذر فتح الواتس اب", context: context);
-                        }
+                  if (currentCustomer.phoneNumbers.length > 1)
+                    TextButton(
+                    onPressed: () {
+                      Constants.showDialogBox(
+                          context: context,
+                          title: "رقم الهاتف",
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextButton.icon(
+                                label: const Text("اتصال"),
+                                icon: const Icon(Icons.call),
+                                onPressed: () {
 
-                      },
+                                  try {
+                                    Constants.launchCallerV2(
+                                        currentCustomer.phoneNumbers[1]);
+                                  } catch (e) {
+                                    debugPrint(e.toString());
+                                    Constants.showToast(
+                                        msg: "تعذر الاتصال", context: context);
+                                  }
 
-                    ),
-                    const DefaultHeightSizedBox(),
 
-                    TextButton.icon(
-                      label: const Text("نسخ الرقم"),
-                      icon: const Icon(Icons.copy,),
-                      onPressed: () {
-                        try {
+                                },
+                              ),
+                              const DefaultHeightSizedBox(),
+                              TextButton.icon(
+                                label: const Text("رسالة واتس"),
+                                icon: const Icon(Icons.whatsapp),
+                                onPressed: () {
+                                  try {
+                                    Constants.launchWhatsAppV2(
+                                        currentCustomer.phoneNumbers[1], "message");
+                                  } catch (e) {
+                                    debugPrint(e.toString());
+                                    Constants.showToast(
+                                        msg: "تعذر فتح الواتس اب",
+                                        context: context);
+                                  }
+                                },
+                              ),
+                              const DefaultHeightSizedBox(),
+                              TextButton.icon(
+                                label: const Text("نسخ الرقم"),
+                                icon: const Icon(
+                                  Icons.copy,
+                                ),
+                                onPressed: () {
 
-                          Constants.copyText(currentCustomer.phoneNumber.countryCode + currentCustomer.phoneNumber.phone.substring(1)).then((value) {
+                                  try {
+                                    Constants.copyText(currentCustomer.phoneNumbers[1])
+                                        .then((value) {
+                                      Constants.showToast(
+                                          msg: "تم النسخ", context: context);
+                                    });
+                                  } catch (e) {
+                                    debugPrint(e.toString());
+                                    Constants.showToast(
+                                        msg: "تعذر الاتصال", context: context);
+                                  }
 
-                            Constants.showToast(msg: "تم النسخ", context: context);
 
-                          });
+                                },
+                              ),
+                            ],
+                          ));
+                    },
+                    child: Text(currentCustomer.phoneNumbers[1])),
 
-                        } catch (e) {
-                          debugPrint(e.toString());
-                          Constants.showToast(msg: "تعذر الاتصال", context: context);
-                        }
-
-                      },
-
-                    ),
-                  ],
-                ));
-              },
-              child: Text("currentCustomer.phoneNumber.phone")) : const Text("مخفي")  ),
+                ],
+              )
+              : const Text("مخفي")),
+          if (Constants.customerTableConfigModel.showAssignedTo)
           DataCell(Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -137,7 +230,6 @@ class CustomersDataTable extends DataTableSource {
                             employeeCubit: employeeCubit,
                             fromRoute: Routes.customersRoute));
                   }
-
                 },
                 imageUrl: currentCustomer.assignedEmployee?.imageUrl,
                 fullName: currentCustomer.assignedEmployee?.fullName,
@@ -151,8 +243,7 @@ class CustomersDataTable extends DataTableSource {
                   : "لا يوجد")
             ],
           )),
-
-
+          if (Constants.customerTableConfigModel.showLastAction)
           DataCell(customerCubit.currentUpdateActions.contains(index)
               ? const Center(
                   child: SizedBox(
@@ -162,7 +253,6 @@ class CustomersDataTable extends DataTableSource {
                 )
               : InkWell(
                   onTap: () {
-
                     if (Constants.currentEmployee!.permissions.contains(AppStrings.createActions)) {
                       Constants.showDialogBox(
                         context: context,
@@ -181,7 +271,6 @@ class CustomersDataTable extends DataTableSource {
                     } else {
                       Constants.showToast(msg: "غير مصرح", context: context);
                     }
-
                   },
                   child: Container(
                     padding: const EdgeInsets.all(2.0),
@@ -195,7 +284,7 @@ class CustomersDataTable extends DataTableSource {
                   ),
                 )),
 
-
+          if (Constants.customerTableConfigModel.showSources)
           DataCell(Text(
             currentCustomer.sources.isNotEmpty
                 ? currentCustomer.sources.length > 2
@@ -209,67 +298,79 @@ class CustomersDataTable extends DataTableSource {
             maxLines: 1,
           )),
 
+          if (Constants.customerTableConfigModel.showUnitTypes)
           DataCell(Text(
             currentCustomer.unitTypes.isNotEmpty
                 ? currentCustomer.unitTypes.length > 2
-                ? currentCustomer.unitTypes
-                .sublist(0, 2)
-                .map((e) => e)
-                .toString() +
-                ", ${currentCustomer.unitTypes.length - 2} "
-                : currentCustomer.unitTypes.map((e) => e).toString()
+                    ? currentCustomer.unitTypes
+                            .sublist(0, 2)
+                            .map((e) => e)
+                            .toString() +
+                        ", ${currentCustomer.unitTypes.length - 2} "
+                    : currentCustomer.unitTypes.map((e) => e).toString()
                 : "لا يوجد",
             maxLines: 1,
           )),
+
+          if (Constants.customerTableConfigModel.showLastActionTime)
           DataCell(Text(Constants.timeAgoSinceDate(
               currentCustomer.lastAction?.dateTime))),
 
-          DataCell(Text( currentCustomer.lastAction != null && currentCustomer.lastAction!.actionDescription != null &&
-              currentCustomer.lastAction!.actionDescription!.isNotEmpty ?
-
-          (currentCustomer.lastAction!.actionDescription!.length > 20 ?
-          currentCustomer.lastAction!.actionDescription!.substring(0, 20) + " ..." : currentCustomer.lastAction!.actionDescription! )   : "لا يوجد",
+          if (Constants.customerTableConfigModel.showLastComment)
+          DataCell(Text(
+            currentCustomer.lastAction != null &&
+                    currentCustomer.lastAction!.actionDescription != null &&
+                    currentCustomer.lastAction!.actionDescription!.isNotEmpty
+                ? (currentCustomer.lastAction!.actionDescription!.length > 20
+                    ? currentCustomer.lastAction!.actionDescription!
+                            .substring(0, 20) +
+                        " ..."
+                    : currentCustomer.lastAction!.actionDescription!)
+                : "لا يوجد",
             maxLines: 1,
           )),
 
-          DataCell(Text(Constants.timeAgoSinceDate(
-              currentCustomer.createDateTime))),
-
+          if (Constants.customerTableConfigModel.showInsertDate)
           DataCell(
-              Constants.currentEmployee!.permissions.contains(AppStrings.viewLeadCreator) ?
-              Row(
+              Text(Constants.timeAgoSinceDate(currentCustomer.createDateTime))),
+
+          if (Constants.customerTableConfigModel.showCreateBy)
+          DataCell(Constants.currentEmployee!.permissions
+                  .contains(AppStrings.viewLeadCreator)
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    DefaultUserAvatarWidget(
+                      onTap: () {
+                        if (currentCustomer.createdBy != null) {
+                          Navigator.pushNamed(
+                              context, Routes.employeesDetailsRoute,
+                              arguments: EmployeeDetailsArgs(
+                                  employeeModel: currentCustomer.createdBy!,
+                                  employeeCubit: employeeCubit,
+                                  fromRoute: Routes.customersRoute));
+                        }
+                      },
+                      imageUrl: currentCustomer.createdBy?.imageUrl,
+                      fullName: currentCustomer.createdBy?.fullName,
+                      height: 40.0,
+                    ),
+                    const SizedBox(
+                      width: 5.0,
+                    ),
+                    Text(currentCustomer.createdBy != null
+                        ? currentCustomer.createdBy!.fullName
+                        : "لا يوجد")
+                  ],
+                )
+              : const Text("مخفي")),
+
+          if (Constants.customerTableConfigModel.showAssignedBy)
+          DataCell(Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-
               DefaultUserAvatarWidget(
                 onTap: () {
-                  if (currentCustomer.createdBy != null) {
-                    Navigator.pushNamed(context, Routes.employeesDetailsRoute,
-                        arguments: EmployeeDetailsArgs(
-                            employeeModel: currentCustomer.createdBy!,
-                            employeeCubit: employeeCubit,
-                            fromRoute: Routes.customersRoute));
-                  }
-                },
-                imageUrl: currentCustomer.createdBy?.imageUrl,
-                fullName: currentCustomer.createdBy?.fullName,
-                height: 40.0,
-              ),
-              const SizedBox(
-                width: 5.0,
-              ),
-              Text(currentCustomer.createdBy != null
-                  ? currentCustomer.createdBy!.fullName
-                  : "لا يوجد")
-            ],
-          ) : const Text("مخفي")),
-          DataCell(
-              Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              DefaultUserAvatarWidget(
-                onTap: () {
-
                   if (currentCustomer.assignedBy != null) {
                     Navigator.pushNamed(context, Routes.employeesDetailsRoute,
                         arguments: EmployeeDetailsArgs(
@@ -277,7 +378,6 @@ class CustomersDataTable extends DataTableSource {
                             employeeCubit: employeeCubit,
                             fromRoute: Routes.customersRoute));
                   }
-
                 },
                 imageUrl: currentCustomer.assignedBy?.imageUrl,
                 fullName: currentCustomer.assignedBy?.fullName,
@@ -291,39 +391,57 @@ class CustomersDataTable extends DataTableSource {
                   : "لا يوجد")
             ],
           )),
+
+          if (Constants.customerTableConfigModel.showReminderTime)
           DataCell(Text(currentCustomer.lastAction != null &&
                   currentCustomer.lastAction!.postponeDateTime != null
               ? Constants.dateTimeFromMilliSeconds(
                   currentCustomer.lastAction!.postponeDateTime)
               : "لا يوجد")),
 
+          if (Constants.customerTableConfigModel.showDuplicateNumber)
           DataCell(Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (Constants.currentEmployee!.permissions.contains(AppStrings.viewDuplicatesLeads))
+              if (Constants.currentEmployee!.permissions
+                  .contains(AppStrings.viewDuplicatesLeads))
                 Text(currentCustomer.duplicateNo.toString()),
-              const SizedBox(width: 10.0,),
+              const SizedBox(
+                width: 10.0,
+              ),
               IconButton(
                 onPressed: () {
-
-                  if (!Constants.currentEmployee!.permissions.contains(AppStrings.viewDuplicatesLeads)) {
+                  if (!Constants.currentEmployee!.permissions
+                      .contains(AppStrings.viewDuplicatesLeads)) {
                     Constants.showToast(msg: "غير مصرح", context: context);
                     return;
                   }
 
                   if (currentCustomer.duplicateNo == 0) {
-                    Constants.showToast(msg: "لا يوجد تكرارات لهذا العميل", context: context);
+                    Constants.showToast(
+                        msg: "لا يوجد تكرارات لهذا العميل", context: context);
                     return;
                   }
 
-
-                  Constants.showDialogBox(context: context, title: "تكرارات العميل" " " + currentCustomer.duplicateNo.toString(),
-                  content: DuplicatesCustomers(phoneNumberModel: currentCustomer.phoneNumber,
-                    teamMembersCubit: teamMembersCubit,
-                     customerCubit: customerCubit, employeeCubit: employeeCubit,));
-
+                  Constants.showDialogBox(
+                      context: context,
+                      title: "تكرارات العميل" " " +
+                          currentCustomer.duplicateNo.toString(),
+                      content: DuplicatesCustomers(
+                        phoneNumbersWrapper: PhoneNumbersWrapper(phoneNumbers: currentCustomer.phoneNumbers),
+                        teamMembersCubit: teamMembersCubit,
+                        customerCubit: customerCubit,
+                        employeeCubit: employeeCubit,
+                      ));
                 },
-                icon:  Icon(Icons.visibility_outlined, color: currentCustomer.duplicateNo == 0 || !Constants.currentEmployee!.permissions.contains(AppStrings.viewDuplicatesLeads) ? Colors.grey : AppColors.primary,),
+                icon: Icon(
+                  Icons.visibility_outlined,
+                  color: currentCustomer.duplicateNo == 0 ||
+                          !Constants.currentEmployee!.permissions
+                              .contains(AppStrings.viewDuplicatesLeads)
+                      ? Colors.grey
+                      : AppColors.primary,
+                ),
               ),
             ],
           ))
@@ -339,7 +457,3 @@ class CustomersDataTable extends DataTableSource {
   @override
   int get selectedRowCount => 0;
 }
-
-
-
-

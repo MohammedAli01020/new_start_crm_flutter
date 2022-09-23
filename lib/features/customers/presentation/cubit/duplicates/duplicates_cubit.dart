@@ -22,12 +22,12 @@ class DuplicatesCubit extends Cubit<DuplicatesState> {
 
   List<CustomerModel> duplicates = [];
 
-  Future<void> findDistinctCustomersByPhoneNumber(PhoneNumberModel phoneNumberModel) async {
+  Future<void> findDistinctCustomersByPhoneNumber(PhoneNumbersWrapper phoneNumbersWrapper) async {
     duplicates = [];
     emit(StartFindDuplicateCustomers());
 
     Either<Failure, List<CustomerModel>> response =
-    await customerUseCases.findDistinctCustomersByPhoneNumber(phoneNumberModel);
+    await customerUseCases.findDistinctCustomersByPhoneNumbers(phoneNumbersWrapper);
 
    response.fold((failure) => emit(FindDuplicateCustomersError(msg: Constants.mapFailureToMsg(failure))),
             (results) {

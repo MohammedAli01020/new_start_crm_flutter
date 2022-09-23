@@ -176,6 +176,27 @@ class CustomDrawer extends StatelessWidget {
               },
             ),
 
+
+
+          CustomListTile(
+            title: 'المطورين والمشاريع',
+            trailing: const Icon(Icons.settings),
+            onTapCallback: () {
+              Navigator.popAndPushNamed(context, Routes.developersRoute);
+            },
+
+          ),
+
+          CustomListTile(
+            title: 'اعدادات جدول العملاء',
+            trailing: const Icon(Icons.settings),
+            onTapCallback: () {
+              Navigator.popAndPushNamed(context, Routes.customerTableConfigRoute,
+              arguments: customerCubit);
+            },
+
+          ),
+
           BlocConsumer<LoginCubit, LoginState>(
             listener: (context, state) {
               if (state is LogoutError) {

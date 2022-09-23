@@ -3,6 +3,10 @@ class AppStrings {
   static const String fontFamily = 'Tajawal';
   static const String noRouteFound = 'No Route Found';
   static const String cachedCurrentEmployee = 'CACHED_CURRENT_EMPLOYEE';
+
+  static const String cachedCustomerTableConfig = 'CACHED_CUSTOMER_TABLE_CONFIG';
+
+
   static const String cachedLocation = 'CACHED_LOCATION';
   static const String cachedNotificationState = 'CACHED_NOTIFICATION_STATE';
   static const String contentType = 'Content-Type';

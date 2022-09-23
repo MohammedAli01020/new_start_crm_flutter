@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../employees/data/models/employee_model.dart';
-import '../../../employees/data/models/phoneNumber_model.dart';
 import '../../data/models/last_action_model.dart';
+
 
 class Customer extends Equatable {
   const Customer({
     required this.customerId,
     required this.fullName,
-    required this.phoneNumber,
+    required this.phoneNumbers,
     required this.createDateTime,
     required this.description,
     required this.projects,
@@ -24,7 +24,7 @@ class Customer extends Equatable {
 
   final int customerId;
   final String fullName;
-  final PhoneNumberModel phoneNumber;
+  final List<String> phoneNumbers;
   final int createDateTime;
   final String? description;
   final List<String> projects;
@@ -43,7 +43,7 @@ class Customer extends Equatable {
       [
         customerId,
         fullName,
-        phoneNumber,
+        phoneNumbers,
         createDateTime,
         description,
         projects,

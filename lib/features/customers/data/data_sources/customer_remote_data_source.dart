@@ -26,7 +26,7 @@ abstract class CustomerRemoteDataSource {
       UpdateCustomerNameOrDescParam updateCustomerNameOrDescParam);
 
   Future<List<CustomerModel>> findDistinctCustomersByPhoneNumber(
-      PhoneNumberModel phoneNumberModel);
+      PhoneNumbersWrapper phoneNumbersWrapper);
 
   Future<CustomerModel> updateCustomerDescription(
       UpdateCustomerNameOrDescParam updateCustomerNameOrDescParam);
@@ -103,9 +103,9 @@ class CustomerRemoteDataSourceImpl implements CustomerRemoteDataSource {
   }
 
   @override
-  Future<List<CustomerModel>> findDistinctCustomersByPhoneNumber(PhoneNumberModel phoneNumberModel) async {
+  Future<List<CustomerModel>> findDistinctCustomersByPhoneNumber(PhoneNumbersWrapper phoneNumbersWrapper) async {
     final response = await apiConsumer.get(EndPoints.duplicateCustomersByPhoneNo,
-        queryParameters: phoneNumberModel.toJson());
+        queryParameters: phoneNumbersWrapper.toJson());
 
     return List<CustomerModel>.from(
         response.map((x) => CustomerModel.fromJson(x)));

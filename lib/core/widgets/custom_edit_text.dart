@@ -6,7 +6,7 @@ class CustomEditText extends StatelessWidget {
   const CustomEditText(
       {Key? key,
       this.hint,
-      required this.controller,
+        this.controller,
       this.validator,
       this.isPassword = false,
       this.prefixIcon,
@@ -25,7 +25,7 @@ class CustomEditText extends StatelessWidget {
   final String? hint;
   final String? label;
 
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String? Function(String?)? validator;
   final bool isPassword;
   final Widget? prefixIcon;

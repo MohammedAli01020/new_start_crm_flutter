@@ -157,18 +157,19 @@ class UpdateBulkCustomersError extends CustomerState {
   List<Object> get props => [msg];
 }
 
-class StartUpdateCustomerPhoneNumber extends CustomerState  {}
-class EndUpdateCustomerPhoneNumber extends CustomerState  {}
+class StartUpdateCustomerPhoneNumber extends CustomerState {}
+
+class EndUpdateCustomerPhoneNumber extends CustomerState {}
 
 
+class StartUpdateCurrentCustomerModel extends CustomerState {}
 
-class StartUpdateCurrentCustomerModel extends CustomerState  {}
-class EndUpdateCurrentCustomerModel extends CustomerState  {}
+class EndUpdateCurrentCustomerModel extends CustomerState {}
 
 
+class StartUpdateCustomerFullName extends CustomerState {}
 
-class StartUpdateCustomerFullName extends CustomerState  {}
-class EndUpdateCustomerFullName extends CustomerState  {
+class EndUpdateCustomerFullName extends CustomerState {
   final CustomerModel customerModel;
 
   EndUpdateCustomerFullName({required this.customerModel});
@@ -176,7 +177,8 @@ class EndUpdateCustomerFullName extends CustomerState  {
   @override
   List<Object> get props => [customerModel];
 }
-class UpdateCustomerFullNameError extends CustomerState  {
+
+class UpdateCustomerFullNameError extends CustomerState {
   final String msg;
 
   UpdateCustomerFullNameError({required this.msg});
@@ -186,9 +188,9 @@ class UpdateCustomerFullNameError extends CustomerState  {
 }
 
 
+class StartUpdateCustomerDescription extends CustomerState {}
 
-class StartUpdateCustomerDescription extends CustomerState  {}
-class EndUpdateCustomerDescription extends CustomerState  {
+class EndUpdateCustomerDescription extends CustomerState {
   final CustomerModel customerModel;
 
   EndUpdateCustomerDescription({required this.customerModel});
@@ -196,7 +198,8 @@ class EndUpdateCustomerDescription extends CustomerState  {
   @override
   List<Object> get props => [customerModel];
 }
-class UpdateCustomerDescriptionError extends CustomerState  {
+
+class UpdateCustomerDescriptionError extends CustomerState {
   final String msg;
 
   UpdateCustomerDescriptionError({required this.msg});
@@ -206,9 +209,9 @@ class UpdateCustomerDescriptionError extends CustomerState  {
 }
 
 
+class StartUpdateCustomerSources extends CustomerState {}
 
-class StartUpdateCustomerSources extends CustomerState  {}
-class EndUpdateCustomerSources extends CustomerState  {
+class EndUpdateCustomerSources extends CustomerState {
   final CustomerModel customerModel;
 
   EndUpdateCustomerSources({required this.customerModel});
@@ -216,7 +219,8 @@ class EndUpdateCustomerSources extends CustomerState  {
   @override
   List<Object> get props => [customerModel];
 }
-class UpdateCustomerSourcesError extends CustomerState  {
+
+class UpdateCustomerSourcesError extends CustomerState {
   final String msg;
 
   UpdateCustomerSourcesError({required this.msg});
@@ -226,8 +230,9 @@ class UpdateCustomerSourcesError extends CustomerState  {
 }
 
 
-class StartUpdateCustomerUnitTypes extends CustomerState  {}
-class EndUpdateCustomerUnitTypes extends CustomerState  {
+class StartUpdateCustomerUnitTypes extends CustomerState {}
+
+class EndUpdateCustomerUnitTypes extends CustomerState {
   final CustomerModel customerModel;
 
   EndUpdateCustomerUnitTypes({required this.customerModel});
@@ -235,7 +240,8 @@ class EndUpdateCustomerUnitTypes extends CustomerState  {
   @override
   List<Object> get props => [customerModel];
 }
-class UpdateCustomerUnitTypesError extends CustomerState  {
+
+class UpdateCustomerUnitTypesError extends CustomerState {
   final String msg;
 
   UpdateCustomerUnitTypesError({required this.msg});
@@ -245,9 +251,9 @@ class UpdateCustomerUnitTypesError extends CustomerState  {
 }
 
 
+class StartUpdateCustomerAssignedEmployee extends CustomerState {}
 
-class StartUpdateCustomerAssignedEmployee extends CustomerState  {}
-class EndUpdateCustomerAssignedEmployee extends CustomerState  {
+class EndUpdateCustomerAssignedEmployee extends CustomerState {
   final CustomerModel customerModel;
 
   EndUpdateCustomerAssignedEmployee({required this.customerModel});
@@ -255,7 +261,8 @@ class EndUpdateCustomerAssignedEmployee extends CustomerState  {
   @override
   List<Object> get props => [customerModel];
 }
-class UpdateCustomerAssignedEmployeeError extends CustomerState  {
+
+class UpdateCustomerAssignedEmployeeError extends CustomerState {
   final String msg;
 
   UpdateCustomerAssignedEmployeeError({required this.msg});
@@ -265,9 +272,9 @@ class UpdateCustomerAssignedEmployeeError extends CustomerState  {
 }
 
 
+class StartDeleteCustomerAssignedEmployee extends CustomerState {}
 
-class StartDeleteCustomerAssignedEmployee extends CustomerState  {}
-class EndDeleteCustomerAssignedEmployee extends CustomerState  {
+class EndDeleteCustomerAssignedEmployee extends CustomerState {
   final CustomerModel customerModel;
 
   EndDeleteCustomerAssignedEmployee({required this.customerModel});
@@ -275,7 +282,8 @@ class EndDeleteCustomerAssignedEmployee extends CustomerState  {
   @override
   List<Object> get props => [customerModel];
 }
-class DeleteCustomerAssignedEmployeeError extends CustomerState  {
+
+class DeleteCustomerAssignedEmployeeError extends CustomerState {
   final String msg;
 
   DeleteCustomerAssignedEmployeeError({required this.msg});
@@ -285,9 +293,9 @@ class DeleteCustomerAssignedEmployeeError extends CustomerState  {
 }
 
 
+class StartUpdateCustomerPhone extends CustomerState {}
 
-class StartUpdateCustomerPhone extends CustomerState  {}
-class EndUpdateCustomerPhone extends CustomerState  {
+class EndUpdateCustomerPhone extends CustomerState {
   final CustomerModel customerModel;
 
   EndUpdateCustomerPhone({required this.customerModel});
@@ -295,7 +303,8 @@ class EndUpdateCustomerPhone extends CustomerState  {
   @override
   List<Object> get props => [customerModel];
 }
-class UpdateCustomerPhoneError extends CustomerState  {
+
+class UpdateCustomerPhoneError extends CustomerState {
   final String msg;
 
   UpdateCustomerPhoneError({required this.msg});
@@ -305,6 +314,27 @@ class UpdateCustomerPhoneError extends CustomerState  {
 }
 
 
+class StartUpdateCustomers extends CustomerState {}
 
-class StartUpdateCustomers extends CustomerState  {}
-class EndUpdateCustomers extends CustomerState  {}
+class EndUpdateCustomers extends CustomerState {}
+
+
+class StartCacheCustomerTableConfig extends CustomerState {}
+
+class EndCacheCustomerTableConfig extends CustomerState {
+  final CustomerTableConfigModel cachedCustomerTableConfig;
+
+  EndCacheCustomerTableConfig({required this.cachedCustomerTableConfig});
+
+  @override
+  List<Object> get props => [cachedCustomerTableConfig];
+}
+
+class CacheCustomerTableConfigError extends CustomerState {
+  final String msg;
+
+  CacheCustomerTableConfigError({required this.msg});
+
+  @override
+  List<Object> get props => [msg];
+}

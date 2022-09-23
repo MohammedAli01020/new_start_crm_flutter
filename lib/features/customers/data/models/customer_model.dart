@@ -1,6 +1,5 @@
 import 'package:crm_flutter_project/features/customers/data/models/last_action_model.dart';
 import 'package:crm_flutter_project/features/employees/data/models/employee_model.dart';
-import 'package:crm_flutter_project/features/employees/data/models/phoneNumber_model.dart';
 
 import '../../../../core/utils/wrapper.dart';
 import '../../domain/entities/customer.dart';
@@ -9,7 +8,7 @@ class CustomerModel extends Customer {
   const CustomerModel(
       {required int customerId,
       required String fullName,
-      required PhoneNumberModel phoneNumber,
+      required List<String> phoneNumbers,
       required int createDateTime,
       required String? description,
       required List<String> projects,
@@ -25,7 +24,7 @@ class CustomerModel extends Customer {
       : super(
             customerId: customerId,
             fullName: fullName,
-            phoneNumber: phoneNumber,
+            phoneNumbers: phoneNumbers,
             createDateTime: createDateTime,
             description: description,
             projects: projects,
@@ -42,7 +41,7 @@ class CustomerModel extends Customer {
   factory CustomerModel.fromJson(Map<String, dynamic> json) => CustomerModel(
         customerId: json["customerId"],
         fullName: json["fullName"],
-        phoneNumber: PhoneNumberModel.fromJson(json["phoneNumber"]),
+        phoneNumbers: List<String>.from(json["phoneNumbers"].map((x) => x)),
         createDateTime: json["createDateTime"],
         description: json["description"],
         projects: json["projects"] != null
@@ -73,7 +72,7 @@ class CustomerModel extends Customer {
   Map<String, dynamic> toJson() => {
         "customerId": customerId,
         "fullName": fullName,
-        "phoneNumber": phoneNumber.toJson(),
+        "phoneNumbers": List<String>.from(phoneNumbers.map((x) => x)),
         "createDateTime": createDateTime,
         "description": description,
         "projects": List<String>.from(projects.map((x) => x)),
@@ -90,7 +89,7 @@ class CustomerModel extends Customer {
   CustomerModel copyWith({
     Wrapped<int>? customerId,
     Wrapped<String>? fullName,
-    Wrapped<PhoneNumberModel>? phoneNumber,
+    Wrapped<List<String>>? phoneNumbers,
     Wrapped<int>? createDateTime,
     Wrapped<String?>? description,
     Wrapped<List<String>>? projects,
@@ -107,7 +106,7 @@ class CustomerModel extends Customer {
     return CustomerModel(
         customerId: customerId != null ? customerId.value : this.customerId,
         fullName: fullName != null ? fullName.value : this.fullName,
-        phoneNumber: phoneNumber != null ? phoneNumber.value : this.phoneNumber,
+        phoneNumbers: phoneNumbers != null ? phoneNumbers.value : this.phoneNumbers,
         createDateTime:
             createDateTime != null ? createDateTime.value : this.createDateTime,
         description: description != null ? description.value : this.description,

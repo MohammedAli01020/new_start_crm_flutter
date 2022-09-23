@@ -12,8 +12,8 @@ class RoleModel extends Role {
   factory RoleModel.fromJson(Map<String, dynamic> json) => RoleModel(
         roleId: json["roleId"],
         name: json["name"],
-        permissions: json["permissions"] != null ? List<PermissionModel>.from(
-            json["permissions"].map((x) => PermissionModel.fromJson(x))) : [],
+        permissions: json["permissions"] != null ?
+        List<PermissionModel>.from(json["permissions"].map((x) => PermissionModel.fromJson(x))) : [],
       );
 
   Map<String, dynamic> toJson() => {

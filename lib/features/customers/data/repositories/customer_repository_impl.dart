@@ -1,4 +1,6 @@
 import 'package:crm_flutter_project/core/error/failures.dart';
+import 'package:crm_flutter_project/features/customer_table_config/data/models/customer_table_config_model.dart';
+import 'package:crm_flutter_project/features/customers/data/data_sources/customer_local_data_source.dart';
 import 'package:crm_flutter_project/features/customers/data/data_sources/customer_remote_data_source.dart';
 
 import 'package:crm_flutter_project/features/customers/data/models/customer_filters_model.dart';
@@ -14,14 +16,17 @@ import 'package:crm_flutter_project/features/login/data/data_sources/login_local
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/utils/constants.dart';
 import '../../domain/repositories/customer_repository.dart';
 
 class CustomerRepositoryImpl implements CustomerRepository {
   final CustomerRemoteDataSource customerRemoteDataSource;
   final LoginLocalDataSource loginLocalDataSource;
+  final CustomerLocalDataSource customerLocalDataSource;
 
-  CustomerRepositoryImpl( {required this.customerRemoteDataSource,
-    required this.loginLocalDataSource,});
+  CustomerRepositoryImpl({required this.customerRemoteDataSource,
+    required this.loginLocalDataSource,
+    required this.customerLocalDataSource });
 
   @override
   Future<Either<Failure, void>> deleteCustomer(int customerId) async {
@@ -89,9 +94,9 @@ class CustomerRepositoryImpl implements CustomerRepository {
   }
 
   @override
-  Future<Either<Failure, List<CustomerModel>>> findDistinctCustomersByPhoneNumber(PhoneNumberModel phoneNumberModel) async {
+  Future<Either<Failure, List<CustomerModel>>> findDistinctCustomersByPhoneNumber(PhoneNumbersWrapper phoneNumbersWrapper) async {
     try {
-      final response = await customerRemoteDataSource.findDistinctCustomersByPhoneNumber(phoneNumberModel);
+      final response = await customerRemoteDataSource.findDistinctCustomersByPhoneNumber(phoneNumbersWrapper);
       return Right(response);
     } on ServerException catch (e) {
       return Left(ServerFailure(msg: e.msg));
@@ -157,5 +162,20 @@ class CustomerRepositoryImpl implements CustomerRepository {
       return Left(ServerFailure(msg: e.msg));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> cacheCustomerTableConfig(CustomerTableConfigModel customerTableConfigModel) async {
+    try {
+      final response = await customerLocalDataSource.cacheCustomerTableConfig(customerTableConfigModel);
+
+      Constants.customerTableConfigModel = customerTableConfigModel;
+
+      return Right(response);
+    } on CacheException catch (e) {
+      return Left(CacheFailure(msg: e.msg));
+    }
+  }
+
+
 
 }

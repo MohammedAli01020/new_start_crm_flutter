@@ -3,6 +3,7 @@ import 'package:crm_flutter_project/features/customer_logs/data/repositories/cus
 import 'package:crm_flutter_project/features/customer_logs/domain/repositories/customer_log_repository.dart';
 import 'package:crm_flutter_project/features/customer_logs/domain/use_cases/customer_log_use_cases.dart';
 import 'package:crm_flutter_project/features/customer_logs/presentation/cubit/customer_logs_cubit.dart';
+import 'package:crm_flutter_project/features/customers/data/data_sources/customer_local_data_source.dart';
 import 'package:crm_flutter_project/features/customers/data/data_sources/customer_remote_data_source.dart';
 import 'package:crm_flutter_project/features/customers/data/repositories/customer_repository_impl.dart';
 import 'package:crm_flutter_project/features/customers/domain/repositories/customer_repository.dart';
@@ -145,7 +146,8 @@ Future<void> init() async {
 
 
   sl.registerLazySingleton<CustomerRepository>(() => CustomerRepositoryImpl(
-      customerRemoteDataSource:  sl(), loginLocalDataSource: sl()));
+      customerRemoteDataSource:  sl(), loginLocalDataSource: sl(),
+      customerLocalDataSource: sl()));
 
 
   sl.registerLazySingleton<EventRepository>(() => EventRepositoryImpl(
@@ -185,6 +187,9 @@ Future<void> init() async {
 
   sl.registerLazySingleton<CustomerRemoteDataSource>(
           () => CustomerRemoteDataSourceImpl(apiConsumer: sl()));
+
+  sl.registerLazySingleton<CustomerLocalDataSource>(
+          () => CustomerLocalDataSourceImpl(sharedPreferences: sl()));
 
   sl.registerLazySingleton<EventRemoteDataSource>(
           () => EventRemoteDataSourceImpl(apiConsumer: sl()));

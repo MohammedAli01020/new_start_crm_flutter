@@ -1,3 +1,4 @@
+import 'package:crm_flutter_project/features/customer_table_config/data/models/customer_table_config_model.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/exceptions.dart';
@@ -65,6 +66,17 @@ class LoginRepositoryImpl implements LoginRepository {
       Constants.currentEmployee = null;
 
       return Right(response);
+    } on CacheException catch (e) {
+      return Left(CacheFailure(msg: e.msg));
+    }
+  }
+
+  @override
+  Future<Either<Failure, CustomerTableConfigModel>> loadLastCustomerTableConfig() async {
+    try {
+      final currentCustomerTableConfig  =
+          await loginLocalDataSource.loadLastCustomerTableConfig();
+      return Right(currentCustomerTableConfig);
     } on CacheException catch (e) {
       return Left(CacheFailure(msg: e.msg));
     }

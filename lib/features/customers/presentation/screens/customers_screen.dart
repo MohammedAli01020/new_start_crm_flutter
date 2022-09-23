@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../../core/widgets/error_item_widget.dart';
@@ -21,7 +22,6 @@ import '../widgets/custom_drawer.dart';
 import '../widgets/customers_app_bar.dart';
 
 class CustomersScreen extends StatefulWidget {
-
   final _scrollController = ScrollController();
   static const _extraScrollSpeed = 80;
 
@@ -48,7 +48,6 @@ class CustomersScreen extends StatefulWidget {
 }
 
 class _CustomersScreenState extends State<CustomersScreen> {
-
   void _getPageCustomers({bool refresh = false}) {
     BlocProvider.of<CustomerCubit>(context).fetchCustomers(refresh: refresh);
   }
@@ -60,14 +59,10 @@ class _CustomersScreenState extends State<CustomersScreen> {
     final customerCubit = BlocProvider.of<CustomerCubit>(context);
 
     Constants.refreshCustomers(customerCubit);
-
   }
-
-
 
   Widget _buildBodyTable(
       {required CustomerCubit cubit, required CustomerState state}) {
-
     if (state is StartRefreshCustomers || state is StartLoadingCustomers) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -86,90 +81,109 @@ class _CustomersScreenState extends State<CustomersScreen> {
       child: SizedBox(
         width: context.width,
         child: PaginatedDataTable(
-            columns: const [
-              DataColumn(label: Text('الاسم')),
-              DataColumn(label: Text('رقم التليفون')),
-              DataColumn(label: Text('معين إلي')),
-              DataColumn(label: Text('أخر حالة')),
-              DataColumn(label: Text('المصادر')),
-              DataColumn(label: Text('الاهتمامات')),
-              DataColumn(label: Text('اخر تحديث للحالة')),
-              DataColumn(label: Text('اخر تعليق')),
-              DataColumn(label: Text('تاريخ الادخال')),
-              DataColumn(label: Text('مدخل بواسطة')),
-              DataColumn(label: Text('معين بواسطة')),
-              DataColumn(label: Text('موعد التذكير')),
-              DataColumn(label: Text('عدد التكرارات')),
+            columns: [
+              if (Constants.customerTableConfigModel.showName)
+                const DataColumn(label: Text('الاسم')),
+              if (Constants.customerTableConfigModel.showPhone)
+                const DataColumn(label: Text('رقم التليفون')),
+              if (Constants.customerTableConfigModel.showAssignedTo)
+                const DataColumn(label: Text('معين إلي')),
+              if (Constants.customerTableConfigModel.showLastAction)
+                const DataColumn(label: Text('أخر حالة')),
+              if (Constants.customerTableConfigModel.showSources)
+                const DataColumn(label: Text('المصادر')),
+              if (Constants.customerTableConfigModel.showUnitTypes)
+                const DataColumn(label: Text('الاهتمامات')),
+              if (Constants.customerTableConfigModel.showLastActionTime)
+                const DataColumn(label: Text('اخر تحديث للحالة')),
+              if (Constants.customerTableConfigModel.showLastComment)
+                const DataColumn(label: Text('اخر تعليق')),
+              if (Constants.customerTableConfigModel.showInsertDate)
+                const DataColumn(label: Text('تاريخ الادخال')),
+              if (Constants.customerTableConfigModel.showCreateBy)
+                const DataColumn(label: Text('مدخل بواسطة')),
+              if (Constants.customerTableConfigModel.showAssignedBy)
+                const DataColumn(label: Text('معين بواسطة')),
+              if (Constants.customerTableConfigModel.showReminderTime)
+                const DataColumn(label: Text('موعد التذكير')),
+              if (Constants.customerTableConfigModel.showDuplicateNumber)
+                const DataColumn(label: Text('عدد التكرارات')),
             ],
             rowsPerPage: 50,
-            header: Text("العملاء: " + cubit.customerTotalElements.toString() ),
+            header: Text("العملاء: " + cubit.customerTotalElements.toString()),
             actions: [
+              if (Constants.currentEmployee!.permissions
+                  .contains(AppStrings.bulkActions))
+                if (cubit.selectedCustomersIds.isNotEmpty)
+                  IconButton(
+                      onPressed: () async {
+                        Constants.showToast(
+                            msg: "not implemented yet", context: context);
+                        return;
 
-              if (Constants.currentEmployee!.permissions.contains(AppStrings.bulkActions))
-              if (cubit.selectedCustomersIds.isNotEmpty)
-                IconButton(
-                    onPressed: () async {
+                        final response = await Constants.showConfirmDialog(
+                            context: context, msg: "هل تريد تأكيد الحذف؟");
 
-                      Constants.showToast(msg: "not implemented yet", context: context);
-                      return;
-
-                      final response = await Constants.showConfirmDialog(
-                          context: context, msg: "هل تريد تأكيد الحذف؟");
-
-                      // if (response) {
-                      //   List<UserTeamIdModel> userTeamIds = teamMembersCubit.selectedTeamMembersIds.map((e) {
-                      //     return  UserTeamIdModel(employeeId: e, teamId: teamDetailsArgs.teamModel.teamId);
-                      //   }).toList();
-                      //
-                      //   teamMembersCubit.deleteAllTeamMembersByIds(userTeamIds);
-                      // }
-                    },
-                    icon: const Icon(Icons.delete)),
-
-              if (Constants.currentEmployee!.permissions.contains(AppStrings.bulkActions))
-              if (cubit.selectedCustomersIds.isNotEmpty)
-                state is StartUpdateBulkCustomers
-                    ? const Center(
-                        child: SizedBox(
-                            height: 20.0,
-                            width: 20.0,
-                            child: CircularProgressIndicator()))
-                    : IconButton(
-                        onPressed: () async {
-                          Constants.showDialogBox(
-                              context: context,
-                              title: "العمليات المجمعة",
-                              content: BulkActionsWidget(
-                                onConfirmAction: (UpdateCustomerParam updateCustomerParam) {
-                                  cubit.updateBulkCustomers(updateCustomerParam);
-                                  Navigator.of(context).pop(true);
-                                },
-                                selectedCustomersIds:
-                                    cubit.selectedCustomersIds,
-                                teamMembersCubit:
-                                    BlocProvider.of<TeamMembersCubit>(context),
-                              ));
-                        },
-                        icon: const Icon(Icons.assignment_turned_in)),
-
-              if (Constants.currentEmployee!.permissions.contains(AppStrings.exportLeads))
-              if (cubit.selectedCustomersIds.isNotEmpty)
-              IconButton(onPressed: () {
-                Constants.showToast(msg: "not implemented yet", context: context);
-
-              }, icon: const FaIcon(FontAwesomeIcons.fileExport)),
-
-
-              state is StartRefreshCustomers || state is StartLoadingCustomers ?
-              const Center(child: SizedBox(
-                height: 20.0,
-                width: 20.0,
-                child: CircularProgressIndicator(),),)
-              :IconButton(onPressed: () {
-
-                Constants.refreshCustomers(cubit);
-
-              }, icon: const Icon(Icons.refresh))
+                        // if (response) {
+                        //   List<UserTeamIdModel> userTeamIds = teamMembersCubit.selectedTeamMembersIds.map((e) {
+                        //     return  UserTeamIdModel(employeeId: e, teamId: teamDetailsArgs.teamModel.teamId);
+                        //   }).toList();
+                        //
+                        //   teamMembersCubit.deleteAllTeamMembersByIds(userTeamIds);
+                        // }
+                      },
+                      icon: const Icon(Icons.delete)),
+              if (Constants.currentEmployee!.permissions
+                  .contains(AppStrings.bulkActions))
+                if (cubit.selectedCustomersIds.isNotEmpty)
+                  state is StartUpdateBulkCustomers
+                      ? const Center(
+                          child: SizedBox(
+                              height: 20.0,
+                              width: 20.0,
+                              child: CircularProgressIndicator()))
+                      : IconButton(
+                          onPressed: () async {
+                            Constants.showDialogBox(
+                                context: context,
+                                title: "العمليات المجمعة",
+                                content: BulkActionsWidget(
+                                  onConfirmAction: (UpdateCustomerParam
+                                      updateCustomerParam) {
+                                    cubit.updateBulkCustomers(
+                                        updateCustomerParam);
+                                    Navigator.of(context).pop(true);
+                                  },
+                                  selectedCustomersIds:
+                                      cubit.selectedCustomersIds,
+                                  teamMembersCubit:
+                                      BlocProvider.of<TeamMembersCubit>(
+                                          context),
+                                ));
+                          },
+                          icon: const Icon(Icons.assignment_turned_in)),
+              if (Constants.currentEmployee!.permissions
+                  .contains(AppStrings.exportLeads))
+                if (cubit.selectedCustomersIds.isNotEmpty)
+                  IconButton(
+                      onPressed: () {
+                        Constants.showToast(
+                            msg: "not implemented yet", context: context);
+                      },
+                      icon: const FaIcon(FontAwesomeIcons.fileExport)),
+              state is StartRefreshCustomers || state is StartLoadingCustomers
+                  ? const Center(
+                      child: SizedBox(
+                        height: 20.0,
+                        width: 20.0,
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : IconButton(
+                      onPressed: () {
+                        Constants.refreshCustomers(cubit);
+                      },
+                      icon: const Icon(Icons.refresh))
             ],
             showCheckboxColumn: true,
             onPageChanged: (pageIndex) {
@@ -177,17 +191,14 @@ class _CustomersScreenState extends State<CustomersScreen> {
                   .copyWith(pageNumber: Wrapped.value(pageIndex)));
 
               cubit.fetchCustomers();
-
             },
             onSelectAll: (val) {
-
               cubit.resetSelectedCustomers();
 
               // if (val != null && val) {
               // } else {
               //   cubit.resetSelectedCustomers();
               // }
-
             },
             source: CustomersDataTable(
               customerCubit: cubit,
@@ -228,7 +239,6 @@ class _CustomersScreenState extends State<CustomersScreen> {
         }
 
         if (state is EndUpdateBulkCustomers) {
-
           cubit.resetSelectedCustomers();
           Constants.showToast(
               msg: "تم تحديث العملاء", color: Colors.green, context: context);
@@ -250,9 +260,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
               customerCubit.updateFilter(customerCubit.customerFiltersModel
                   .copyWith(fullNameOrPhoneNumber: Wrapped.value(search)));
 
-
               Constants.refreshCustomers(customerCubit);
-
             },
             onCancelTapCallback: (isSearch) {
               if (!isSearch) {
@@ -262,7 +270,8 @@ class _CustomersScreenState extends State<CustomersScreen> {
 
                 Constants.refreshCustomers(customerCubit);
               }
-            }, teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context),
+            },
+            teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context),
           ),
           body: _buildBodyTable(cubit: customerCubit, state: state),
           drawer: CustomDrawer(customerCubit: customerCubit),
@@ -277,5 +286,3 @@ class _CustomersScreenState extends State<CustomersScreen> {
     widget._scrollController.dispose();
   }
 }
-
-

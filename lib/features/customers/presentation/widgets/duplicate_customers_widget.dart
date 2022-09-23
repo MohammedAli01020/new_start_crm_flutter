@@ -1,3 +1,4 @@
+import 'package:crm_flutter_project/features/customers/domain/use_cases/customer_use_cases.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../config/routes/app_routes.dart';
@@ -16,12 +17,12 @@ import 'package:crm_flutter_project/injection_container.dart' as di;
 
 import '../screens/customer_datails_screen.dart';
 class DuplicatesCustomers extends StatelessWidget {
-  final PhoneNumberModel phoneNumberModel;
+  final PhoneNumbersWrapper phoneNumbersWrapper;
   final CustomerCubit customerCubit;
   final TeamMembersCubit teamMembersCubit;
   final EmployeeCubit employeeCubit;
 
-  const DuplicatesCustomers({Key? key, required this.phoneNumberModel,
+  const DuplicatesCustomers({Key? key, required this.phoneNumbersWrapper,
     required this.customerCubit, required this.teamMembersCubit, required this.employeeCubit}) : super(key: key);
 
   @override
@@ -29,7 +30,7 @@ class DuplicatesCustomers extends StatelessWidget {
 
 
     return BlocProvider(
-      create:  (context) => di.sl<DuplicatesCubit>()..findDistinctCustomersByPhoneNumber(phoneNumberModel),
+      create:  (context) => di.sl<DuplicatesCubit>()..findDistinctCustomersByPhoneNumber(phoneNumbersWrapper),
       child: BlocBuilder<DuplicatesCubit, DuplicatesState>(
         builder: (context, state) {
           final cubit = DuplicatesCubit.get(context);
@@ -48,7 +49,7 @@ class DuplicatesCustomers extends StatelessWidget {
               child: ErrorItemWidget(
                 msg: state.msg,
                 onPress: () {
-                  cubit.findDistinctCustomersByPhoneNumber(phoneNumberModel);
+                  cubit.findDistinctCustomersByPhoneNumber(phoneNumbersWrapper);
                 },
               ),
             );

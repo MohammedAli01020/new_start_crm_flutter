@@ -26,6 +26,7 @@ import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../../core/utils/wrapper.dart';
+import '../../../../core/widgets/custom_edit_text.dart';
 import '../../../../core/widgets/error_item_widget.dart';
 import '../../../../core/widgets/waiting_item_widget.dart';
 import '../../../employees/data/models/employee_model.dart';
@@ -270,9 +271,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text("رقم العميل: " +
-                            cubit.currentCustomer.phoneNumber.phone),
-                        const Spacer(),
+                        Expanded(
+                          child: Text("ارقام العميل: " +
+                              cubit.currentCustomer.phoneNumbers.toString()),
+                        ),
+
                         if (Constants.currentEmployee!.permissions
                             .contains(AppStrings.editLeadPhone))
 
@@ -291,11 +294,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                                 Constants.showDialogBox(
                                     context: context, title: "تعديل رقم الهاتف",
                                     content: EditCustomerPhoneNumber(
-                                      phoneNumberModel: cubit.currentCustomer.phoneNumber,
-                                      onDoneCallback: (PhoneNumberModel updatedPhone) {
+                                      phoneNumbers:  cubit.currentCustomer.phoneNumbers,
+                                      onDoneCallback: (List<String> updatedPhoneNumbers) {
 
                                         cubit.updateCustomerPhone(UpdateCustomerPhoneNumberParam(
-                                            phoneNumber: updatedPhone,
+                                            phoneNumbers: updatedPhoneNumbers,
                                             updatedByEmployeeId: Constants.currentEmployee!.employeeId,
                                             customerId: cubit.currentCustomer.customerId
                                         ));
@@ -638,7 +641,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
             omDeleteCallback: () {},
 
 
-            withEdit: false,
+            withEdit: true,
             // withEdit: Constants.currentEmployee!.permissions
             //         .contains(AppStrings.editAllLeads) ||
             //     (Constants.currentEmployee!.permissions
@@ -733,10 +736,10 @@ class CustomerDetailsArgs {
 
 
 class EditCustomerPhoneNumber extends StatefulWidget {
-  final PhoneNumberModel phoneNumberModel;
+  final List<String> phoneNumbers;
   final Function onDoneCallback;
 
-  const EditCustomerPhoneNumber({Key? key, required this.phoneNumberModel,
+  const EditCustomerPhoneNumber({Key? key, required this.phoneNumbers,
     required this.onDoneCallback})
       : super(key: key);
 
@@ -747,17 +750,31 @@ class EditCustomerPhoneNumber extends StatefulWidget {
 
 class _EditCustomerPhoneNumberState extends State<EditCustomerPhoneNumber> {
   final formKey = GlobalKey<FormState>();
-  late PhoneNumberModel currentPhone;
+
+  final _firstPhoneController = TextEditingController();
+  final _secondPhoneController = TextEditingController();
+  late List<String> currentPhoneNumbers;
+
 
   @override
   void initState() {
     super.initState();
+    currentPhoneNumbers = widget.phoneNumbers;
 
-    currentPhone = PhoneNumberModel(
-      phone: widget.phoneNumberModel.phone.substring(1),
-      isoCode: widget.phoneNumberModel.isoCode,
-      countryCode: widget.phoneNumberModel.countryCode,
-    );
+    if (currentPhoneNumbers.length == 1) {
+      _firstPhoneController.text = currentPhoneNumbers.first;
+    } else if (currentPhoneNumbers.length == 2) {
+      _firstPhoneController.text = currentPhoneNumbers.first;
+      _secondPhoneController.text = currentPhoneNumbers.elementAt(1);
+    }
+
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _firstPhoneController.dispose();
+    _secondPhoneController.dispose();
   }
 
   @override
@@ -767,35 +784,63 @@ class _EditCustomerPhoneNumberState extends State<EditCustomerPhoneNumber> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          IntlPhoneField(
-            decoration: const InputDecoration(
-              labelText: 'رقم الهاتف',
-              border: OutlineInputBorder(
-                borderSide: BorderSide(),
-              ),
-            ),
-            validator: (v) {
-              if (v != null) {
-                return AppStrings.required;
-              }
 
-              return null;
-            },
-            invalidNumberMessage: "هذا الرقم غير صحيح",
-            initialValue: currentPhone.phone,
-            initialCountryCode: currentPhone.isoCode,
-            onChanged: (phone) {
-              currentPhone = PhoneNumberModel(
-                  phone: phone.number,
-                  isoCode: phone.countryISOCode,
-                  countryCode: phone.countryCode);
-            },
-          ),
+
+          CustomEditText(
+              controller: _firstPhoneController,
+              hint: "رقم الهاتف الأول",
+              maxLength: 50,
+              validator: (v) {
+                if (v == null || v.isEmpty) {
+                  return AppStrings.required;
+                }
+
+                if (v.length > 50) {
+                  return "اقصي عدد احرف 50";
+                }
+
+                return null;
+              },
+              inputType: TextInputType.phone),
+          const DefaultHeightSizedBox(),
+          CustomEditText(
+              controller: _secondPhoneController,
+              hint: "رقم الهاتف الأول",
+              maxLength: 50,
+              validator: (v) {
+
+                if (v != null && v.length > 50) {
+                  return "اقصي عدد احرف 50";
+                }
+
+                return null;
+              },
+              inputType: TextInputType.phone),
+          const DefaultHeightSizedBox(),
+
+
+
           DefaultButtonWidget(onTap: () {
-
             if (formKey.currentState!.validate()) {
 
-              widget.onDoneCallback(currentPhone);
+              if (_firstPhoneController.text.trim() == _secondPhoneController.text.trim() ) {
+                Constants.showToast(msg: "الرقمين متشابهين", context: context);
+                return;
+              }
+
+
+              if (_firstPhoneController.text.isNotEmpty && _secondPhoneController.text.isNotEmpty) {
+                currentPhoneNumbers = [
+                  _firstPhoneController.text.trim(),
+                  _secondPhoneController.text.trim()
+                ];
+              } else {
+                currentPhoneNumbers = [
+                  _firstPhoneController.text.trim()
+                ];
+              }
+
+              widget.onDoneCallback(currentPhoneNumbers);
               Navigator.pop(context);
             }
 
