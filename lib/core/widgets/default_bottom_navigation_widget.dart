@@ -37,6 +37,9 @@ class DefaultBottomNavigationWidget extends StatelessWidget {
           if (withEdit)
           Expanded(
               child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  primary: Theme.of(context).primaryColor
+                ),
             onPressed: onEditTapCallback,
             label: const Text("تعديل"),
             icon: const Icon(Icons.edit),
@@ -48,6 +51,9 @@ class DefaultBottomNavigationWidget extends StatelessWidget {
           if (withDelete)
             Expanded(
                 child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                        primary: Theme.of(context).primaryColor
+                    ),
                     icon: const Icon(Icons.delete),
                     onPressed: () async {
                       final result = await Constants.showConfirmDialog(

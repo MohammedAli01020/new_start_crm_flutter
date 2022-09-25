@@ -160,7 +160,8 @@ class TeamDetailsScreen extends StatelessWidget {
                     onSelect: (val,TeamMemberModel currentTeamMember) {
                       teamMembersCubit.updateSelectedTeamMembersIds(currentTeamMember.employee.employeeId, val);
                     },
-                    teamMembersCubit: teamMembersCubit)),
+                    teamMembersCubit: teamMembersCubit,
+                    context: context)),
           ),
         );
       },

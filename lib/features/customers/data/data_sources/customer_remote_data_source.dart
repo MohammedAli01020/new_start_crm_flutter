@@ -2,7 +2,6 @@ import 'package:crm_flutter_project/features/customers/data/models/customers_dat
 
 import '../../../../core/api/api_consumer.dart';
 import '../../../../core/api/end_points.dart';
-import '../../../employees/data/models/phoneNumber_model.dart';
 import '../../domain/use_cases/customer_use_cases.dart';
 import '../models/customer_filters_model.dart';
 import '../models/customer_model.dart';
@@ -48,6 +47,10 @@ abstract class CustomerRemoteDataSource {
 
   Future<CustomerModel> updateCustomerPhoneNumber(
       UpdateCustomerPhoneNumberParam updateCustomerPhoneNumberParam);
+
+  Future<CustomerModel> updateCustomerDevelopersAndProjects(
+      UpdateCustomerDevelopersAndProjectsParam updateCustomerDevelopersAndProjectsParam);
+
 }
 class CustomerRemoteDataSourceImpl implements CustomerRemoteDataSource {
   final ApiConsumer apiConsumer;
@@ -155,6 +158,14 @@ class CustomerRemoteDataSourceImpl implements CustomerRemoteDataSource {
   Future<CustomerModel> updateCustomerPhoneNumber(UpdateCustomerPhoneNumberParam updateCustomerPhoneNumberParam) async {
     final response = await apiConsumer.put(EndPoints.updateCustomerPhoneNumber,
         body: updateCustomerPhoneNumberParam.toJson());
+
+    return CustomerModel.fromJson(response);
+  }
+
+  @override
+  Future<CustomerModel> updateCustomerDevelopersAndProjects(UpdateCustomerDevelopersAndProjectsParam updateCustomerDevelopersAndProjectsParam) async {
+    final response = await apiConsumer.put(EndPoints.updateCustomerDevelopersAndProjects,
+        body: updateCustomerDevelopersAndProjectsParam.toJson());
 
     return CustomerModel.fromJson(response);
   }

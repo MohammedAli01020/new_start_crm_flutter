@@ -10,7 +10,6 @@ import 'package:crm_flutter_project/features/customers/data/models/customer_mode
 import 'package:crm_flutter_project/features/customers/domain/entities/customers_data.dart';
 
 import 'package:crm_flutter_project/features/customers/domain/use_cases/customer_use_cases.dart';
-import 'package:crm_flutter_project/features/employees/data/models/phoneNumber_model.dart';
 import 'package:crm_flutter_project/features/login/data/data_sources/login_local_data_source.dart';
 
 import 'package:dartz/dartz.dart';
@@ -173,6 +172,16 @@ class CustomerRepositoryImpl implements CustomerRepository {
       return Right(response);
     } on CacheException catch (e) {
       return Left(CacheFailure(msg: e.msg));
+    }
+  }
+
+  @override
+  Future<Either<Failure, CustomerModel>> updateCustomerDevelopersAndProjects(UpdateCustomerDevelopersAndProjectsParam updateCustomerDevelopersAndProjectsParam) async {
+    try {
+      final response = await customerRemoteDataSource.updateCustomerDevelopersAndProjects(updateCustomerDevelopersAndProjectsParam);
+      return Right(response);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(msg: e.msg));
     }
   }
 

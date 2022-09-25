@@ -1,9 +1,9 @@
 class EndPoints {
-  static const String baseUrl = 'http://192.168.1.38:5000/';
+  // static const String baseUrl = 'http://192.168.1.38:5000/';
 
   // static const String baseUrl = 'http://construction-env.eba-ttpmkd5p.us-east-1.elasticbeanstalk.com/';
 
-  // static const String baseUrl = 'http://newstart-env.eba-xhzfkni9.us-east-1.elasticbeanstalk.com/';
+  static const String baseUrl = 'http://newstart-env.eba-xhzfkni9.us-east-1.elasticbeanstalk.com/';
 
   static const String login = '${baseUrl}login';
 
@@ -29,6 +29,11 @@ class EndPoints {
   static const String updateCustomerAssignedEmployee = '${baseUrl}api/customers/update_assigned_employee';
   static const String deleteCustomerAssignedEmployee = '${baseUrl}api/customers/delete_assigned_employee';
   static const String updateCustomerPhoneNumber = '${baseUrl}api/customers/update_phone_number';
+
+  static const String updateCustomerDevelopersAndProjects = '${baseUrl}api/customers/update_developers_and_projects';
+
+
+
   // teams
   static const String modifyTeam = '${baseUrl}api/teams/modify';
   static const String pageTeam = '${baseUrl}api/teams/all';
@@ -63,6 +68,16 @@ class EndPoints {
   static const String allUnitTypes = '${baseUrl}api/unit_types/all';
   static const String deleteUnitType= '${baseUrl}api/unit_types/delete/id/';
 
+  // developers
+  static const String modifyDeveloper = '${baseUrl}api/developers/modify';
+  static const String allDevelopers = '${baseUrl}api/developers/all';
+  static const String deleteDeveloper= '${baseUrl}api/developers/delete/id/';
+
+  // projects
+  static const String modifyProject= '${baseUrl}api/projects/modify';
+  static const String allProjects = '${baseUrl}api/projects/all';
+  static const String deleteProject = '${baseUrl}api/projects/delete/id/';
+
   // permissions
   static const String allPermissions = '${baseUrl}api/permissions/all';
 
@@ -72,4 +87,7 @@ class EndPoints {
 
   // employees assigns_report
   static const String allEmployeeAssignsReports = '${baseUrl}api/employees/assigns_report';
+
+  // employees own_reports
+  static const String employeeOwnReports = '${baseUrl}api/statistics/employee';
 }

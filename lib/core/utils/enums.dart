@@ -26,13 +26,21 @@ enum SourceType { SELECT_SOURCES, VIEW_SOURCES }
 
 enum UnitTypesType { SELECT_UNIT_TYPES, VIEW_UNIT_TYPES }
 
+enum DevelopersType { SELECT_DEVELOPERS, VIEW_DEVELOPERS }
+
+
 enum ReminderTypes {
   ALL,
   DELAYED,
   NOW,
-  SKIP
+  SKIP,
+  NO_EVENT
 }
 
+enum TeamTypes {
+  ALL,
+  ME
+}
 
 enum PermissionsType {
   view_all_leads,

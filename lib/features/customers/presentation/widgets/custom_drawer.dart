@@ -2,6 +2,7 @@ import 'package:crm_flutter_project/core/utils/app_strings.dart';
 import 'package:crm_flutter_project/core/utils/enums.dart';
 import 'package:crm_flutter_project/core/utils/wrapper.dart';
 import 'package:crm_flutter_project/features/customers/presentation/cubit/customer_cubit.dart';
+import 'package:crm_flutter_project/features/developers_and_projects/presentation/screens/developers_screen.dart';
 import 'package:crm_flutter_project/features/events/presentation/screens/events_screen.dart';
 import 'package:crm_flutter_project/features/unit_types/presentation/screens/unit_types_screen.dart';
 import 'package:flutter/material.dart';
@@ -116,7 +117,8 @@ class CustomDrawer extends StatelessWidget {
 
             ),
 
-          if (Constants.currentEmployee!.permissions.contains(AppStrings.viewAllGroups))
+          if (Constants.currentEmployee!.permissions.contains(AppStrings.viewAllGroups) ||
+              Constants.currentEmployee!.permissions.contains(AppStrings.viewOwnGroups) )
           CustomListTile(
             title: 'المجموعات',
             trailing: const Icon(Icons.group_add),
@@ -177,12 +179,13 @@ class CustomDrawer extends StatelessWidget {
             ),
 
 
-
+          if (Constants.currentEmployee!.permissions.contains(AppStrings.viewDevelopers))
           CustomListTile(
             title: 'المطورين والمشاريع',
-            trailing: const Icon(Icons.settings),
+            trailing: const Icon(Icons.apartment_sharp),
             onTapCallback: () {
-              Navigator.popAndPushNamed(context, Routes.developersRoute);
+              Navigator.popAndPushNamed(context, Routes.developersRoute,
+              arguments: DevelopersArgs(developerType: DevelopersType.VIEW_DEVELOPERS.name));
             },
 
           ),
@@ -193,6 +196,15 @@ class CustomDrawer extends StatelessWidget {
             onTapCallback: () {
               Navigator.popAndPushNamed(context, Routes.customerTableConfigRoute,
               arguments: customerCubit);
+            },
+
+          ),
+
+          CustomListTile(
+            title: 'تقاريري',
+            trailing: const Icon(Icons.stacked_line_chart),
+            onTapCallback: () {
+              Navigator.popAndPushNamed(context, Routes.ownReportsRoute);
             },
 
           ),

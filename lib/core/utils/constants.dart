@@ -365,6 +365,8 @@ class Constants {
     }
   }
 
+
+  static bool isDark = false;
   static CurrentEmployee? currentEmployee;
 
   static CustomerTableConfigModel customerTableConfigModel =
@@ -497,6 +499,19 @@ class Constants {
     const PermissionModel(permissionId: 36, name: AppStrings.editEvents),
     const PermissionModel(permissionId: 37, name: AppStrings.createEvents),
     const PermissionModel(permissionId: 38, name: AppStrings.deleteEvents),
+  ];
+
+
+  // developers
+  // (68, 'مشاهدة المطورين'),
+  // (69, 'تعديل المطورين'),
+  // (70, 'إضافة المطورين'),
+  // (71, 'حذف المطورين')
+  static List<PermissionModel> developersPermissions = [
+    const PermissionModel(permissionId: 68, name: AppStrings.viewDevelopers),
+    const PermissionModel(permissionId: 69, name: AppStrings.editDevelopers),
+    const PermissionModel(permissionId: 70, name: AppStrings.createDevelopers),
+    const PermissionModel(permissionId: 71, name: AppStrings.deleteDevelopers),
   ];
 
   // projects

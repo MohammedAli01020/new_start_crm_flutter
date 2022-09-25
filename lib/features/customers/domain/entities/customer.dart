@@ -12,6 +12,7 @@ class Customer extends Equatable {
     required this.createDateTime,
     required this.description,
     required this.projects,
+    required this.developers,
     required this.unitTypes,
     required this.sources,
     required this.createdBy,
@@ -28,6 +29,9 @@ class Customer extends Equatable {
   final int createDateTime;
   final String? description;
   final List<String> projects;
+
+  final List<String> developers;
+
   final List<String> unitTypes;
   final List<String> sources;
   final EmployeeModel? createdBy;
@@ -47,6 +51,7 @@ class Customer extends Equatable {
         createDateTime,
         description,
         projects,
+        developers,
         unitTypes,
         sources,
         createdBy,

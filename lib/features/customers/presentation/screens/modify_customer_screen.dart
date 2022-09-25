@@ -1,8 +1,7 @@
 
-
 import 'package:crm_flutter_project/features/customers/data/models/customer_model.dart';
-
 import 'package:crm_flutter_project/features/customers/presentation/cubit/customer_cubit.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,6 +16,7 @@ import '../../../teams/presentation/cubit/team_members/team_members_cubit.dart';
 import '../../data/models/create_action_request_model.dart';
 import '../../domain/use_cases/customer_use_cases.dart';
 import '../widgets/assign_to_employee.dart';
+import '../widgets/pick_developers_and_prjects_types.dart';
 import '../widgets/pick_sources.dart';
 import '../widgets/pick_unit_types.dart';
 
@@ -47,6 +47,8 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
   List<String> projects = [];
   List<String> unitTypes = [];
   List<String> sources = [];
+
+  List<String> developers = [];
 
   late List<String> phoneNumbers;
 
@@ -93,7 +95,7 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
       sources = widget.modifyCustomerArgs.customerModel!.sources;
       projects = widget.modifyCustomerArgs.customerModel!.projects;
       unitTypes = widget.modifyCustomerArgs.customerModel!.unitTypes;
-
+      developers =  widget.modifyCustomerArgs.customerModel!.developers;
       _fullNameController.text =
           widget.modifyCustomerArgs.customerModel!.fullName;
 
@@ -224,13 +226,22 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
                       },
                     ),
                     const DefaultHeightSizedBox(),
-                    Card(
-                      child: ListTile(
-                        onTap: () {},
-                        title: const Text("اختر المطورين والمشاريع"),
-                        trailing: const Icon(Icons.arrow_forward_ios),
-                      ),
+
+                    PickDevelopersAndProjects(
+                      projects: projects,
+                      developers: developers,
+                      onRemoveCallback: () {
+                        projects = [];
+                        developers = [];
+                      },
+                      onPickedDevelopersAndProjectsCallback: (List<String> selectedDevelopers, List<String> selectedProjects) {
+                        projects = selectedProjects;
+                        developers  = selectedDevelopers;
+                      },
+
+
                     ),
+
                     const DefaultHeightSizedBox(),
                     PickSources(
                       onPickedSourcesCallback: (List<String> newSources) {
@@ -282,7 +293,7 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
                     const DefaultHeightSizedBox(),
                     CustomEditText(
                         controller: _secondPhoneController,
-                        hint: "رقم الهاتف الأول",
+                        hint: "رقم الهاتف الثاني",
                         maxLength: 50,
                         validator: (v) {
 
@@ -324,6 +335,7 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
                                 phoneNumbers: phoneNumbers,
                                 createDateTime: createDateTime,
                                 description: _descriptionController.text,
+                                developers: developers,
                                 projects: projects,
                                 unitTypes: unitTypes,
                                 sources: sources,

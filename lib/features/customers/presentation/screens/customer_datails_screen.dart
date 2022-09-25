@@ -1,9 +1,10 @@
 import 'dart:math';
 
+import 'package:crm_flutter_project/core/api/end_points.dart';
 import 'package:crm_flutter_project/core/utils/app_strings.dart';
 import 'package:crm_flutter_project/core/utils/media_query_values.dart';
 import 'package:crm_flutter_project/core/widgets/default_bottom_navigation_widget.dart';
-import 'package:crm_flutter_project/core/widgets/default_button_widget.dart';
+
 import 'package:crm_flutter_project/core/widgets/default_hieght_sized_box.dart';
 import 'package:crm_flutter_project/features/customer_logs/data/models/customer_log_model.dart';
 import 'package:crm_flutter_project/features/customer_logs/presentation/cubit/customer_logs_cubit.dart';
@@ -11,14 +12,13 @@ import 'package:crm_flutter_project/features/customers/data/models/customer_mode
 import 'package:crm_flutter_project/features/customers/domain/use_cases/customer_use_cases.dart';
 import 'package:crm_flutter_project/features/customers/presentation/cubit/customer_cubit.dart';
 import 'package:crm_flutter_project/features/customers/presentation/widgets/modify_customer_desc_widget.dart';
-import 'package:crm_flutter_project/features/employees/data/models/phoneNumber_model.dart';
+import 'package:crm_flutter_project/features/developers_and_projects/presentation/screens/developers_screen.dart';
 import 'package:crm_flutter_project/features/employees/presentation/cubit/employee_cubit.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_members/team_members_cubit.dart';
 import 'package:crm_flutter_project/features/unit_types/presentation/screens/unit_types_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:linkwell/linkwell.dart';
 
 import '../../../../config/routes/app_routes.dart';
@@ -26,12 +26,13 @@ import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../../core/utils/wrapper.dart';
-import '../../../../core/widgets/custom_edit_text.dart';
 import '../../../../core/widgets/error_item_widget.dart';
 import '../../../../core/widgets/waiting_item_widget.dart';
 import '../../../employees/data/models/employee_model.dart';
 import '../../../sources/presentation/screens/sources_screen.dart';
 import '../../../teams/presentation/screens/employee_picker_screen.dart';
+import '../widgets/customer_log_data_table.dart';
+import '../widgets/edit_customer_phone_widget.dart';
 import '../widgets/modify_customer_name_widget.dart';
 import 'modify_customer_screen.dart';
 
@@ -458,6 +459,59 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                     ],
                   ),
 
+                  const DefaultHeightSizedBox(),
+
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(child: Text("المطورين والمشاريع: " + cubit.currentCustomer
+                          .developers.toString() + ", " + cubit.currentCustomer
+                          .projects.toString(),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,)),
+
+                      if (Constants.currentEmployee!.permissions
+                          .contains(AppStrings.editDevelopers))
+                        state is StartUpdateCustomerDevelopersAndProjects
+                            ? const SizedBox(
+                            height: 20.0,
+                            width: 20.0,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ))
+                            :
+                        IconButton(
+                            onPressed: () async {
+                              final response = await Navigator.pushNamed(
+                                  context, Routes.developersRoute,
+                                  arguments: DevelopersArgs(
+                                      developerType: DevelopersType.SELECT_DEVELOPERS.name,
+                                      selectedProjectsNames: cubit.currentCustomer.projects,
+                                  selectedDevelopersNames: cubit.currentCustomer.developers));
+
+
+
+                              if (response != null && response is DeveloperResults) {
+
+                                cubit.updateCustomerDevelopersAndProjects(
+                                    UpdateCustomerDevelopersAndProjectsParam(
+                                        updatedByEmployeeId: Constants
+                                            .currentEmployee!.employeeId,
+                                        customerId: cubit.currentCustomer
+                                            .customerId,
+                                        updatedDevelopers: response.selectedDevelopers,
+                                    updatedProjects: response.selectedProjects));
+
+                              }
+
+                            },
+                            icon: const Icon(Icons.edit))
+                    ],
+                  ),
+
+                  const DefaultHeightSizedBox(),
+
+
 
                   const DefaultHeightSizedBox(),
                   if (Constants.currentEmployee!.permissions
@@ -641,7 +695,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
             omDeleteCallback: () {},
 
 
-            withEdit: true,
+            withEdit: false,
             // withEdit: Constants.currentEmployee!.permissions
             //         .contains(AppStrings.editAllLeads) ||
             //     (Constants.currentEmployee!.permissions
@@ -735,160 +789,7 @@ class CustomerDetailsArgs {
 }
 
 
-class EditCustomerPhoneNumber extends StatefulWidget {
-  final List<String> phoneNumbers;
-  final Function onDoneCallback;
-
-  const EditCustomerPhoneNumber({Key? key, required this.phoneNumbers,
-    required this.onDoneCallback})
-      : super(key: key);
-
-  @override
-  State<EditCustomerPhoneNumber> createState() =>
-      _EditCustomerPhoneNumberState();
-}
-
-class _EditCustomerPhoneNumberState extends State<EditCustomerPhoneNumber> {
-  final formKey = GlobalKey<FormState>();
-
-  final _firstPhoneController = TextEditingController();
-  final _secondPhoneController = TextEditingController();
-  late List<String> currentPhoneNumbers;
-
-
-  @override
-  void initState() {
-    super.initState();
-    currentPhoneNumbers = widget.phoneNumbers;
-
-    if (currentPhoneNumbers.length == 1) {
-      _firstPhoneController.text = currentPhoneNumbers.first;
-    } else if (currentPhoneNumbers.length == 2) {
-      _firstPhoneController.text = currentPhoneNumbers.first;
-      _secondPhoneController.text = currentPhoneNumbers.elementAt(1);
-    }
-
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _firstPhoneController.dispose();
-    _secondPhoneController.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: formKey,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-
-
-          CustomEditText(
-              controller: _firstPhoneController,
-              hint: "رقم الهاتف الأول",
-              maxLength: 50,
-              validator: (v) {
-                if (v == null || v.isEmpty) {
-                  return AppStrings.required;
-                }
-
-                if (v.length > 50) {
-                  return "اقصي عدد احرف 50";
-                }
-
-                return null;
-              },
-              inputType: TextInputType.phone),
-          const DefaultHeightSizedBox(),
-          CustomEditText(
-              controller: _secondPhoneController,
-              hint: "رقم الهاتف الأول",
-              maxLength: 50,
-              validator: (v) {
-
-                if (v != null && v.length > 50) {
-                  return "اقصي عدد احرف 50";
-                }
-
-                return null;
-              },
-              inputType: TextInputType.phone),
-          const DefaultHeightSizedBox(),
 
 
 
-          DefaultButtonWidget(onTap: () {
-            if (formKey.currentState!.validate()) {
 
-              if (_firstPhoneController.text.trim() == _secondPhoneController.text.trim() ) {
-                Constants.showToast(msg: "الرقمين متشابهين", context: context);
-                return;
-              }
-
-
-              if (_firstPhoneController.text.isNotEmpty && _secondPhoneController.text.isNotEmpty) {
-                currentPhoneNumbers = [
-                  _firstPhoneController.text.trim(),
-                  _secondPhoneController.text.trim()
-                ];
-              } else {
-                currentPhoneNumbers = [
-                  _firstPhoneController.text.trim()
-                ];
-              }
-
-              widget.onDoneCallback(currentPhoneNumbers);
-              Navigator.pop(context);
-            }
-
-          }, text: "تأكيد")
-        ],
-      ),
-    );
-  }
-}
-
-
-class CustomerLogsDataTable extends DataTableSource {
-  final CustomerLogsCubit customerLogsCubit;
-  final Function onSelect;
-
-  CustomerLogsDataTable({
-    required this.customerLogsCubit,
-    required this.onSelect,
-  });
-
-  @override
-  DataRow? getRow(int index) {
-    final currentCustomerLog = customerLogsCubit.customerLogs[index];
-
-    return DataRow.byIndex(
-        index: index,
-        onSelectChanged: (val) {
-          onSelect(val, currentCustomerLog);
-        },
-        cells: [
-          DataCell(SizedBox(
-            width: 300.0,
-            child: Text(
-              currentCustomerLog.description.toString(),
-              maxLines: 3,
-            ),
-          )),
-          DataCell(
-              Text(Constants.timeAgoSinceDate(currentCustomerLog.dateTime))),
-        ]);
-  }
-
-  @override
-  bool get isRowCountApproximate => false;
-
-  @override
-  int get rowCount => customerLogsCubit.customerLogTotalElements;
-
-  @override
-  int get selectedRowCount => 0;
-}

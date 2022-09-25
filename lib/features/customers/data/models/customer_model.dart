@@ -12,6 +12,9 @@ class CustomerModel extends Customer {
       required int createDateTime,
       required String? description,
       required List<String> projects,
+
+      required List<String> developers,
+
       required List<String> unitTypes,
       required List<String> sources,
       required EmployeeModel? createdBy,
@@ -28,6 +31,7 @@ class CustomerModel extends Customer {
             createDateTime: createDateTime,
             description: description,
             projects: projects,
+            developers: developers,
             unitTypes: unitTypes,
             sources: sources,
             createdBy: createdBy,
@@ -44,6 +48,10 @@ class CustomerModel extends Customer {
         phoneNumbers: List<String>.from(json["phoneNumbers"].map((x) => x)),
         createDateTime: json["createDateTime"],
         description: json["description"],
+
+    developers: json["developers"] != null
+        ? List<String>.from(json["developers"].map((x) => x))
+        : [],
         projects: json["projects"] != null
             ? List<String>.from(json["projects"].map((x) => x))
             : [],
@@ -75,6 +83,7 @@ class CustomerModel extends Customer {
         "phoneNumbers": List<String>.from(phoneNumbers.map((x) => x)),
         "createDateTime": createDateTime,
         "description": description,
+        "developers": List<String>.from(developers.map((x) => x)),
         "projects": List<String>.from(projects.map((x) => x)),
         "unitTypes": List<String>.from(unitTypes.map((x) => x)),
         "sources": List<String>.from(sources.map((x) => x)),
@@ -93,6 +102,8 @@ class CustomerModel extends Customer {
     Wrapped<int>? createDateTime,
     Wrapped<String?>? description,
     Wrapped<List<String>>? projects,
+    Wrapped<List<String>>? developers,
+
     Wrapped<List<String>>? unitTypes,
     Wrapped<List<String>>? sources,
     Wrapped<EmployeeModel?>? createdBy,
@@ -110,6 +121,8 @@ class CustomerModel extends Customer {
         createDateTime:
             createDateTime != null ? createDateTime.value : this.createDateTime,
         description: description != null ? description.value : this.description,
+        developers: developers != null ? developers.value : this.developers,
+
         projects: projects != null ? projects.value : this.projects,
         unitTypes: unitTypes != null ? unitTypes.value : this.unitTypes,
         sources: sources != null ? sources.value : this.sources,

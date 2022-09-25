@@ -1,3 +1,7 @@
+import 'package:crm_flutter_project/core/utils/app_strings.dart';
+import 'package:crm_flutter_project/core/utils/constants.dart';
+import 'package:crm_flutter_project/core/utils/enums.dart';
+
 import '../../../../core/utils/wrapper.dart';
 import '../../domain/entities/team_filters.dart';
 
@@ -11,7 +15,8 @@ class TeamFiltersModel extends TeamFilters {
       required String? search,
       required int? teamLeaderId,
       required int? startDateTime,
-      required int? endDateTime})
+      required int? endDateTime,
+      required String teamTypes})
       : super(
             pageNumber: pageNumber,
             pageSize: pageSize,
@@ -21,7 +26,8 @@ class TeamFiltersModel extends TeamFilters {
             search: search,
             teamLeaderId: teamLeaderId,
             startDateTime: startDateTime,
-            endDateTime: endDateTime);
+            endDateTime: endDateTime,
+            teamTypes: teamTypes);
 
   factory TeamFiltersModel.fromJson(Map<String, dynamic> json) =>
       TeamFiltersModel(
@@ -34,6 +40,7 @@ class TeamFiltersModel extends TeamFilters {
         teamLeaderId: json["teamLeaderId"],
         startDateTime: json["startDateTime"],
         endDateTime: json["endDateTime"],
+        teamTypes: json["teamTypes"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -46,6 +53,7 @@ class TeamFiltersModel extends TeamFilters {
         "teamLeaderId": teamLeaderId,
         "startDateTime": startDateTime,
         "endDateTime": endDateTime,
+        "teamTypes": teamTypes
       };
 
   TeamFiltersModel copyWith({
@@ -58,6 +66,7 @@ class TeamFiltersModel extends TeamFilters {
     Wrapped<int?>? teamLeaderId,
     Wrapped<int?>? startDateTime,
     Wrapped<int?>? endDateTime,
+    Wrapped<String>? teamTypes,
   }) {
     return TeamFiltersModel(
       pageNumber: pageNumber != null ? pageNumber.value : this.pageNumber,
@@ -74,19 +83,30 @@ class TeamFiltersModel extends TeamFilters {
       startDateTime:
           startDateTime != null ? startDateTime.value : this.startDateTime,
       endDateTime: endDateTime != null ? endDateTime.value : this.endDateTime,
+      teamTypes: teamTypes != null ? teamTypes.value : this.teamTypes,
     );
   }
 
   factory TeamFiltersModel.initial() {
-    return const TeamFiltersModel(
+    return TeamFiltersModel(
         pageNumber: 0,
         pageSize: 35,
         sortDirection: "DESC",
         sortBy: "createDateTime",
         endDateTime: null,
         startDateTime: null,
-        createdByEmployeeId: null,
+        createdByEmployeeId: Constants.currentEmployee!.permissions
+                .contains(AppStrings.viewOwnGroups)
+            ? Constants.currentEmployee!.employeeId
+            : null,
         search: null,
-        teamLeaderId: null);
+        teamLeaderId: Constants.currentEmployee!.permissions
+                .contains(AppStrings.viewOwnGroups)
+            ? Constants.currentEmployee!.employeeId
+            : null,
+        teamTypes: Constants.currentEmployee!.permissions
+                .contains(AppStrings.viewOwnGroups)
+            ? TeamTypes.ME.name
+            : TeamTypes.ALL.name);
   }
 }

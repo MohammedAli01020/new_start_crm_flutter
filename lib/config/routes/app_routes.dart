@@ -7,7 +7,9 @@ import 'package:crm_flutter_project/features/customer_table_config/presentation/
 import 'package:crm_flutter_project/features/customers/presentation/screens/customer_datails_screen.dart';
 import 'package:crm_flutter_project/features/customers/presentation/screens/customers_screen.dart';
 import 'package:crm_flutter_project/features/customers/presentation/screens/modify_customer_screen.dart';
+import 'package:crm_flutter_project/features/developers_and_projects/domain/use_cases/projects_use_case.dart';
 import 'package:crm_flutter_project/features/developers_and_projects/presentation/screens/developers_screen.dart';
+import 'package:crm_flutter_project/features/developers_and_projects/presentation/screens/projects_screen.dart';
 import 'package:crm_flutter_project/features/employees/data/models/employee_filters_model.dart';
 import 'package:crm_flutter_project/features/employees/data/models/role_model.dart';
 import 'package:crm_flutter_project/features/employees/presentation/screens/employee_details_screen.dart';
@@ -15,6 +17,7 @@ import 'package:crm_flutter_project/features/employees/presentation/screens/modi
 import 'package:crm_flutter_project/features/employees/presentation/screens/modify_role_screen.dart';
 import 'package:crm_flutter_project/features/events/presentation/screens/events_screen.dart';
 import 'package:crm_flutter_project/features/global_reports/presentation/screens/global_reports_screen.dart';
+import 'package:crm_flutter_project/features/own_reports/presentation/screens/own_reports_screen.dart';
 import 'package:crm_flutter_project/features/sources/presentation/screens/sources_screen.dart';
 import 'package:crm_flutter_project/features/teams/data/models/team_members_filters_model.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/employee_picker_screen.dart';
@@ -30,11 +33,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/utils/app_strings.dart';
 import '../../features/customer_logs/presentation/cubit/customer_logs_cubit.dart';
 import '../../features/customers/presentation/cubit/customer_cubit.dart';
+import '../../features/developers_and_projects/presentation/cubit/developer/developer_cubit.dart';
+import '../../features/developers_and_projects/presentation/cubit/project/project_cubit.dart';
 import '../../features/employees/presentation/cubit/employee_cubit.dart';
 import '../../features/employees/presentation/screens/employees_screen.dart';
 import '../../features/events/presentation/cubit/event_cubit.dart';
 import '../../features/global_reports/presentation/cubit/global_reports_cubit.dart';
 import '../../features/login/presentation/screens/login_screen.dart';
+import '../../features/own_reports/presentation/cubit/own_reports_cubit.dart';
 import '../../features/permissions/presentation/cubit/permission_cubit.dart';
 import '../../features/sources/presentation/cubit/source_cubit.dart';
 import '../../features/teams/presentation/cubit/team_cubit.dart';
@@ -70,6 +76,7 @@ class Routes {
   // unit_types
   static const String unitTypesRoute = '/unitTypesRoute';
 
+
   // roles
   static const String modifyRole = '/modifyRole';
 
@@ -86,6 +93,10 @@ class Routes {
   // developers_and_projects
   static const String developersRoute = '/developersRoute';
   static const String projectsRoute = '/projectsRoute';
+
+  // own_reports
+  static const String ownReportsRoute = '/ownReportsRoute';
+
 }
 
 
@@ -458,8 +469,53 @@ class AppRoutes {
             settings: routeSettings,
             builder: ((context) {
 
-              return const DevelopersScreen();
+              final developersArgs = routeSettings.arguments as DevelopersArgs;
+
+              return BlocProvider(
+                create: (context) {
+                  return di.sl<DeveloperCubit>()..setSelectedDevelopers(developersArgs.selectedDevelopersNames ?? [])
+                    ..setSelectedProjects(developersArgs.selectedProjectsNames ?? [])
+                    ..getAllDevelopersByNameLike();
+                },
+                child: DevelopersScreen(developersArgs: developersArgs,),
+              );
             }));
+
+
+      case Routes.projectsRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+
+              final projectsArgs = routeSettings.arguments as ProjectsArgs;
+
+              return BlocProvider(
+                create: (context) {
+                  return di.sl<ProjectCubit>()..setSelectedProjects(projectsArgs.selectedProjectsNames ?? [])
+                    ..getAllProjectsWithFilters(ProjectFilters(
+                        developerId: projectsArgs.developerModel.developerId
+                    ));
+                },
+                child: ProjectsScreen(projectsArgs: projectsArgs,),
+              );
+
+            }));
+
+
+      case Routes.ownReportsRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+
+              return BlocProvider(
+                create: (context) {
+                  return di.sl<OwnReportsCubit>()..fetchEmployeeReports();
+                },
+                child: const OwnReportsScreen(),
+              );
+
+            }));
+
 
       default:
         return undefinedRoute();

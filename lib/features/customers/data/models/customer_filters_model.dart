@@ -16,7 +16,9 @@ class CustomerFiltersModel extends CustomerFilters {
       required int? teamId,
       required String? reminderTypes,
       required List<String>? unitTypes,
-      required List<String>? sources})
+      required List<String>? sources,
+      required List<String>? projects,
+      required List<String>? developers})
       : super(
             pageNumber: pageNumber,
             pageSize: pageSize,
@@ -31,24 +33,29 @@ class CustomerFiltersModel extends CustomerFilters {
             teamId: teamId,
             reminderTypes: reminderTypes,
             unitTypes: unitTypes,
-            sources: sources);
+            sources: sources,
+            projects: projects,
+            developers: developers);
 
   factory CustomerFiltersModel.fromJson(Map<String, dynamic> json) =>
       CustomerFiltersModel(
-          pageNumber: json["pageNumber"],
-          pageSize: json["pageSize"],
-          sortDirection: json["sortDirection"],
-          sortBy: json["sortBy"],
-          fullNameOrPhoneNumber: json["fullNameOrPhoneNumber"],
-          customerTypes: json["customerTypes"],
-          lastEventIds: json["lastEventIds"],
-          startDateTime: json["startDateTime"],
-          endDateTime: json["endDateTime"],
-          employeeId: json["employeeId"],
-          teamId: json["teamId"],
-          reminderTypes: json["reminderTypes"],
-          unitTypes: json["unitTypes"],
-          sources: json["sources"]);
+        pageNumber: json["pageNumber"],
+        pageSize: json["pageSize"],
+        sortDirection: json["sortDirection"],
+        sortBy: json["sortBy"],
+        fullNameOrPhoneNumber: json["fullNameOrPhoneNumber"],
+        customerTypes: json["customerTypes"],
+        lastEventIds: json["lastEventIds"],
+        startDateTime: json["startDateTime"],
+        endDateTime: json["endDateTime"],
+        employeeId: json["employeeId"],
+        teamId: json["teamId"],
+        reminderTypes: json["reminderTypes"],
+        unitTypes: json["unitTypes"],
+        sources: json["sources"],
+        projects: json["projects"],
+        developers: json["developers"],
+      );
 
   Map<String, dynamic> toJson() => {
         "pageNumber": pageNumber,
@@ -64,7 +71,9 @@ class CustomerFiltersModel extends CustomerFilters {
         "teamId": teamId,
         "reminderTypes": reminderTypes,
         "unitTypes": unitTypes,
-        "sources": sources
+        "sources": sources,
+        "projects": projects,
+        "developers": developers
       };
 
   CustomerFiltersModel copyWith({
@@ -82,6 +91,8 @@ class CustomerFiltersModel extends CustomerFilters {
     Wrapped<String?>? reminderTypes,
     Wrapped<List<String>?>? unitTypes,
     Wrapped<List<String>?>? sources,
+    Wrapped<List<String>?>? projects,
+    Wrapped<List<String>?>? developers,
   }) {
     return CustomerFiltersModel(
       pageNumber: pageNumber != null ? pageNumber.value : this.pageNumber,
@@ -105,6 +116,8 @@ class CustomerFiltersModel extends CustomerFilters {
           reminderTypes != null ? reminderTypes.value : this.reminderTypes,
       unitTypes: unitTypes != null ? unitTypes.value : this.unitTypes,
       sources: sources != null ? sources.value : this.sources,
+      projects: projects != null ? projects.value : this.projects,
+      developers: developers != null ? developers.value : this.developers,
     );
   }
 
@@ -123,6 +136,8 @@ class CustomerFiltersModel extends CustomerFilters {
         customerTypes: null,
         reminderTypes: null,
         unitTypes: null,
-        sources: null);
+        sources: null,
+        projects: null,
+        developers: null);
   }
 }

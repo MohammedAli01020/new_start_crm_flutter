@@ -329,6 +329,29 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                         width: context.width,
                         padding: const EdgeInsets.all(16.0),
                         color: Colors.blueGrey[100],
+                        child: const Text("اذونات المطورين")),
+                  ),
+                  SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final currentPermission = Constants.developersPermissions[index];
+                        return CheckboxListTile(
+                            value: permissionCubit.selectedPermissions
+                                .contains(currentPermission),
+                            title: Text(currentPermission.name),
+                            selected: permissionCubit.selectedPermissions
+                                .contains(currentPermission),
+                            onChanged: (val) {
+                              permissionCubit
+                                  .updateSelectedPermissions(currentPermission);
+                            });
+                      }, childCount: Constants.developersPermissions.length)),
+
+
+                  SliverToBoxAdapter(
+                    child: Container(
+                        width: context.width,
+                        padding: const EdgeInsets.all(16.0),
+                        color: Colors.blueGrey[100],
                         child: const Text("اذونات المشاريع")),
                   ),
                   SliverList(

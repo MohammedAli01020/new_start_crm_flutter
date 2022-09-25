@@ -94,6 +94,10 @@ class _CustomersScreenState extends State<CustomersScreen> {
                 const DataColumn(label: Text('المصادر')),
               if (Constants.customerTableConfigModel.showUnitTypes)
                 const DataColumn(label: Text('الاهتمامات')),
+              if (Constants.customerTableConfigModel.showDevelopers)
+                const DataColumn(label: Text('المطورين')),
+              if (Constants.customerTableConfigModel.showProjects)
+                const DataColumn(label: Text('المشاريع')),
               if (Constants.customerTableConfigModel.showLastActionTime)
                 const DataColumn(label: Text('اخر تحديث للحالة')),
               if (Constants.customerTableConfigModel.showLastComment)

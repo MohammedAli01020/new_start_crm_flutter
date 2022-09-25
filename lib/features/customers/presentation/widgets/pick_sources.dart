@@ -8,6 +8,8 @@ class PickSources extends StatefulWidget {
   final List<String> sources;
   final Function onPickedSourcesCallback;
   final VoidCallback onRemoveCallback;
+
+
   const PickSources({Key? key, required this.sources,
     required this.onPickedSourcesCallback,
     required this.onRemoveCallback}) : super(key: key);
@@ -35,8 +37,6 @@ class _PickSourcesState extends State<PickSources> {
           child: Card(
             child: ListTile(
               onTap: () async {
-
-
                 final pickedSources = await Navigator.pushNamed(context, Routes.sourcesRoute,
                     arguments: SourcesArgs(sourceType: SourceType.SELECT_SOURCES.name,
                         selectedSourcesNames: selectedSources));

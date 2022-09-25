@@ -16,7 +16,9 @@ import '../screens/modify_customer_screen.dart';
 import 'CustomerTypePicker.dart';
 import 'DateFilterPicker.dart';
 import 'ReminderTypePicker.dart';
+import 'developers_picker.dart';
 import 'event_picker.dart';
+import 'projects_picker.dart';
 
 class CustomersAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Function onSearchChangeCallback;
@@ -207,17 +209,17 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                         widget.customerCubit.selectedEvents ?? [],
                         onConfirmCallback: (List<EventModel> selected) {
 
-                          widget.customerCubit.updateFilter(widget
-                              .customerCubit.customerFiltersModel
-                              .copyWith(
-                              lastEventIds: Wrapped.value(selected.isEmpty
-                                  ? null
-                                  : selected
-                                  .map((e) => e.eventId)
-                                  .toList())));
+                            widget.customerCubit.updateFilter(widget
+                                .customerCubit.customerFiltersModel
+                                .copyWith(
+                                lastEventIds: Wrapped.value(selected.isEmpty
+                                    ? null
+                                    : selected
+                                    .map((e) => e.eventId)
+                                    .toList())));
 
-                          widget.customerCubit.updateSelectedEvents(
-                              selected.isEmpty ? null : selected);
+                            widget.customerCubit.updateSelectedEvents(
+                                selected.isEmpty ? null : selected);
 
                           Constants.refreshCustomers(widget.customerCubit);
 
@@ -406,6 +408,115 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                                   null &&
                                   widget
                                       .customerCubit.selectedSources!.isNotEmpty
+                                  ? AppColors.primary
+                                  : Colors.grey),
+                        ],
+                      ))),
+
+
+              GestureDetector(
+                  onTap: () {
+                    Constants.showDialogBox(
+                        context: context,
+                        title: "فلتر حسب المطورين",
+                        content: DevelopersPicker(
+                          selectedDevelopers: widget.customerCubit.customerFiltersModel.developers ?? [],
+                          onConfirmCallback: (List<String> selectedDevelopers) {
+
+                            widget.customerCubit.updateFilter(widget
+                                .customerCubit.customerFiltersModel
+                                .copyWith(
+                                developers: Wrapped.value(selectedDevelopers.isEmpty
+                                    ? null
+                                    : selectedDevelopers)));
+
+                            widget.customerCubit.updateSelectedDevelopers(
+                                selectedDevelopers.isEmpty ? null : selectedDevelopers);
+
+                            Constants.refreshCustomers(widget.customerCubit);
+                            Navigator.of(context).pop(false);
+                          },
+
+
+                        )
+                    );
+                  },
+                  child: FilterField(
+                      text: Row(
+                        children: [
+                          Text(
+                            widget.customerCubit.selectedDevelopers != null &&
+                                widget.customerCubit.selectedDevelopers!.isNotEmpty
+                                ? (widget.customerCubit.selectedDevelopers!.length >
+                                1
+                                ? widget.customerCubit.selectedDevelopers!
+                                .sublist(0, 1)
+                                .toString() +
+                                ", ${widget.customerCubit.selectedDevelopers!
+                                    .length - 1} other"
+                                : widget.customerCubit.selectedDevelopers!
+                                .toString())
+                                : "كل المطورين",
+                          ),
+                          Icon(Icons.arrow_drop_down,
+                              color: widget.customerCubit.selectedDevelopers !=
+                                  null &&
+                                  widget
+                                      .customerCubit.selectedDevelopers!.isNotEmpty
+                                  ? AppColors.primary
+                                  : Colors.grey),
+                        ],
+                      ))),
+
+
+              GestureDetector(
+                  onTap: () {
+                    Constants.showDialogBox(
+                        context: context,
+                        title: "فلتر حسب المشاريع",
+                        content: ProjectsPicker(
+                          selectedProjects: widget.customerCubit.customerFiltersModel.projects ?? [],
+                          onConfirmCallback: (List<String> selectedProjects) {
+
+                            widget.customerCubit.updateFilter(widget
+                                .customerCubit.customerFiltersModel
+                                .copyWith(
+                                projects: Wrapped.value(selectedProjects.isEmpty
+                                    ? null
+                                    : selectedProjects)));
+
+                            widget.customerCubit.updateSelectedProjects(
+                                selectedProjects.isEmpty ? null : selectedProjects);
+
+                            Constants.refreshCustomers(widget.customerCubit);
+                            Navigator.of(context).pop(false);
+                          },
+
+                        )
+                    );
+                  },
+                  child: FilterField(
+                      text: Row(
+                        children: [
+                          Text(
+                            widget.customerCubit.selectedProjects != null &&
+                                widget.customerCubit.selectedProjects!.isNotEmpty
+                                ? (widget.customerCubit.selectedProjects!.length >
+                                1
+                                ? widget.customerCubit.selectedProjects!
+                                .sublist(0, 1)
+                                .toString() +
+                                ", ${widget.customerCubit.selectedProjects!
+                                    .length - 1} other"
+                                : widget.customerCubit.selectedProjects!
+                                .toString())
+                                : "كل المشاريع",
+                          ),
+                          Icon(Icons.arrow_drop_down,
+                              color: widget.customerCubit.selectedProjects !=
+                                  null &&
+                                  widget
+                                      .customerCubit.selectedProjects!.isNotEmpty
                                   ? AppColors.primary
                                   : Colors.grey),
                         ],

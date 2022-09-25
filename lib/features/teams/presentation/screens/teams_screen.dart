@@ -13,6 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:number_paginator/number_paginator.dart';
 import '../../../../config/routes/app_routes.dart';
 import '../../../../core/widgets/error_item_widget.dart';
+import '../widgets/teams_app_bar.dart';
 
 class TeamsScreen extends StatelessWidget {
   const TeamsScreen({Key? key}) : super(key: key);
@@ -147,19 +148,25 @@ class TeamsScreen extends StatelessWidget {
       builder: (context, state) {
         final teamCubit = TeamCubit.get(context);
         return Scaffold(
-          appBar: AppBar(title: const Text("المجموعات"),
-          actions: [
-            if (Constants.currentEmployee!.permissions.contains(AppStrings.createGroups))
-            IconButton(onPressed: () {
+          appBar: TeamsAppBar(
+            onSearchChangeCallback: (String search) {
+              teamCubit.updateFilter(teamCubit.teamFiltersModel.copyWith(
+                search: Wrapped.value(search)
+              ));
 
-                Navigator.pushNamed(context, Routes.modifyTeamRoute,
-                  arguments: ModifyTeamArgs(
-                      teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context),
-                      teamCubit: teamCubit,
-                      fromRoute: Routes.teamsRoute),);
+              teamCubit.fetchTeams(isWebPagination: true, refresh: true);
+            },
+            onCancelTapCallback: () {
 
-            }, icon: const Icon(Icons.group_add))
-          ],),
+              teamCubit.updateFilter(teamCubit.teamFiltersModel.copyWith(
+                  search: const Wrapped.value(null)
+              ));
+
+              teamCubit.fetchTeams(isWebPagination: true, refresh: true);
+            },
+            teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context),
+            teamCubit: teamCubit,
+          ),
           body: _buildBody(context: context, state: state, cubit: teamCubit),
         );
       },

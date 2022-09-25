@@ -51,6 +51,20 @@ class CustomEditText extends StatelessWidget {
       style: const TextStyle(fontSize: 20.0),
       keyboardType: inputType,
       decoration: InputDecoration(
+
+        border: const OutlineInputBorder(
+          // borderRadius: BorderRadius.all(Radius.circular(32.0)),
+        ),
+        enabledBorder: const OutlineInputBorder(
+          borderSide: BorderSide(width: 1.0),
+          // borderRadius: BorderRadius.all(Radius.circular(32.0)),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide( width: 2.0),
+          // borderRadius: BorderRadius.all(Radius.circular(32.0)),
+        ),
+
+
           labelText: label,
           hintText: hint,
           prefixIcon: prefixIcon,

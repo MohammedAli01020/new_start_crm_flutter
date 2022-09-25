@@ -63,6 +63,7 @@ class _EventsAppBarState extends State<EventsAppBar> {
 
 
         if (Constants.currentEmployee!.permissions.contains(AppStrings.createEvents))
+            if (widget.eventType == EventType.VIEW_EVENTS.name)
         IconButton(onPressed: widget.onNewTapCallback,
             icon: const Icon(Icons.add))
 

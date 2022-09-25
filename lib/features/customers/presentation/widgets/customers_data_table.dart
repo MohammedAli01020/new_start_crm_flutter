@@ -312,6 +312,35 @@ class CustomersDataTable extends DataTableSource {
             maxLines: 1,
           )),
 
+
+          if (Constants.customerTableConfigModel.showDevelopers)
+            DataCell(Text(
+              currentCustomer.developers.isNotEmpty
+                  ? currentCustomer.developers.length > 2
+                  ? currentCustomer.developers
+                  .sublist(0, 2)
+                  .map((e) => e)
+                  .toString() +
+                  ", ${currentCustomer.developers.length - 2} "
+                  : currentCustomer.developers.map((e) => e).toString()
+                  : "لا يوجد",
+              maxLines: 1,
+            )),
+
+          if (Constants.customerTableConfigModel.showProjects)
+            DataCell(Text(
+              currentCustomer.projects.isNotEmpty
+                  ? currentCustomer.projects.length > 2
+                  ? currentCustomer.projects
+                  .sublist(0, 2)
+                  .map((e) => e)
+                  .toString() +
+                  ", ${currentCustomer.projects.length - 2} "
+                  : currentCustomer.projects.map((e) => e).toString()
+                  : "لا يوجد",
+              maxLines: 1,
+            )),
+
           if (Constants.customerTableConfigModel.showLastActionTime)
           DataCell(Text(Constants.timeAgoSinceDate(
               currentCustomer.lastAction?.dateTime))),

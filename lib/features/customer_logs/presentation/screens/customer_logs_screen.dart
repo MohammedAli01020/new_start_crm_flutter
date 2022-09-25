@@ -1,5 +1,7 @@
+import 'package:crm_flutter_project/core/utils/app_strings.dart';
 import 'package:crm_flutter_project/core/utils/constants.dart';
 import 'package:crm_flutter_project/core/utils/media_query_values.dart';
+import 'package:crm_flutter_project/core/widgets/default_hieght_sized_box.dart';
 import 'package:crm_flutter_project/features/customer_logs/presentation/cubit/customer_logs_cubit.dart';
 import 'package:crm_flutter_project/features/customers/data/models/customer_model.dart';
 import 'package:crm_flutter_project/features/customers/presentation/cubit/customer_cubit.dart';
@@ -9,6 +11,7 @@ import 'package:crm_flutter_project/features/employees/presentation/cubit/employ
 import 'package:crm_flutter_project/features/employees/presentation/screens/employee_details_screen.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_members/team_members_cubit.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/employee_picker_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linkwell/linkwell.dart';
@@ -33,6 +36,7 @@ class CustomerLogsScreen extends StatelessWidget {
 
   Widget _buildList(CustomerLogsCubit customerLogsCubit,
       CustomerLogsState state, BuildContext context) {
+
     // if (state is StartRefreshCustomerLogs ||
     //     state is StartLoadingCustomerLogs) {
     //   return const Center(child: CircularProgressIndicator());
@@ -55,11 +59,18 @@ class CustomerLogsScreen extends StatelessWidget {
     }
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Visibility(
             visible: state is StartRefreshCustomerLogs ||
                 state is StartLoadingCustomerLogs,
             child: const LinearProgressIndicator()),
+
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text("النتائج: ${customerLogsCubit.customerLogTotalElements}"),
+        ),
+
         Expanded(
           child: ListView.separated(
             itemBuilder: (context, index) {
@@ -219,6 +230,7 @@ class CustomerLogsScreen extends StatelessWidget {
                             ],
                           ),
                         )),
+
                     SelectPersonItem(
                       onSelectPersonCallback: (int employeeId) {
 
@@ -304,40 +316,52 @@ class _SelectPersonItemState extends State<SelectPersonItem> {
   }
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(context, Routes.employeePickerRoute,
-                arguments: EmployeePickerArgs(
-                    employeePickerTypes:
-                    EmployeePickerTypes.SELECT_EMPLOYEE.name,
-                    teamMembersCubit:
-                    BlocProvider.of<TeamMembersCubit>(context)))
-                .then((value) {
-              if (value != null && value is Map<String, dynamic>) {
-                debugPrint(value.toString());
-                EmployeeModel em = EmployeeModel.fromJson(value);
-                personName = em.fullName;
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, Routes.employeePickerRoute,
+            arguments: EmployeePickerArgs(
+                employeePickerTypes:
+                EmployeePickerTypes.SELECT_EMPLOYEE.name,
+                teamMembersCubit:
+                BlocProvider.of<TeamMembersCubit>(context)))
+            .then((value) {
+          if (value != null && value is Map<String, dynamic>) {
+            debugPrint(value.toString());
+            EmployeeModel em = EmployeeModel.fromJson(value);
+            personName = em.fullName;
+            employeeId = em.employeeId;
 
-                setState(() {});
+            setState(() {});
 
-                widget.onSelectPersonCallback(em.employeeId);
-              }
-            });
-          },
-          child: FilterField(
-            text: Text((personName != null && employeeId != null) ? personName! : "كل الموظفون"),
-          ),
+            widget.onSelectPersonCallback(em.employeeId);
+          }
+        });
+      },
+      child: FilterField(
+        text: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text((personName != null && employeeId != null) ? personName! : "كل الموظفون"),
+            const SizedBox(width: 10.0,),
+
+            if (personName != null && employeeId != null)
+            InkWell(
+                onTap: () {
+                  personName = null;
+                  employeeId = null;
+
+                  setState(() {});
+
+                  widget.onClearTapCallback();
+
+                },
+                child:  Text("مسح الفلتر", style: TextStyle(color: AppColors.primary),)),
+
+          ],
         ),
-        if (employeeId != null)
-        Positioned(
-          left: 0,
-          bottom: 0,
-          child: IconButton(onPressed:widget.onClearTapCallback, icon: const Icon(Icons.clear)),
-        )
-      ],
-
+      ),
     );
   }
 }

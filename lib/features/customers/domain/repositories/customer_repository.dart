@@ -48,4 +48,8 @@ abstract class CustomerRepository {
       UpdateCustomerPhoneNumberParam updateCustomerPhoneNumberParam);
 
   Future<Either<Failure, void>> cacheCustomerTableConfig(CustomerTableConfigModel customerTableConfigModel);
+
+
+  Future<Either<Failure, CustomerModel>> updateCustomerDevelopersAndProjects(
+      UpdateCustomerDevelopersAndProjectsParam updateCustomerDevelopersAndProjectsParam);
 }

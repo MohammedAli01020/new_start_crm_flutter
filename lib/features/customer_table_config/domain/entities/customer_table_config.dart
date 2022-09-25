@@ -7,6 +7,8 @@ class CustomerTableConfig extends Equatable {
   final bool showLastAction;
   final bool showSources;
   final bool showUnitTypes;
+  final bool showDevelopers;
+  final bool showProjects;
   final bool showLastActionTime;
   final bool showLastComment;
   final bool showInsertDate;
@@ -22,6 +24,8 @@ class CustomerTableConfig extends Equatable {
       required this.showLastAction,
       required this.showSources,
       required this.showUnitTypes,
+      required this.showDevelopers,
+      required this.showProjects,
       required this.showLastActionTime,
       required this.showLastComment,
       required this.showInsertDate,
@@ -38,6 +42,8 @@ class CustomerTableConfig extends Equatable {
         showLastAction,
         showSources,
         showUnitTypes,
+        showDevelopers,
+        showProjects,
         showLastActionTime,
         showLastComment,
         showInsertDate,

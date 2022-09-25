@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/utils/app_strings.dart';
+import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/enums.dart';
 
 
@@ -60,7 +62,8 @@ class _SourcesAppBarState extends State<SourcesAppBar> {
               icon: const Icon(Icons.done)),
 
 
-        if (widget.sourceType == SourceType.VIEW_SOURCES.name)
+          if (Constants.currentEmployee!.permissions.contains(AppStrings.createSources))
+            if (widget.sourceType == SourceType.VIEW_SOURCES.name)
         IconButton(onPressed: widget.onNewTapCallback,
             icon: const Icon(Icons.add))
 

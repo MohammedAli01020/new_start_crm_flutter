@@ -100,6 +100,33 @@ class CustomerTableConfigScreen extends StatelessWidget {
 
               const Divider(),
 
+
+              SwitchListTile(
+                  title: const Text("المطورين"),
+                  value: Constants.customerTableConfigModel.showDevelopers,
+                  onChanged: (val) {
+
+                    cubit.cacheCustomerTableConfig( Constants.customerTableConfigModel.copyWith(
+                        showDevelopers: Wrapped.value(val)
+                    ));
+                  }),
+
+              const Divider(),
+
+
+              SwitchListTile(
+                  title: const Text("المشاريع"),
+                  value: Constants.customerTableConfigModel.showProjects,
+                  onChanged: (val) {
+
+                    cubit.cacheCustomerTableConfig( Constants.customerTableConfigModel.copyWith(
+                        showProjects: Wrapped.value(val)
+                    ));
+                  }),
+
+              const Divider(),
+
+
               SwitchListTile(
                   title: const Text("اخر تحديث للحالة"),
                   value: Constants.customerTableConfigModel.showLastActionTime,

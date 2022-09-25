@@ -59,6 +59,9 @@ abstract class CustomerUseCases {
       UpdateCustomerPhoneNumberParam updateCustomerPhoneNumberParam);
 
 
+  Future<Either<Failure, CustomerModel>> updateCustomerDevelopersAndProjects(
+      UpdateCustomerDevelopersAndProjectsParam updateCustomerDevelopersAndProjectsParam);
+
   Future<Either<Failure, void>> cacheCustomerTableConfig(CustomerTableConfigModel customerTableConfigModel);
 
 }
@@ -141,12 +144,17 @@ class CustomerUseCasesImpl implements CustomerUseCases {
   @override
   Future<Either<Failure, CustomerModel>> updateCustomerPhoneNumber(UpdateCustomerPhoneNumberParam updateCustomerPhoneNumberParam) {
     return customerRepository.updateCustomerPhoneNumber(updateCustomerPhoneNumberParam);
-
   }
 
   @override
   Future<Either<Failure, void>> cacheCustomerTableConfig(CustomerTableConfigModel customerTableConfigModel) {
     return customerRepository.cacheCustomerTableConfig(customerTableConfigModel);
+
+  }
+
+  @override
+  Future<Either<Failure, CustomerModel>> updateCustomerDevelopersAndProjects(UpdateCustomerDevelopersAndProjectsParam updateCustomerDevelopersAndProjectsParam) {
+    return customerRepository.updateCustomerDevelopersAndProjects(updateCustomerDevelopersAndProjectsParam);
 
   }
 
@@ -161,6 +169,8 @@ class ModifyCustomerParam {
   final int createDateTime;
   final String? description;
   final List<String> projects;
+
+  final List<String> developers;
   final List<String> unitTypes;
   final List<String> sources;
   final int? createdByEmployeeId;
@@ -179,6 +189,7 @@ class ModifyCustomerParam {
     required this.createDateTime,
     required this.description,
     required this.projects,
+    required this.developers,
     required this.unitTypes,
     required this.sources,
     required this.createdByEmployeeId,
@@ -195,7 +206,10 @@ class ModifyCustomerParam {
         "phoneNumbers": phoneNumbers,
         "createDateTime": createDateTime,
         "description": description,
+
         "projects": projects,
+        "developers": developers,
+
         "unitTypes": unitTypes,
         "sources": sources,
         "createdByEmployeeId": createdByEmployeeId,
@@ -362,6 +376,35 @@ class UpdateCustomerPhoneNumberParam {
     "updatedByEmployeeId": updatedByEmployeeId,
     "customerId" :customerId,
     "phoneNumbers": phoneNumbers
+  };
+}
+
+
+
+class UpdateCustomerDevelopersAndProjectsParam {
+  final int updatedByEmployeeId;
+
+  final int customerId;
+  
+  final List<String> updatedDevelopers;
+
+  final List<String> updatedProjects;
+
+
+  UpdateCustomerDevelopersAndProjectsParam({
+    required this.updatedByEmployeeId,
+    required this.customerId,
+    required this.updatedDevelopers,
+    required this.updatedProjects
+
+  });
+
+
+  Map<String, dynamic> toJson() => {
+    "updatedByEmployeeId": updatedByEmployeeId,
+    "customerId" :customerId,
+    "updatedDevelopers": updatedDevelopers,
+    "updatedProjects": updatedProjects
   };
 }
 

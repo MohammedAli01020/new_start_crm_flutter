@@ -9,6 +9,8 @@ class CustomerTableConfigModel extends CustomerTableConfig {
       required bool showLastAction,
       required bool showSources,
       required bool showUnitTypes,
+        required bool showDevelopers,
+        required bool showProjects,
       required bool showLastActionTime,
       required bool showLastComment,
       required bool showInsertDate,
@@ -23,6 +25,8 @@ class CustomerTableConfigModel extends CustomerTableConfig {
             showLastAction: showLastAction,
             showSources: showSources,
             showUnitTypes: showUnitTypes,
+            showDevelopers: showDevelopers,
+            showProjects: showProjects,
             showLastActionTime: showLastActionTime,
             showLastComment: showLastComment,
             showInsertDate: showInsertDate,
@@ -39,6 +43,9 @@ class CustomerTableConfigModel extends CustomerTableConfig {
         showLastAction: json['showLastAction'],
         showSources: json['showSources'],
         showUnitTypes: json['showUnitTypes'],
+        showDevelopers: json['showDevelopers'],
+        showProjects: json['showProjects'],
+
         showLastActionTime: json['showLastActionTime'],
         showLastComment: json['showLastComment'],
         showInsertDate: json['showInsertDate'],
@@ -55,7 +62,12 @@ class CustomerTableConfigModel extends CustomerTableConfig {
         "showLastAction": showLastAction,
         'showSources': showSources,
         "showUnitTypes": showUnitTypes,
-        "showLastActionTime": showLastActionTime,
+
+    "showDevelopers": showDevelopers,
+    "showProjects": showProjects,
+
+
+    "showLastActionTime": showLastActionTime,
         "showLastComment": showLastComment,
         "showInsertDate": showInsertDate,
         "showCreateBy": showCreateBy,
@@ -71,7 +83,14 @@ class CustomerTableConfigModel extends CustomerTableConfig {
       Wrapped<bool>? showLastAction,
       Wrapped<bool>? showSources,
       Wrapped<bool>? showUnitTypes,
-      Wrapped<bool>? showLastActionTime,
+
+
+        Wrapped<bool>? showDevelopers,
+        Wrapped<bool>? showProjects,
+
+
+
+        Wrapped<bool>? showLastActionTime,
       Wrapped<bool>? showLastComment,
       Wrapped<bool>? showInsertDate,
       Wrapped<bool>? showCreateBy,
@@ -86,8 +105,12 @@ class CustomerTableConfigModel extends CustomerTableConfig {
         showLastAction:
             showLastAction != null ? showLastAction.value : this.showLastAction,
         showSources: showSources != null ? showSources.value : this.showSources,
-        showUnitTypes:
-            showUnitTypes != null ? showUnitTypes.value : this.showUnitTypes,
+
+        showUnitTypes: showUnitTypes != null ? showUnitTypes.value : this.showUnitTypes,
+
+        showDevelopers: showDevelopers != null ? showDevelopers.value : this.showDevelopers,
+        showProjects: showProjects != null ? showProjects.value : this.showProjects,
+
         showLastActionTime: showLastActionTime != null
             ? showLastActionTime.value
             : this.showLastActionTime,
@@ -116,6 +139,8 @@ class CustomerTableConfigModel extends CustomerTableConfig {
         showLastAction: true,
         showSources: true,
         showUnitTypes: true,
+        showDevelopers: true,
+        showProjects: true,
         showLastActionTime: true,
         showLastComment: true,
         showInsertDate: true,

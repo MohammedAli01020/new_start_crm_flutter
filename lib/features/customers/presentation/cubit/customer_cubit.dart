@@ -195,6 +195,26 @@ class CustomerCubit extends Cubit<CustomerState> {
     emit(EndUpdateSources());
   }
 
+
+
+  List<String>? selectedDevelopers = [];
+
+  void updateSelectedDevelopers (List<String>? newDevelopers ) {
+    emit(StartUpdateDevelopers());
+    selectedDevelopers = newDevelopers;
+    emit(EndUpdateDevelopers());
+  }
+
+
+  List<String>? selectedProjects = [];
+
+  void updateSelectedProjects(List<String>? newProjects) {
+    emit(StartUpdateProjects());
+    selectedProjects = newProjects;
+    emit(EndUpdateProjects());
+  }
+
+
   List<String>? selectedUnitTypes = [];
 
   void updateSelectedUnitTypes(List<String>? newUnitTypes) {
@@ -462,5 +482,32 @@ class CustomerCubit extends Cubit<CustomerState> {
             msg: Constants.mapFailureToMsg(failure)),
         (r) => EndCacheCustomerTableConfig(
             cachedCustomerTableConfig: customerTableConfigModel)));
+  }
+
+
+
+  Future<void> updateCustomerDevelopersAndProjects(
+      UpdateCustomerDevelopersAndProjectsParam updateCustomerDevelopersAndProjectsParam) async {
+    emit(StartUpdateCustomerDevelopersAndProjects());
+    Either<Failure, CustomerModel> response = await customerUseCases
+        .updateCustomerDevelopersAndProjects(updateCustomerDevelopersAndProjectsParam);
+
+    response.fold(
+            (failure) => emit(
+                UpdateCustomerDevelopersAndProjectsError(msg: Constants.mapFailureToMsg(failure))),
+            (newCustomerModel) {
+          try {
+            int index = customers.indexWhere((element) {
+              return element.customerId ==
+                  updateCustomerDevelopersAndProjectsParam.customerId;
+            });
+            customers[index] = newCustomerModel;
+            currentCustomer = newCustomerModel;
+          } catch (e) {
+            debugPrint(e.toString());
+          }
+
+          return emit(EndUpdateCustomerDevelopersAndProjects(customerModel: newCustomerModel));
+        });
   }
 }

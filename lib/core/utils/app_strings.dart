@@ -3,6 +3,7 @@ class AppStrings {
   static const String fontFamily = 'Tajawal';
   static const String noRouteFound = 'No Route Found';
   static const String cachedCurrentEmployee = 'CACHED_CURRENT_EMPLOYEE';
+  static const String cachedThemeMode = 'CACHED_THEME_MODE';
 
   static const String cachedCustomerTableConfig = 'CACHED_CUSTOMER_TABLE_CONFIG';
 
@@ -35,6 +36,7 @@ class AppStrings {
   static const String userNotEnabledMessage = "انتهت مدة التفعيل يرجي التفعيل لهذا الشهر, شكرا لتفهمكم";
 
 
+  static const String noEvent = "no event";
 
 
   // permissions
@@ -143,6 +145,12 @@ class AppStrings {
   static const String editSources  = 'تعديل المصادر';
   static const String createSources  = 'إضافة المصادر';
   static const String deleteSources = 'حذف المصادر';
+
+  // developers
+  static const String viewDevelopers = 'مشاهدة المطورين';
+  static const String editDevelopers  = 'تعديل المطورين';
+  static const String createDevelopers  = 'إضافة المطورين';
+  static const String deleteDevelopers= 'حذف المطورين';
 
   // groups
   static const String viewAllGroups = 'مشاهدة كل المجموعات';

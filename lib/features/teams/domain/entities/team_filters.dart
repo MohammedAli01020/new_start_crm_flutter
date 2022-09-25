@@ -16,6 +16,8 @@ class TeamFilters extends Equatable {
 
   final int? endDateTime;
 
+  final String teamTypes;
+
   const TeamFilters({
     required this.pageNumber,
     required this.pageSize,
@@ -26,6 +28,7 @@ class TeamFilters extends Equatable {
     required this.teamLeaderId,
     required this.startDateTime,
     required this.endDateTime,
+    required this.teamTypes
   });
 
   @override
@@ -39,5 +42,6 @@ class TeamFilters extends Equatable {
         teamLeaderId,
         startDateTime,
         endDateTime,
+    teamTypes
       ];
 }

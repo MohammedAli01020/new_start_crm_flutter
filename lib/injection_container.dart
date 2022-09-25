@@ -10,6 +10,15 @@ import 'package:crm_flutter_project/features/customers/domain/repositories/custo
 import 'package:crm_flutter_project/features/customers/domain/use_cases/customer_use_cases.dart';
 import 'package:crm_flutter_project/features/customers/presentation/cubit/customer_cubit.dart';
 import 'package:crm_flutter_project/features/customers/presentation/cubit/duplicates/duplicates_cubit.dart';
+import 'package:crm_flutter_project/features/developers_and_projects/data/data_sources/developer_remote_data_source.dart';
+import 'package:crm_flutter_project/features/developers_and_projects/data/data_sources/project_remote_data_source.dart';
+import 'package:crm_flutter_project/features/developers_and_projects/data/repositories/developer_repository_impl.dart';
+import 'package:crm_flutter_project/features/developers_and_projects/data/repositories/project_repository_impl.dart';
+import 'package:crm_flutter_project/features/developers_and_projects/domain/repositories/project_repository.dart';
+import 'package:crm_flutter_project/features/developers_and_projects/domain/use_cases/developer_use_case.dart';
+import 'package:crm_flutter_project/features/developers_and_projects/domain/use_cases/projects_use_case.dart';
+import 'package:crm_flutter_project/features/developers_and_projects/presentation/cubit/developer/developer_cubit.dart';
+import 'package:crm_flutter_project/features/developers_and_projects/presentation/cubit/project/project_cubit.dart';
 import 'package:crm_flutter_project/features/employees/data/data_sources/employee_remote_data_source.dart';
 import 'package:crm_flutter_project/features/employees/data/repositories/employee_repository_impl.dart';
 import 'package:crm_flutter_project/features/employees/domain/repositories/employee_repository.dart';
@@ -25,6 +34,11 @@ import 'package:crm_flutter_project/features/global_reports/data/repositories/gl
 import 'package:crm_flutter_project/features/global_reports/domain/repositories/global_reports_repository.dart';
 import 'package:crm_flutter_project/features/global_reports/domain/use_cases/global_reports_use_cases.dart';
 import 'package:crm_flutter_project/features/global_reports/presentation/cubit/global_reports_cubit.dart';
+import 'package:crm_flutter_project/features/own_reports/data/data_sources/own_reports_remote_data_source.dart';
+import 'package:crm_flutter_project/features/own_reports/data/repositories/own_reports_repository.dart';
+import 'package:crm_flutter_project/features/own_reports/domain/repositories/own_reports_repository.dart';
+import 'package:crm_flutter_project/features/own_reports/domain/use_cases/own_reports_use_case.dart';
+import 'package:crm_flutter_project/features/own_reports/presentation/cubit/own_reports_cubit.dart';
 import 'package:crm_flutter_project/features/permissions/data/data_sources/permission_remote_data_source.dart';
 import 'package:crm_flutter_project/features/permissions/data/repositories/permission_repository_impl.dart';
 import 'package:crm_flutter_project/features/permissions/domain/repositories/permission_repository.dart';
@@ -57,6 +71,7 @@ import 'core/api/api_consumer.dart';
 import 'core/api/app_interceptors.dart';
 import 'core/api/dio_consumer.dart';
 import 'core/network/network_info.dart';
+import 'features/developers_and_projects/domain/repositories/developer_repository.dart';
 import 'features/login/data/data_sources/login_local_data_source.dart';
 import 'features/login/data/data_sources/login_remote_data_source.dart';
 import 'features/login/data/repositories/login_repository_impl.dart';
@@ -93,6 +108,12 @@ Future<void> init() async {
 
   sl.registerFactory(() => DuplicatesCubit(customerUseCases:  sl()));
 
+  sl.registerFactory(() => DeveloperCubit(developerUseCase: sl()));
+
+  sl.registerFactory(() => ProjectCubit(projectUseCase: sl()));
+
+
+  sl.registerFactory(() => OwnReportsCubit(ownReportsUseCase: sl()));
 
   // Use cases
   sl.registerLazySingleton<LoginUseCases>(
@@ -131,6 +152,15 @@ Future<void> init() async {
   sl.registerLazySingleton<GlobalReportsUseCases>(
           () => GlobalReportsUseCasesImpl(globalReportsRepository:   sl()));
 
+  sl.registerLazySingleton<DeveloperUseCase>(
+          () => DeveloperUseCaseImpl(developerRepository: sl()));
+
+  sl.registerLazySingleton<ProjectUseCase>(
+          () => ProjectUseCaseImpl(projectRepository: sl()));
+
+  sl.registerLazySingleton<OwnReportsUseCase>(
+          () => OwnReportsUseCaseImpl(ownReportsRepository:  sl()));
+
   // Repository
   sl.registerLazySingleton<LoginRepository>(() => LoginRepositoryImpl(
       loginLocalDataSource: sl(), loginRemoteDataSource: sl()));
@@ -167,6 +197,15 @@ Future<void> init() async {
 
   sl.registerLazySingleton<GlobalReportsRepository>(() => GlobalReportsRepositoryImpl(
       globalReportsRemoteDataSource:  sl()));
+
+  sl.registerLazySingleton<DeveloperRepository>(() => DeveloperRepositoryImpl(
+      developerRemoteDataSource:  sl()));
+
+  sl.registerLazySingleton<ProjectRepository>(() => ProjectRepositoryImpl(
+      projectRemoteDataSource:  sl()));
+
+  sl.registerLazySingleton<OwnReportsRepository>(() => OwnReportsRepositoryImpl(
+      ownReportsRemoteDataSource:   sl()));
 
   // Data Sources
   sl.registerLazySingleton<LoginRemoteDataSource>(
@@ -209,6 +248,16 @@ Future<void> init() async {
 
   sl.registerLazySingleton<GlobalReportsRemoteDataSource>(
           () => GlobalReportsRemoteDataSourceImpl(apiConsumer: sl()));
+
+  sl.registerLazySingleton<DeveloperRemoteDataSource>(
+          () => DeveloperRemoteDataSourceImpl(apiConsumer: sl()));
+
+
+  sl.registerLazySingleton<ProjectRemoteDataSource>(
+          () => ProjectRemoteDataSourceImpl(apiConsumer: sl()));
+
+  sl.registerLazySingleton<OwnReportsRemoteDataSource>(
+          () => OwnReportsRemoteDataSourceImpl(apiConsumer: sl()));
   //! Core
   sl.registerLazySingleton<NetworkInfo>(
       () => NetworkInfoImpl(internetConnectionChecker: sl()));

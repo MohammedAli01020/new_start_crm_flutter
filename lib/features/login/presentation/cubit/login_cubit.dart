@@ -93,7 +93,6 @@ class LoginCubit extends Cubit<LoginState> {
     });
   }
 
-
   Future<void> loadLastCustomerTableConfig() async {
 
     Either<Failure, CustomerTableConfigModel> response =
@@ -105,8 +104,6 @@ class LoginCubit extends Cubit<LoginState> {
       Constants.customerTableConfigModel = savedCustomerTableConfig;
     });
   }
-
-
 
   Future<void> updateCurrentUser() async {
 
@@ -143,5 +140,11 @@ class LoginCubit extends Cubit<LoginState> {
       return emit(EndGettingEmployee());
     });
   }
+
+
+  void changeTheme() {
+
+  }
+
 
 }

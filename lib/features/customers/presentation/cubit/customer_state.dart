@@ -109,6 +109,20 @@ class StartUpdateSources extends CustomerState {}
 
 class EndUpdateSources extends CustomerState {}
 
+
+
+// developers
+class StartUpdateDevelopers extends CustomerState {}
+
+class EndUpdateDevelopers extends CustomerState {}
+
+
+// projects
+class StartUpdateProjects extends CustomerState {}
+
+class EndUpdateProjects extends CustomerState {}
+
+
 // unitTypes
 class StartUpdateUnitTypes extends CustomerState {}
 
@@ -312,6 +326,29 @@ class UpdateCustomerPhoneError extends CustomerState {
   @override
   List<Object> get props => [msg];
 }
+
+
+
+class StartUpdateCustomerDevelopersAndProjects extends CustomerState {}
+
+class EndUpdateCustomerDevelopersAndProjects  extends CustomerState {
+  final CustomerModel customerModel;
+
+  EndUpdateCustomerDevelopersAndProjects({required this.customerModel});
+
+  @override
+  List<Object> get props => [customerModel];
+}
+
+class UpdateCustomerDevelopersAndProjectsError extends CustomerState {
+  final String msg;
+
+  UpdateCustomerDevelopersAndProjectsError({required this.msg});
+
+  @override
+  List<Object> get props => [msg];
+}
+
 
 
 class StartUpdateCustomers extends CustomerState {}

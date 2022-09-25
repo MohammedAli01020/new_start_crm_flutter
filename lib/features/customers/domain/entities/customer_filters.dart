@@ -17,6 +17,9 @@ class CustomerFilters extends Equatable {
   final List<String>? unitTypes;
   final List<String>? sources;
 
+  final List<String>? projects;
+  final List<String>? developers;
+
   const CustomerFilters(
       {required this.pageNumber,
       required this.pageSize,
@@ -31,7 +34,11 @@ class CustomerFilters extends Equatable {
       required this.teamId,
       required this.reminderTypes,
       required this.unitTypes,
-      required this.sources});
+      required this.sources,
+        required this.projects,
+        required this.developers,
+
+      });
 
   @override
   List<Object?> get props => [
@@ -48,6 +55,8 @@ class CustomerFilters extends Equatable {
         teamId,
         reminderTypes,
         unitTypes,
-        sources
+        sources,
+    projects,
+    developers
       ];
 }

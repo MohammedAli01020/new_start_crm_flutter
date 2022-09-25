@@ -43,7 +43,6 @@ class SourceCubit extends Cubit<SourceState> {
     emit(EndUpdateSelectedSources());
   }
 
-
   void setSelectedSources(List<String> newSources) {
     emit(StartSetSelectedSources());
     selectedSources = newSources;
