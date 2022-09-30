@@ -62,6 +62,7 @@ class _EmployeePickerScreenState extends State<EmployeePickerScreen> {
 
     employeeCubit.updateFilter(employeeCubit.employeeFiltersModel.copyWith(
         employeeTypes: Wrapped.value(EmployeeTypes.ALL.name),
+        availableToAssign: const Wrapped.value(true)
     ));
 
     _getPageEmployees(refresh: true, employeePickerTypes: EmployeePickerTypes.ASSIGN_MEMBER.name);

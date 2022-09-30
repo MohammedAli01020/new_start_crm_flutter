@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:crm_flutter_project/core/utils/app_strings.dart';
 import 'package:crm_flutter_project/core/utils/enums.dart';
 import 'package:crm_flutter_project/features/employees/data/models/employee_filters_model.dart';
 import 'package:crm_flutter_project/features/employees/data/models/role_model.dart';
 import 'package:crm_flutter_project/features/employees/domain/entities/employees_data.dart';
 import 'package:crm_flutter_project/features/employees/domain/use_cases/employee_use_cases.dart';
+import 'package:crm_flutter_project/features/employees/domain/use_cases/file_use_cases.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -14,13 +17,13 @@ import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/wrapper.dart';
 import '../../data/models/employee_model.dart';
 
-import '../../data/models/phoneNumber_model.dart';
 part 'employee_state.dart';
 
 class EmployeeCubit extends Cubit<EmployeeState> {
   final EmployeeUseCases employeeUseCases;
+  final FileUseCases fileUseCases;
 
-  EmployeeCubit({required this.employeeUseCases}) : super(EmployeeInitial());
+  EmployeeCubit({required this.employeeUseCases, required this.fileUseCases }) : super(EmployeeInitial());
 
   static EmployeeCubit get(context) => BlocProvider.of(context);
 
@@ -95,46 +98,45 @@ class EmployeeCubit extends Cubit<EmployeeState> {
     employeePagesCount = result.totalPages;
     if (refresh) {
 
-      if (employeePickerTypes != null && employeePickerTypes == EmployeePickerTypes.ASSIGN_MEMBER.name) {
-        newEmployees = newEmployees.where((element) {
-          return element.role != null;
-        }).toList();
-
-        newEmployees = newEmployees.where((element) {
-          final plist =  element.role!.permissions.map((e) {
-            return e.name;
-          }).toList();
-
-          return plist.contains(AppStrings.availableToAssign);
-        }).toList();
-
-        employees = newEmployees;
-      } else {
-        employees = newEmployees;
-      }
-
+      employees = newEmployees;
+      //
+      // if (employeePickerTypes != null && employeePickerTypes == EmployeePickerTypes.ASSIGN_MEMBER.name) {
+      //   newEmployees = newEmployees.where((element) {
+      //     return element.role != null;
+      //   }).toList();
+      //
+      //   newEmployees = newEmployees.where((element) {
+      //     final plist =  element.role!.permissions.map((e) {
+      //       return e.name;
+      //     }).toList();
+      //
+      //     return plist.contains(AppStrings.availableToAssign);
+      //   }).toList();
+      //
+      //   employees = newEmployees;
+      // } else {
+      //   employees = newEmployees;
+      // }
     } else {
-
-      if (employeePickerTypes != null && employeePickerTypes == EmployeePickerTypes.ASSIGN_MEMBER.name) {
-
-        newEmployees = newEmployees.where((element) {
-          return element.role != null;
-        }).toList();
-
-        newEmployees = newEmployees.where((element) {
-          final plist =  element.role!.permissions.map((e) {
-            return e.name;
-          }).toList();
-
-          return plist.contains(AppStrings.availableToAssign);
-        }).toList();
-
-        employees.addAll(newEmployees);
-      } else {
-        employees.addAll(newEmployees);
-      }
-
-
+      employees.addAll(newEmployees);
+      // if (employeePickerTypes != null && employeePickerTypes == EmployeePickerTypes.ASSIGN_MEMBER.name) {
+      //
+      //   newEmployees = newEmployees.where((element) {
+      //     return element.role != null;
+      //   }).toList();
+      //
+      //   newEmployees = newEmployees.where((element) {
+      //     final plist =  element.role!.permissions.map((e) {
+      //       return e.name;
+      //     }).toList();
+      //
+      //     return plist.contains(AppStrings.availableToAssign);
+      //   }).toList();
+      //
+      //   employees.addAll(newEmployees);
+      // } else {
+      //   employees.addAll(newEmployees);
+      // }
     }
   }
 
@@ -162,59 +164,95 @@ class EmployeeCubit extends Cubit<EmployeeState> {
     });
   }
 
-  Future<void> modifyEmployee(ModifyEmployeeParam modifyEmployeeParam) async {
+  Future<void> modifyEmployee(ModifyEmployeeParam modifyEmployeeParam,
+      File? toBeUploadedImageFile, String? toBeDeletedImageUrl) async {
+
     emit(StartModifyEmployee());
-    Either<Failure, EmployeeModel> response =
-        await employeeUseCases.modifyEmployee(modifyEmployeeParam);
 
-    response.fold(
-        (failure) =>
-            emit(ModifyEmployeeError(msg: Constants.mapFailureToMsg(failure))),
-        (newLoanModel) {
-      if (modifyEmployeeParam.employeeId != null) {
-        try {
-          int index = employees.indexWhere((element) {
-            return element.employeeId == modifyEmployeeParam.employeeId;
+
+    if (toBeDeletedImageUrl != null) {
+      await fileUseCases.deleteFile(toBeDeletedImageUrl);
+      modifyEmployeeParam.copyWith(imageUrl: const Wrapped.value(null));
+    }
+
+
+    if (toBeUploadedImageFile != null) {
+
+      Either<Failure, String> uploadImageResponse =
+      await fileUseCases.uploadFile(toBeUploadedImageFile);
+
+      uploadImageResponse.fold((failure) => emit(UploadImageFileError(msg: Constants.mapFailureToMsg(failure))),
+              (imageUrl) async {
+
+
+        modifyEmployeeParam = modifyEmployeeParam.copyWith(imageUrl: Wrapped.value(imageUrl));
+
+
+        Either<Failure, EmployeeModel> response =
+            await employeeUseCases.modifyEmployee(modifyEmployeeParam);
+
+        response.fold(
+                (failure) =>
+                emit(ModifyEmployeeError(msg: Constants.mapFailureToMsg(failure))),
+                (newLoanModel) {
+              if (modifyEmployeeParam.employeeId != null) {
+                try {
+                  int index = employees.indexWhere((element) {
+                    return element.employeeId == modifyEmployeeParam.employeeId;
+                  });
+
+                  employees[index] = newLoanModel;
+                } catch (e) {
+                  debugPrint(e.toString());
+                }
+              } else {
+                employees.insert(0, newLoanModel);
+                employeeTotalElements++;
+              }
+
+              return emit(EndModifyEmployee(employeeModel: newLoanModel));
+            });
+      });
+
+    } else {
+
+      Either<Failure, EmployeeModel> response =
+      await employeeUseCases.modifyEmployee(modifyEmployeeParam);
+
+      response.fold(
+              (failure) =>
+              emit(ModifyEmployeeError(msg: Constants.mapFailureToMsg(failure))),
+              (newLoanModel) {
+            if (modifyEmployeeParam.employeeId != null) {
+              try {
+                int index = employees.indexWhere((element) {
+                  return element.employeeId == modifyEmployeeParam.employeeId;
+                });
+
+                employees[index] = newLoanModel;
+              } catch (e) {
+                debugPrint(e.toString());
+              }
+            } else {
+              employees.insert(0, newLoanModel);
+              employeeTotalElements++;
+            }
+
+            return emit(EndModifyEmployee(employeeModel: newLoanModel));
           });
+    }
 
-          employees[index] = newLoanModel;
-        } catch (e) {
-          debugPrint(e.toString());
-        }
-      } else {
-        employees.insert(0, newLoanModel);
-        employeeTotalElements++;
-      }
 
-      return emit(EndModifyEmployee(employeeModel: newLoanModel));
-    });
+
   }
 
-
-
-
-
-
   RoleModel? currentRole;
-
 
   void updateRole(RoleModel? newRole) {
     emit(StartUpdateRole());
     currentRole = newRole;
     emit(EndUpdateRole());
-
   }
-
-
-  PhoneNumberModel? phoneNumber;
-
-  void updatePhoneNumber(PhoneNumberModel? newPhone) {
-    emit(StartUpdatePhoneNumber());
-    phoneNumber = newPhone;
-    emit(EndUpdatePhoneNumber());
-
-  }
-
 
 
   late EmployeeModel currentEmployee;
@@ -223,6 +261,22 @@ class EmployeeCubit extends Cubit<EmployeeState> {
     emit(StartUpdateCurrentEmployeeModel());
     currentEmployee = updated;
     emit(EndUpdateCurrentEmployeeModel());
+
+  }
+
+
+  Future<void> findRoleByEmployeeId(int employeeId) async {
+    emit(StartFindRoleByEmployeeId());
+
+    Either<Failure, RoleModel> response =
+        await employeeUseCases.findRoleByEmployeeId(employeeId);
+
+
+    response.fold((failure) => emit(FindRoleByEmployeeIdError(msg: Constants.mapFailureToMsg(failure))),
+            (role) {
+              currentRole = role;
+              return emit(EndFindRoleByEmployeeId(roleModel: role));
+            });
 
   }
 

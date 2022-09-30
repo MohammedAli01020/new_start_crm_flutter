@@ -1,4 +1,4 @@
-import 'package:crm_flutter_project/features/employees/data/models/phoneNumber_model.dart';
+
 import 'package:crm_flutter_project/features/employees/data/models/role_model.dart';
 
 import '../../domain/entities/employee.dart';
@@ -9,7 +9,7 @@ class EmployeeModel extends Employee {
     required String fullName,
     required String? imageUrl,
     required int createDateTime,
-    required PhoneNumberModel phoneNumber,
+    required String phoneNumber,
     required bool enabled,
     required String username,
     required String password,
@@ -34,7 +34,7 @@ class EmployeeModel extends Employee {
         fullName: json["fullName"],
         imageUrl: json["imageUrl"],
         createDateTime: json["createDateTime"],
-        phoneNumber: PhoneNumberModel.fromJson(json["phoneNumber"]),
+        phoneNumber: json["phoneNumber"],
         enabled: json["enabled"],
         username: json["username"],
         password: json["password"],
@@ -48,7 +48,7 @@ class EmployeeModel extends Employee {
         "fullName": fullName,
         "imageUrl": imageUrl,
         "createDateTime": createDateTime,
-        "phoneNumber": phoneNumber.toJson(),
+        "phoneNumber": phoneNumber,
         "enabled": enabled,
         "username": username,
         "password": password,

@@ -96,6 +96,8 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
 
                     widget.customerCubit.updateFilter(widget.customerCubit.customerFiltersModel.copyWith(
                       sources: const Wrapped.value(null),
+                      projects: const Wrapped.value(null),
+                      developers: const Wrapped.value(null),
                       unitTypes: const Wrapped.value(null),
                       lastEventIds: const Wrapped.value(null),
                       reminderTypes: const Wrapped.value(null),
@@ -105,6 +107,9 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                     widget.customerCubit.updateSelectedEvents([]);
                     widget.customerCubit.updateSelectedSources([]);
                     widget.customerCubit.updateSelectedUnitTypes([]);
+
+                    widget.customerCubit.updateSelectedDevelopers([]);
+                    widget.customerCubit.updateSelectedProjects([]);
 
                     Constants.refreshCustomers(widget.customerCubit);
 

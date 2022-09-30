@@ -52,4 +52,6 @@ abstract class CustomerRepository {
 
   Future<Either<Failure, CustomerModel>> updateCustomerDevelopersAndProjects(
       UpdateCustomerDevelopersAndProjectsParam updateCustomerDevelopersAndProjectsParam);
+
+  Future<Either<Failure, void>> deleteAllCustomersByIds(CustomerIdsWrapper customerIdsWrapper);
 }

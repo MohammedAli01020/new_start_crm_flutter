@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:crm_flutter_project/core/api/end_points.dart';
 import 'package:crm_flutter_project/core/utils/app_strings.dart';
 import 'package:crm_flutter_project/core/utils/media_query_values.dart';
 import 'package:crm_flutter_project/core/widgets/default_bottom_navigation_widget.dart';
@@ -696,6 +695,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
 
 
             withEdit: false,
+
             // withEdit: Constants.currentEmployee!.permissions
             //         .contains(AppStrings.editAllLeads) ||
             //     (Constants.currentEmployee!.permissions
@@ -732,10 +732,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
       builder: (context, state) {
         final customerLogsCubit = CustomerLogsCubit.get(context);
 
-        if (state is StartRefreshCustomerLogs ||
-            state is StartLoadingCustomerLogs) {
-          return const Center(child: CircularProgressIndicator());
-        }
+        // if (state is StartRefreshCustomerLogs ||
+        //     state is StartLoadingCustomerLogs) {
+        //   return const Center(child: CircularProgressIndicator());
+        // }
 
         if (state is RefreshCustomerLogsError) {
           return ErrorItemWidget(
@@ -747,28 +747,36 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
         }
 
         return SingleChildScrollView(
-          child: SizedBox(
-            width: context.width,
-            child: PaginatedDataTable(
-                columns: const [
-                  DataColumn(label: Text('الوصف')),
-                  DataColumn(label: Text('التاريخ')),
-                ],
-                showCheckboxColumn: false,
-                dataRowHeight: 65.0,
-                header: Text("سجلات العميل " +
-                    customerLogsCubit.customerLogTotalElements.toString()),
-                rowsPerPage: 5,
-                onPageChanged: (pageIndex) {
-                  customerLogsCubit.updateFilter(customerLogsCubit
-                      .customerLogFiltersModel
-                      .copyWith(pageNumber: Wrapped.value(pageIndex)));
+          child: Column(
+            children: [
+              Visibility(
+                  visible: state is StartRefreshCustomerLogs || state is StartLoadingCustomerLogs,
+                  child: const LinearProgressIndicator()),
 
-                  _getPageCustomerLogs(context: context);
-                },
-                source: CustomerLogsDataTable(
-                    onSelect: (val, CustomerLogModel customerLogModel) {},
-                    customerLogsCubit: customerLogsCubit)),
+              SizedBox(
+                width: context.width,
+                child: PaginatedDataTable(
+                    columns: const [
+                      DataColumn(label: Text('الوصف')),
+                      DataColumn(label: Text('التاريخ')),
+                    ],
+                    showCheckboxColumn: false,
+                    dataRowHeight: 65.0,
+                    header: Text("سجلات العميل " +
+                        customerLogsCubit.customerLogTotalElements.toString()),
+                    rowsPerPage: 5,
+                    onPageChanged: (pageIndex) {
+                      customerLogsCubit.updateFilter(customerLogsCubit
+                          .customerLogFiltersModel
+                          .copyWith(pageNumber: Wrapped.value(pageIndex)));
+
+                      _getPageCustomerLogs(context: context);
+                    },
+                    source: CustomerLogsDataTable(
+                        onSelect: (val, CustomerLogModel customerLogModel) {},
+                        customerLogsCubit: customerLogsCubit)),
+              ),
+            ],
           ),
         );
       },

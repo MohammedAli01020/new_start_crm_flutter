@@ -5,6 +5,7 @@ import '../../../../core/api/end_points.dart';
 import '../../domain/use_cases/employee_use_cases.dart';
 import '../models/employee_filters_model.dart';
 import '../models/employee_model.dart';
+import '../models/role_model.dart';
 
 abstract class EmployeeRemoteDataSource {
   Future<EmployeesDataModel> getAllEmployeesWithFilters(
@@ -13,6 +14,8 @@ abstract class EmployeeRemoteDataSource {
   Future<EmployeeModel> modifyEmployee(ModifyEmployeeParam modifyEmployeeParam);
 
   Future<void> deleteEmployee(int costId);
+
+  Future<RoleModel> findRoleByEmployeeId(int employeeId);
 }
 
 class EmployeeRemoteDataSourceImpl implements EmployeeRemoteDataSource {
@@ -44,5 +47,12 @@ class EmployeeRemoteDataSourceImpl implements EmployeeRemoteDataSource {
         body: modifyEmployeeParam.toJson());
 
     return EmployeeModel.fromJson(response);
+  }
+
+  @override
+  Future<RoleModel> findRoleByEmployeeId(int employeeId) async {
+    final response = await apiConsumer.get(EndPoints.roleByEmployeeId + employeeId.toString());
+
+    return RoleModel.fromJson(response);
   }
 }

@@ -20,9 +20,13 @@ import 'package:crm_flutter_project/features/developers_and_projects/domain/use_
 import 'package:crm_flutter_project/features/developers_and_projects/presentation/cubit/developer/developer_cubit.dart';
 import 'package:crm_flutter_project/features/developers_and_projects/presentation/cubit/project/project_cubit.dart';
 import 'package:crm_flutter_project/features/employees/data/data_sources/employee_remote_data_source.dart';
+import 'package:crm_flutter_project/features/employees/data/data_sources/file_remote_data_source.dart';
 import 'package:crm_flutter_project/features/employees/data/repositories/employee_repository_impl.dart';
+import 'package:crm_flutter_project/features/employees/data/repositories/file_repository_impl.dart';
 import 'package:crm_flutter_project/features/employees/domain/repositories/employee_repository.dart';
+import 'package:crm_flutter_project/features/employees/domain/repositories/file_repository.dart';
 import 'package:crm_flutter_project/features/employees/domain/use_cases/employee_use_cases.dart';
+import 'package:crm_flutter_project/features/employees/domain/use_cases/file_use_cases.dart';
 import 'package:crm_flutter_project/features/employees/presentation/cubit/employee_cubit.dart';
 import 'package:crm_flutter_project/features/events/data/data_sources/event_remote_data_source.dart';
 import 'package:crm_flutter_project/features/events/data/repositories/event_repository_impl.dart';
@@ -34,6 +38,11 @@ import 'package:crm_flutter_project/features/global_reports/data/repositories/gl
 import 'package:crm_flutter_project/features/global_reports/domain/repositories/global_reports_repository.dart';
 import 'package:crm_flutter_project/features/global_reports/domain/use_cases/global_reports_use_cases.dart';
 import 'package:crm_flutter_project/features/global_reports/presentation/cubit/global_reports_cubit.dart';
+import 'package:crm_flutter_project/features/login/data/data_sources/theme_local_data_source.dart';
+import 'package:crm_flutter_project/features/login/data/repositories/theme_repository_impl.dart';
+import 'package:crm_flutter_project/features/login/domain/repositories/theme_repository.dart';
+import 'package:crm_flutter_project/features/login/domain/use_cases/theme_use_case.dart';
+import 'package:crm_flutter_project/features/login/presentation/cubit/theme/theme_cubit.dart';
 import 'package:crm_flutter_project/features/own_reports/data/data_sources/own_reports_remote_data_source.dart';
 import 'package:crm_flutter_project/features/own_reports/data/repositories/own_reports_repository.dart';
 import 'package:crm_flutter_project/features/own_reports/domain/repositories/own_reports_repository.dart';
@@ -44,6 +53,10 @@ import 'package:crm_flutter_project/features/permissions/data/repositories/permi
 import 'package:crm_flutter_project/features/permissions/domain/repositories/permission_repository.dart';
 import 'package:crm_flutter_project/features/permissions/domain/use_cases/permissions_use_cases.dart';
 import 'package:crm_flutter_project/features/permissions/presentation/cubit/permission_cubit.dart';
+import 'package:crm_flutter_project/features/pre_defined_roles/data/data_sources/pre_defined_roles_remote_data_source.dart';
+import 'package:crm_flutter_project/features/pre_defined_roles/data/repositories/pre_defined_roles_repository_impl.dart';
+import 'package:crm_flutter_project/features/pre_defined_roles/domain/use_cases/pre_defined_roles_use_cases.dart';
+import 'package:crm_flutter_project/features/pre_defined_roles/presentation/cubit/pre_defined_roles_cubit.dart';
 import 'package:crm_flutter_project/features/sources/data/data_sources/source_remote_data_source.dart';
 import 'package:crm_flutter_project/features/sources/data/repositories/source_repository_impl.dart';
 import 'package:crm_flutter_project/features/sources/domain/repositories/source_repository.dart';
@@ -78,6 +91,7 @@ import 'features/login/data/repositories/login_repository_impl.dart';
 import 'features/login/domain/repositories/login_repository.dart';
 import 'features/login/domain/use_cases/login_use_cases.dart';
 import 'features/login/presentation/cubit/login_cubit.dart';
+import 'features/pre_defined_roles/domain/repositories/pre_defined_roles_repository.dart';
 import 'features/teams/presentation/cubit/team_members/team_members_cubit.dart';
 
 final sl = GetIt.instance;
@@ -87,7 +101,7 @@ Future<void> init() async {
 
   // Blocs
   sl.registerFactory(() => LoginCubit(loginUseCases: sl()));
-  sl.registerFactory(() => EmployeeCubit(employeeUseCases: sl()));
+  sl.registerFactory(() => EmployeeCubit(employeeUseCases: sl(), fileUseCases: sl()));
 
   sl.registerFactory(() => TeamCubit(teamUseCases: sl()));
   sl.registerFactory(() => TeamMembersCubit(teamMemberUseCases: sl()));
@@ -114,6 +128,14 @@ Future<void> init() async {
 
 
   sl.registerFactory(() => OwnReportsCubit(ownReportsUseCase: sl()));
+
+
+  sl.registerFactory(() => ThemeCubit(themeUseCase: sl()));
+
+
+  sl.registerFactory(() => PreDefinedRolesCubit(preDefinedRolesUseCases: sl()));
+
+
 
   // Use cases
   sl.registerLazySingleton<LoginUseCases>(
@@ -161,6 +183,17 @@ Future<void> init() async {
   sl.registerLazySingleton<OwnReportsUseCase>(
           () => OwnReportsUseCaseImpl(ownReportsRepository:  sl()));
 
+  sl.registerLazySingleton<ThemeUseCase>(
+          () => ThemeUseCaseImpl(themeRepository:  sl()));
+
+
+  sl.registerLazySingleton<FileUseCases>(
+          () => FileUseCasesImpl(fileRepository:  sl()));
+
+
+  sl.registerLazySingleton<PreDefinedRolesUseCases>(
+          () => PreDefinedRolesUseCasesImpl(preDefinedRolesRepository:  sl()));
+
   // Repository
   sl.registerLazySingleton<LoginRepository>(() => LoginRepositoryImpl(
       loginLocalDataSource: sl(), loginRemoteDataSource: sl()));
@@ -206,6 +239,15 @@ Future<void> init() async {
 
   sl.registerLazySingleton<OwnReportsRepository>(() => OwnReportsRepositoryImpl(
       ownReportsRemoteDataSource:   sl()));
+
+  sl.registerLazySingleton<ThemeRepository>(() => ThemeRepositoryImpl(
+      themeLocalDataSource: sl()));
+
+  sl.registerLazySingleton<FileRepository>(() => FileRepositoryImpl(
+      fileRemoteDataSource: sl()));
+
+  sl.registerLazySingleton<PreDefinedRolesRepository>(() => PreDefinedRolesRepositoryImpl(
+      preDefinedRolesRemoteDateSource: sl()));
 
   // Data Sources
   sl.registerLazySingleton<LoginRemoteDataSource>(
@@ -258,6 +300,16 @@ Future<void> init() async {
 
   sl.registerLazySingleton<OwnReportsRemoteDataSource>(
           () => OwnReportsRemoteDataSourceImpl(apiConsumer: sl()));
+
+  sl.registerLazySingleton<ThemeLocalDataSource>(
+          () => ThemeLocalDataSourceImpl(sharedPreferences: sl()));
+
+
+  sl.registerLazySingleton<FileRemoteDataSource>(
+          () => FileRemoteDataSourceImpl(apiConsumer: sl()));
+
+  sl.registerLazySingleton<PreDefinedRolesRemoteDateSource>(
+          () => PreDefinedRolesRemoteDateSourceImpl(apiConsumer: sl()));
   //! Core
   sl.registerLazySingleton<NetworkInfo>(
       () => NetworkInfoImpl(internetConnectionChecker: sl()));

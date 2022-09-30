@@ -73,10 +73,10 @@ class TeamDetailsScreen extends StatelessWidget {
       builder: (context, state) {
         final teamMembersCubit = TeamMembersCubit.get(context);
 
-        if (state is StartRefreshTeamMembers ||
-            state is StartLoadingTeamMembers) {
-          return const Center(child: CircularProgressIndicator());
-        }
+        // if (state is StartRefreshTeamMembers ||
+        //     state is StartLoadingTeamMembers) {
+        //   return const Center(child: CircularProgressIndicator());
+        // }
 
 
         if (state is RefreshTeamMembersError) {
@@ -89,79 +89,85 @@ class TeamDetailsScreen extends StatelessWidget {
         }
 
         return SingleChildScrollView(
-          child: SizedBox(
-            width: context.width,
-            child: PaginatedDataTable(
+          child: Column(
 
-                columns: const [
-                  DataColumn(label: Text('صورة العضو')),
-                  DataColumn(label: Text('اسم العضو')),
-                  DataColumn(label: Text('تاريخ الاضافة')),
-                  DataColumn(label: Text('بواسطة')),
+            children: [
 
-                ],
-                header: const Text("الاعضاء"),
-                actions: [
-                  if (teamMembersCubit.selectedTeamMembersIds.isNotEmpty &&
-                      Constants.currentEmployee!.permissions.contains(AppStrings.deleteGroupMembers))
-                    state is StartDeleteAllTeamMembersByIds ?
-                    const Center(child: SizedBox(
-                        height: 20.0,
-                        width: 20.0,
-                        child: CircularProgressIndicator())) :IconButton(onPressed: () async {
+              Visibility(
+                  visible: state is StartRefreshTeamMembers || state is StartLoadingTeamMembers,
+                  child: const LinearProgressIndicator()),
+              SizedBox(
+                width: context.width,
+                child: PaginatedDataTable(
 
-                    final response = await Constants.showConfirmDialog(context: context, msg: "هل تريد تأكيد الحذف؟");
+                    columns: const [
+                      DataColumn(label: Text('صورة العضو')),
+                      DataColumn(label: Text('اسم العضو')),
+                      DataColumn(label: Text('تاريخ الاضافة')),
+                      DataColumn(label: Text('بواسطة')),
 
-                    if (response) {
-                      List<UserTeamIdModel> userTeamIds = teamMembersCubit.selectedTeamMembersIds.map((e) {
-                        return  UserTeamIdModel(employeeId: e, teamId: teamDetailsArgs.teamModel.teamId);
-                      }).toList();
+                    ],
+                    header: const Text("الاعضاء"),
+                    actions: [
+                      if (teamMembersCubit.selectedTeamMembersIds.isNotEmpty &&
+                          Constants.currentEmployee!.permissions.contains(AppStrings.deleteGroupMembers))
+                        state is StartDeleteAllTeamMembersByIds ?
+                        const Center(child: SizedBox(
+                            height: 20.0,
+                            width: 20.0,
+                            child: CircularProgressIndicator())) :IconButton(onPressed: () async {
 
-                      teamMembersCubit.deleteAllTeamMembersByIds(userTeamIds);
-                    }
+                        final response = await Constants.showConfirmDialog(context: context, msg: "هل تريد تأكيد الحذف؟");
 
-                  }, icon: const Icon(Icons.delete)),
+                        if (response) {
+                          List<UserTeamIdModel> userTeamIds = teamMembersCubit.selectedTeamMembersIds.map((e) {
+                            return  UserTeamIdModel(employeeId: e, teamId: teamDetailsArgs.teamModel.teamId);
+                          }).toList();
+
+                          teamMembersCubit.deleteAllTeamMembersByIds(userTeamIds);
+                        }
+
+                      }, icon: const Icon(Icons.delete)),
 
 
-                  if (Constants.currentEmployee!.permissions.contains(AppStrings.addGroupMembers))
-                  IconButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, Routes.employeePickerRoute,
-                            arguments: EmployeePickerArgs(
-                                teamMembersCubit: teamMembersCubit,
-                                excludeTeamLeader: teamDetailsArgs.teamModel.teamLeader != null ?
-                                teamDetailsArgs.teamModel.teamLeader!.employeeId : null,
-                                employeePickerTypes:
-                                EmployeePickerTypes.SELECT_TEAM_MEMBER.name,
-                                notInThisTeamId:
-                                teamDetailsArgs.teamModel.teamId));
-                      },
-                      icon: const Icon(Icons.group_add)),
-                ],
-                rowsPerPage: 5,
+                      if (Constants.currentEmployee!.permissions.contains(AppStrings.addGroupMembers))
+                      IconButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, Routes.employeePickerRoute,
+                                arguments: EmployeePickerArgs(
+                                    teamMembersCubit: teamMembersCubit,
+                                    excludeTeamLeader: teamDetailsArgs.teamModel.teamLeader != null ?
+                                    teamDetailsArgs.teamModel.teamLeader!.employeeId : null,
+                                    employeePickerTypes:
+                                    EmployeePickerTypes.SELECT_TEAM_MEMBER.name,
+                                    notInThisTeamId:
+                                    teamDetailsArgs.teamModel.teamId));
+                          },
+                          icon: const Icon(Icons.group_add)),
+                    ],
+                    rowsPerPage: 5,
 
-                showCheckboxColumn: true,
-                onSelectAll: (val) {
-                  if (val != null && val == false ) {
-                    teamMembersCubit.resetSelectedTeamMembers();
-                  } else {
-                    teamMembersCubit.fetchAllTeamMembersByTeamId(teamDetailsArgs.teamModel.teamId);
-                  }
-                },
+                    showCheckboxColumn: true,
+                    onSelectAll: (val) {
 
-                onPageChanged: (pageIndex) {
-                  teamMembersCubit.updateFilter(teamMembersCubit
-                      .teamMembersFiltersModel
-                      .copyWith(pageNumber: Wrapped.value(pageIndex)));
-
-                  _getPageEmployees(context: context);
-                },
-                source: TeamMembersDataTable(
-                    onSelect: (val,TeamMemberModel currentTeamMember) {
-                      teamMembersCubit.updateSelectedTeamMembersIds(currentTeamMember.employee.employeeId, val);
+                      if (val != null && val == false ) {
+                        teamMembersCubit.resetSelectedTeamMembers();
+                      } else {
+                        teamMembersCubit.fetchAllTeamMembersByTeamId(teamDetailsArgs.teamModel.teamId);
+                      }
                     },
-                    teamMembersCubit: teamMembersCubit,
-                    context: context)),
+
+                    onPageChanged: (pageIndex) {
+                      _getPageEmployees(context: context);
+                    },
+                    source: TeamMembersDataTable(
+                        onSelect: (val,TeamMemberModel currentTeamMember) {
+                          teamMembersCubit.updateSelectedTeamMembersIds(currentTeamMember.employee.employeeId, val);
+                        },
+                        teamMembersCubit: teamMembersCubit,
+                        context: context)),
+              ),
+            ],
           ),
         );
       },

@@ -61,9 +61,10 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                   DefaultUserAvatarWidget(
                     imageUrl: employeeCubit.currentEmployee.imageUrl,
                     fullName: employeeCubit.currentEmployee.fullName,
-                    height: 40.0,),
+                    height: 150.0,),
 
 
+                  const Divider(),
 
                   const DefaultHeightSizedBox(),
 
@@ -81,10 +82,10 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                       const SizedBox(width: 10.0,),
                       TextButton(
                           onPressed: () {
-                            Constants.launchCaller(employeeCubit.currentEmployee.phoneNumber);
+                            Constants.launchCallerV2(employeeCubit.currentEmployee.phoneNumber);
                           },
 
-                          child: Text(employeeCubit.currentEmployee.phoneNumber.phone)),
+                          child: Text(employeeCubit.currentEmployee.phoneNumber)),
                     ],
                   ),
 

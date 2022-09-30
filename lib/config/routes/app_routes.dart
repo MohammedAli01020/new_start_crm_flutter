@@ -18,6 +18,8 @@ import 'package:crm_flutter_project/features/employees/presentation/screens/modi
 import 'package:crm_flutter_project/features/events/presentation/screens/events_screen.dart';
 import 'package:crm_flutter_project/features/global_reports/presentation/screens/global_reports_screen.dart';
 import 'package:crm_flutter_project/features/own_reports/presentation/screens/own_reports_screen.dart';
+import 'package:crm_flutter_project/features/pre_defined_roles/presentation/screens/modify_pre_defined_role_screen.dart';
+import 'package:crm_flutter_project/features/pre_defined_roles/presentation/screens/pre_defined_roles_screen.dart';
 import 'package:crm_flutter_project/features/sources/presentation/screens/sources_screen.dart';
 import 'package:crm_flutter_project/features/teams/data/models/team_members_filters_model.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/employee_picker_screen.dart';
@@ -42,6 +44,7 @@ import '../../features/global_reports/presentation/cubit/global_reports_cubit.da
 import '../../features/login/presentation/screens/login_screen.dart';
 import '../../features/own_reports/presentation/cubit/own_reports_cubit.dart';
 import '../../features/permissions/presentation/cubit/permission_cubit.dart';
+import '../../features/pre_defined_roles/presentation/cubit/pre_defined_roles_cubit.dart';
 import '../../features/sources/presentation/cubit/source_cubit.dart';
 import '../../features/teams/presentation/cubit/team_cubit.dart';
 import '../../features/teams/presentation/cubit/team_members/team_members_cubit.dart';
@@ -96,6 +99,13 @@ class Routes {
 
   // own_reports
   static const String ownReportsRoute = '/ownReportsRoute';
+
+
+  // pre_defined_roles
+  static const String preDefinedRolesRoute = '/preDefinedRolesRoute';
+
+  static const String modifyPreDefinedRoleRoute = '/modifyPreDefinedRoleRoute';
+
 
 }
 
@@ -515,6 +525,36 @@ class AppRoutes {
               );
 
             }));
+
+
+      case Routes.preDefinedRolesRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+              final preDefinedRoleType = routeSettings.arguments as String;
+
+              return BlocProvider(
+                create: (context) {
+                  return di.sl<PreDefinedRolesCubit>()..getAllPreDefinedRoles();
+                },
+                child: PreDefinedRolesScreen(preDefinedRoleType: preDefinedRoleType,),
+              );
+
+            }));
+
+
+      case Routes.modifyPreDefinedRoleRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+              final modifyPreDefinedRoleArgs = routeSettings.arguments as ModifyPreDefinedRoleArgs;
+              return BlocProvider.value(
+                value: modifyPreDefinedRoleArgs.preDefinedRolesCubit,
+                child: ModifyPreDefinedRoleScreen(modifyPreDefinedRoleArgs: modifyPreDefinedRoleArgs),
+              );
+
+            }));
+
 
 
       default:

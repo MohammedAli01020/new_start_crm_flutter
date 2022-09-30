@@ -379,6 +379,8 @@ class Constants {
   // (29, 'تعيين الموظفين'),
   // (34, 'متاح للتعيين'),
   // (63, 'مشاهدة موظفين اضفتهم'),
+  // (72, 'تعديل اذونات الموظف'),
+  // (73, 'ايقاف الموظف')
   static List<PermissionModel> employeesPermissions = [
     const PermissionModel(permissionId: 25, name: AppStrings.createEmployees),
     const PermissionModel(permissionId: 26, name: AppStrings.editEmployees),
@@ -386,8 +388,12 @@ class Constants {
     const PermissionModel(permissionId: 28, name: AppStrings.viewEmployees),
     const PermissionModel(permissionId: 29, name: AppStrings.assignEmployees),
     const PermissionModel(permissionId: 34, name: AppStrings.availableToAssign),
-    const PermissionModel(
-        permissionId: 63, name: AppStrings.viewCreatedEmployees),
+    const PermissionModel(permissionId: 63, name: AppStrings.viewCreatedEmployees),
+
+    const PermissionModel(permissionId: 72, name: AppStrings.editEmployeeRole),
+    const PermissionModel(permissionId: 73, name: AppStrings.disableEmployee),
+
+
   ];
 
   // (1, 'مشاهده كل العملاء'),
@@ -584,5 +590,17 @@ class Constants {
   static List<PermissionModel> logsPermissions = [
     const PermissionModel(
         permissionId: 61, name: AppStrings.viewAllCustomerLogs),
+  ];
+
+  // pre_defined_roles
+  // (74, 'مشاهدة الادوار'),
+  // (75, 'تعديل الادوار'),
+  // (76, 'إضافة الادوار'),
+  // (77, 'حذف الادوار')
+  static List<PermissionModel> preDefinedRolesPermissions = [
+    const PermissionModel(permissionId: 74, name: AppStrings.viewPreDefinedRoles),
+    const PermissionModel(permissionId: 75, name: AppStrings.editPreDefinedRoles),
+    const PermissionModel(permissionId: 76, name: AppStrings.createPreDefinedRoles),
+    const PermissionModel(permissionId: 77, name: AppStrings.deletePreDefinedRoles),
   ];
 }

@@ -47,7 +47,9 @@ class CustomerCubit extends Cubit<CustomerState> {
   }
 
   List<CustomerModel> customers = [];
+
   int customerCurrentPage = 0;
+
   int customerTotalElements = 0;
   late int customerPagesCount;
 
@@ -57,16 +59,21 @@ class CustomerCubit extends Cubit<CustomerState> {
     if (state is StartRefreshCustomers || state is StartLoadingCustomers) {
       return;
     }
+
     if (refresh) {
+      print("refresh");
+
       customerCurrentPage = 0;
       isNoMoreData = false;
       emit(StartRefreshCustomers());
     } else {
       if (customerCurrentPage >= customerPagesCount) {
         isNoMoreData = true;
+        print("isNoMoreData");
         emit(LoadNoMoreCustomers());
         return;
       } else {
+        print("StartLoadingCustomers");
         emit(StartLoadingCustomers());
       }
     }
@@ -160,23 +167,23 @@ class CustomerCubit extends Cubit<CustomerState> {
     });
   }
 
-  List<int> selectedCustomersIds = [];
+  List<CustomerModel> selectedCustomers = [];
 
-  void updateSelectedCustomersIds(int teamMemberId, bool val) {
+  void updateSelectedCustomers(CustomerModel customer, bool val) {
     emit(StartUpdateSelectedCustomers());
     if (val) {
-      selectedCustomersIds.add(teamMemberId);
+      selectedCustomers.add(customer);
     } else {
-      selectedCustomersIds.remove(teamMemberId);
+      selectedCustomers.remove(customer);
     }
 
     emit(EndUpdateSelectedCustomers());
   }
 
-  void resetSelectedCustomers() {
-    emit(StartResetSelectedCustomers());
-    selectedCustomersIds = [];
-    emit(EndResetSelectedCustomers());
+  void setSelectedCustomers(List<CustomerModel> newCustomers) {
+    emit(StartSetSelectedCustomers());
+    selectedCustomers = newCustomers;
+    emit(EndSetSelectedCustomers());
   }
 
   List<EventModel>? selectedEvents = [];
@@ -195,16 +202,13 @@ class CustomerCubit extends Cubit<CustomerState> {
     emit(EndUpdateSources());
   }
 
-
-
   List<String>? selectedDevelopers = [];
 
-  void updateSelectedDevelopers (List<String>? newDevelopers ) {
+  void updateSelectedDevelopers(List<String>? newDevelopers) {
     emit(StartUpdateDevelopers());
     selectedDevelopers = newDevelopers;
     emit(EndUpdateDevelopers());
   }
-
 
   List<String>? selectedProjects = [];
 
@@ -213,7 +217,6 @@ class CustomerCubit extends Cubit<CustomerState> {
     selectedProjects = newProjects;
     emit(EndUpdateProjects());
   }
-
 
   List<String>? selectedUnitTypes = [];
 
@@ -484,30 +487,61 @@ class CustomerCubit extends Cubit<CustomerState> {
             cachedCustomerTableConfig: customerTableConfigModel)));
   }
 
-
-
   Future<void> updateCustomerDevelopersAndProjects(
-      UpdateCustomerDevelopersAndProjectsParam updateCustomerDevelopersAndProjectsParam) async {
+      UpdateCustomerDevelopersAndProjectsParam
+          updateCustomerDevelopersAndProjectsParam) async {
     emit(StartUpdateCustomerDevelopersAndProjects());
-    Either<Failure, CustomerModel> response = await customerUseCases
-        .updateCustomerDevelopersAndProjects(updateCustomerDevelopersAndProjectsParam);
+    Either<Failure, CustomerModel> response =
+        await customerUseCases.updateCustomerDevelopersAndProjects(
+            updateCustomerDevelopersAndProjectsParam);
 
     response.fold(
-            (failure) => emit(
-                UpdateCustomerDevelopersAndProjectsError(msg: Constants.mapFailureToMsg(failure))),
-            (newCustomerModel) {
-          try {
-            int index = customers.indexWhere((element) {
-              return element.customerId ==
-                  updateCustomerDevelopersAndProjectsParam.customerId;
+        (failure) => emit(UpdateCustomerDevelopersAndProjectsError(
+            msg: Constants.mapFailureToMsg(failure))), (newCustomerModel) {
+      try {
+        int index = customers.indexWhere((element) {
+          return element.customerId ==
+              updateCustomerDevelopersAndProjectsParam.customerId;
+        });
+        customers[index] = newCustomerModel;
+        currentCustomer = newCustomerModel;
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+
+      return emit(EndUpdateCustomerDevelopersAndProjects(
+          customerModel: newCustomerModel));
+    });
+  }
+
+  int currentTablePageIndex = 0;
+
+  void updateTableIndex(int newIndex) {
+    currentTablePageIndex = newIndex;
+  }
+
+  Future<void> deleteAllCustomersByIds(List<int> customerIds, int employeeId) async {
+    emit(StartDeleteAllCustomersByIds());
+
+    Either<Failure, void> response = await customerUseCases
+        .deleteAllCustomersByIds(CustomerIdsWrapper(customerIds: customerIds, employeeId: employeeId));
+
+    response.fold(
+        (failure) => emit(DeleteAllCustomersByIdsError(
+            msg: Constants.mapFailureToMsg(failure))), (v) {
+
+
+          for (int i = 0; i < customerIds.length; i++) {
+            customers.removeWhere((element) {
+              return element.customerId == customerIds[i];
             });
-            customers[index] = newCustomerModel;
-            currentCustomer = newCustomerModel;
-          } catch (e) {
-            debugPrint(e.toString());
           }
 
-          return emit(EndUpdateCustomerDevelopersAndProjects(customerModel: newCustomerModel));
-        });
+
+      selectedCustomers = [];
+      customerTotalElements = customerTotalElements - customerIds.length;
+
+      return emit(EndDeleteAllCustomersByIds());
+    });
   }
 }

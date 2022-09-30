@@ -1,12 +1,10 @@
 import 'dart:math';
 
-import 'package:crm_flutter_project/core/utils/app_strings.dart';
 import 'package:crm_flutter_project/core/utils/constants.dart';
 import 'package:crm_flutter_project/core/utils/media_query_values.dart';
 import 'package:crm_flutter_project/core/utils/wrapper.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_cubit.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_members/team_members_cubit.dart';
-import 'package:crm_flutter_project/features/teams/presentation/screens/modify_team_screen.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/team_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -120,7 +118,6 @@ class TeamsScreen extends StatelessWidget {
 
         Expanded(child: _buildList(cubit, state, context)),
 
-
         if (cubit.teams.isNotEmpty) SizedBox(
           width: context.width,
           child: NumberPaginator(
@@ -150,6 +147,7 @@ class TeamsScreen extends StatelessWidget {
         return Scaffold(
           appBar: TeamsAppBar(
             onSearchChangeCallback: (String search) {
+
               teamCubit.updateFilter(teamCubit.teamFiltersModel.copyWith(
                 search: Wrapped.value(search)
               ));

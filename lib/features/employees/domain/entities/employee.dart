@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-import '../../data/models/phoneNumber_model.dart';
 import '../../data/models/role_model.dart';
 
 class Employee extends Equatable {
@@ -22,7 +21,7 @@ class Employee extends Equatable {
   final String fullName;
   final String? imageUrl;
   final int createDateTime;
-  final PhoneNumberModel phoneNumber;
+  final String phoneNumber;
   final bool enabled;
   final String username;
   final String password;

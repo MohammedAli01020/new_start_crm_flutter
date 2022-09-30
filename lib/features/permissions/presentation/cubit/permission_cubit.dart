@@ -36,6 +36,7 @@ class PermissionCubit extends Cubit<PermissionState> {
     });
   }
 
+
   List<PermissionModel> selectedPermissions = [];
 
   void updateSelectedPermissions(PermissionModel permission) {
@@ -47,7 +48,6 @@ class PermissionCubit extends Cubit<PermissionState> {
     }
     emit(EndUpdateSelectedPermissions());
   }
-
 
   void updateAllPermissions(List<PermissionModel> permissions) {
     emit(StartUpdateAllPermissions());

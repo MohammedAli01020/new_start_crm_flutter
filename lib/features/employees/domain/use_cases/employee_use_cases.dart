@@ -1,14 +1,15 @@
 import 'package:crm_flutter_project/features/employees/data/models/employee_model.dart';
-import 'package:crm_flutter_project/features/employees/data/models/phoneNumber_model.dart';
 import 'package:crm_flutter_project/features/employees/data/models/role_model.dart';
 import 'package:crm_flutter_project/features/employees/domain/entities/employees_data.dart';
 import 'package:crm_flutter_project/features/employees/domain/repositories/employee_repository.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failures.dart';
+import '../../../../core/utils/wrapper.dart';
 import '../../data/models/employee_filters_model.dart';
 
 abstract class EmployeeUseCases {
+
   Future<Either<Failure, EmployeesData>> getAllEmployeesWithFilters(
       EmployeeFiltersModel employeeFiltersModel);
 
@@ -16,6 +17,9 @@ abstract class EmployeeUseCases {
       ModifyEmployeeParam modifyEmployeeParam);
 
   Future<Either<Failure, void>> deleteEmployee(int costId);
+
+  Future<Either<Failure, RoleModel>> findRoleByEmployeeId(int employeeId);
+
 }
 
 class EmployeeUseCasesImpl implements EmployeeUseCases {
@@ -39,6 +43,11 @@ class EmployeeUseCasesImpl implements EmployeeUseCases {
       ModifyEmployeeParam modifyEmployeeParam) {
     return employeeRepository.modifyEmployee(modifyEmployeeParam);
   }
+
+  @override
+  Future<Either<Failure, RoleModel>> findRoleByEmployeeId(int employeeId) {
+    return employeeRepository.findRoleByEmployeeId(employeeId);
+  }
 }
 
 class ModifyEmployeeParam {
@@ -50,7 +59,7 @@ class ModifyEmployeeParam {
 
   final int createDateTime;
 
-  final PhoneNumberModel phoneNumber;
+  final String phoneNumber;
 
   final bool enabled;
 
@@ -62,30 +71,68 @@ class ModifyEmployeeParam {
 
   final int? createdByEmployeeId;
 
-  ModifyEmployeeParam(
-      {required this.employeeId,
-      required this.fullName,
-      required this.imageUrl,
-      required this.createDateTime,
-      required this.phoneNumber,
-      required this.enabled,
-      required this.username,
-      required this.password,
-      required this.role,
-      required this.createdByEmployeeId});
 
-  Map<String, dynamic> toJson() => {
+  ModifyEmployeeParam({required this.employeeId,
+    required this.fullName,
+    required this.imageUrl,
+    required this.createDateTime,
+    required this.phoneNumber,
+    required this.enabled,
+    required this.username,
+    required this.password,
+    required this.role,
+    required this.createdByEmployeeId});
+
+  Map<String, dynamic> toJson() =>
+      {
         "employeeId": employeeId,
         "fullName": fullName,
         "imageUrl": imageUrl,
         "createDateTime": createDateTime,
-        "phoneNumber": phoneNumber.toJson(),
+        "phoneNumber": phoneNumber,
         "enabled": enabled,
         "username": username,
         "password": password,
         "role": role?.toJson(),
         "createdByEmployeeId": createdByEmployeeId,
       };
+
+  ModifyEmployeeParam copyWith({
+    Wrapped<int?>? employeeId,
+
+    Wrapped<String>? fullName,
+
+    Wrapped<String?>? imageUrl,
+
+    Wrapped<int>? createDateTime,
+
+    Wrapped<String>? phoneNumber,
+
+    Wrapped<bool>? enabled,
+
+    Wrapped<String>? username,
+
+    Wrapped<String?>? password,
+
+    Wrapped<RoleModel?>? role,
+
+    Wrapped<int?>? createdByEmployeeId
+
+  }) {
+    return ModifyEmployeeParam(
+        employeeId: employeeId != null ? employeeId.value : this.employeeId,
+        fullName: fullName != null ? fullName.value : this.fullName,
+        imageUrl: imageUrl != null ? imageUrl.value : this.imageUrl,
+        createDateTime: createDateTime != null ? createDateTime.value : this.createDateTime,
+        phoneNumber: phoneNumber != null ? phoneNumber.value : this.phoneNumber,
+        enabled: enabled != null ? enabled.value : this.enabled,
+        username: username != null ? username.value : this.username,
+        password: password != null ? password.value : this.password,
+        role: role != null ? role.value : this.role,
+        createdByEmployeeId: createdByEmployeeId != null ? createdByEmployeeId.value : this.createdByEmployeeId);
+  }
+
+
 }
 
 

@@ -1,12 +1,14 @@
 import '../../../../core/api/api_consumer.dart';
 import '../../../../core/api/end_points.dart';
 import '../../../employees/data/models/employee_model.dart';
+import '../../../employees/data/models/role_model.dart';
 import '../../domain/use_cases/login_use_cases.dart';
 import '../models/current_employee_model.dart';
 
 abstract class LoginRemoteDataSource {
   Future<CurrentEmployeeModel> login(LoginParam loginParam);
   Future<EmployeeModel> getEmployeeById(int employerId);
+  Future<RoleModel> findRoleByEmployeeId(int employeeId);
 }
 
 class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
@@ -28,5 +30,12 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
         await apiConsumer.get(EndPoints.findEmployeeById + employerId.toString());
 
     return EmployeeModel.fromJson(response);
+  }
+
+  @override
+  Future<RoleModel> findRoleByEmployeeId(int employeeId) async {
+    final response = await apiConsumer.get(EndPoints.roleByEmployeeId + employeeId.toString());
+
+    return RoleModel.fromJson(response);
   }
 }

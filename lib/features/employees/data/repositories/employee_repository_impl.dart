@@ -4,6 +4,7 @@ import 'package:crm_flutter_project/features/employees/data/data_sources/employe
 import 'package:crm_flutter_project/features/employees/data/models/employee_filters_model.dart';
 
 import 'package:crm_flutter_project/features/employees/data/models/employee_model.dart';
+import 'package:crm_flutter_project/features/employees/data/models/role_model.dart';
 
 import 'package:crm_flutter_project/features/employees/domain/entities/employees_data.dart';
 
@@ -42,6 +43,16 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
   Future<Either<Failure, EmployeeModel>> modifyEmployee(ModifyEmployeeParam modifyEmployeeParam) async {
     try {
       final response = await employeeRemoteDataSource.modifyEmployee(modifyEmployeeParam);
+      return Right(response);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(msg: e.msg));
+    }
+  }
+
+  @override
+  Future<Either<Failure, RoleModel>> findRoleByEmployeeId(int employeeId) async {
+    try {
+      final response = await employeeRemoteDataSource.findRoleByEmployeeId(employeeId);
       return Right(response);
     } on ServerException catch (e) {
       return Left(ServerFailure(msg: e.msg));

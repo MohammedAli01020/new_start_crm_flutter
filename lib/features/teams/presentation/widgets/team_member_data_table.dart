@@ -22,48 +22,52 @@ class TeamMembersDataTable extends DataTableSource {
 
   @override
   DataRow? getRow(int index) {
-    final currentTeamMember = teamMembersCubit.teamMembers[index];
+    try {
+      final currentTeamMember = teamMembersCubit.teamMembers[index];
+      return DataRow.byIndex(
+          index: index,
+          selected: teamMembersCubit.selectedTeamMembersIds.contains(
+              currentTeamMember.employee.employeeId),
+          onSelectChanged: (val) {
+            onSelect(val, currentTeamMember);
+          },
+          cells: [
+            DataCell(BlocProvider(
+              create: (context) => di.sl<EmployeeCubit>(),
+              child: BlocBuilder<EmployeeCubit, EmployeeState>(
+                builder: (context, state) {
+                  final cubit = EmployeeCubit.get(context);
+                  return DefaultUserAvatarWidget(
+                    onTap: () {
+                      if (Constants.currentEmployee!.teamId != null &&
+                          Constants.currentEmployee!.teamId ==
+                              currentTeamMember.userTeamId.teamId) {
+                        Navigator.pushNamed(context, Routes.employeesDetailsRoute,
+                            arguments: EmployeeDetailsArgs(
+                                employeeModel: currentTeamMember.employee,
+                                employeeCubit: cubit,
+                                fromRoute: Routes.teamsDetailsRoute));
+                      }
+                    },
+                    imageUrl: currentTeamMember.employee.imageUrl,
+                    fullName: currentTeamMember.employee.fullName,
+                    height: 40.0,);
+                },
+              ),
+            )),
 
-    return DataRow.byIndex(
-        index: index,
-        selected: teamMembersCubit.selectedTeamMembersIds.contains(
-            currentTeamMember.employee.employeeId),
-        onSelectChanged: (val) {
-          onSelect(val, currentTeamMember);
-        },
-        cells: [
-          DataCell(BlocProvider(
-            create: (context) => di.sl<EmployeeCubit>(),
-            child: BlocBuilder<EmployeeCubit, EmployeeState>(
-              builder: (context, state) {
-                final cubit = EmployeeCubit.get(context);
-                return DefaultUserAvatarWidget(
-                  onTap: () {
-                    if (Constants.currentEmployee!.teamId != null &&
-                        Constants.currentEmployee!.teamId ==
-                            currentTeamMember.userTeamId.teamId) {
-                      Navigator.pushNamed(context, Routes.employeesDetailsRoute,
-                          arguments: EmployeeDetailsArgs(
-                              employeeModel: currentTeamMember.employee,
-                              employeeCubit: cubit,
-                              fromRoute: Routes.teamsDetailsRoute));
-                    }
-                  },
-                  imageUrl: currentTeamMember.employee.imageUrl,
-                  fullName: currentTeamMember.employee.fullName,
-                  height: 40.0,);
-              },
-            ),
-          )),
 
+            DataCell(Text(currentTeamMember.employee.fullName)),
+            DataCell(Text(Constants.dateTimeFromMilliSeconds(
+                currentTeamMember.insertDateTime))),
 
-          DataCell(Text(currentTeamMember.employee.fullName)),
-          DataCell(Text(Constants.dateTimeFromMilliSeconds(
-              currentTeamMember.insertDateTime))),
+            DataCell(Text(currentTeamMember.insertedBy != null ? currentTeamMember
+                .insertedBy!.fullName : "غير موجود")),
+          ]);
+    } catch (e) {
+      return null;
+    }
 
-          DataCell(Text(currentTeamMember.insertedBy != null ? currentTeamMember
-              .insertedBy!.fullName : "غير موجود")),
-        ]);
   }
 
   @override

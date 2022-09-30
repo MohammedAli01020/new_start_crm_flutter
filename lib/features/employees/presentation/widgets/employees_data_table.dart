@@ -15,31 +15,37 @@ class EmployeesDataTable extends DataTableSource {
 
   @override
   DataRow? getRow(int index) {
-    final currentEmployee = employeeCubit.employees[index];
 
-    return DataRow.byIndex(
-        index: index,
-        onSelectChanged: (val) {
-          onSelect(val, currentEmployee);
-        },
-        cells: [
-          DataCell(DefaultUserAvatarWidget(
-            imageUrl: currentEmployee.imageUrl,
-            fullName: currentEmployee.fullName,
-            height: 40.0,)),
+    try {
+      final currentEmployee = employeeCubit.employees[index];
 
-          DataCell(Text(currentEmployee.fullName)),
-          DataCell(Text(Constants.dateTimeFromMilliSeconds(
-              currentEmployee.createDateTime))),
-          DataCell(TextButton(
-              onPressed: () {
-                Constants.launchCaller(currentEmployee.phoneNumber);
-              },
-              child: Text(currentEmployee.phoneNumber.phone))),
+      return DataRow.byIndex(
+          index: index,
+          onSelectChanged: (val) {
+            onSelect(val, currentEmployee);
+          },
+          cells: [
+            DataCell(DefaultUserAvatarWidget(
+              imageUrl: currentEmployee.imageUrl,
+              fullName: currentEmployee.fullName,
+              height: 40.0,)),
 
-          DataCell(Text(currentEmployee.enabled.toString())),
-          DataCell(Text(currentEmployee.username)),
-        ]);
+            DataCell(Text(currentEmployee.fullName)),
+            DataCell(Text(Constants.dateTimeFromMilliSeconds(
+                currentEmployee.createDateTime))),
+            DataCell(TextButton(
+                onPressed: () {
+                  Constants.launchCallerV2(currentEmployee.phoneNumber);
+                },
+                child: Text(currentEmployee.phoneNumber))),
+
+            DataCell(Text(currentEmployee.enabled.toString())),
+            DataCell(Text(currentEmployee.username)),
+          ]);
+    } catch(e) {
+      return null;
+    }
+
   }
 
   @override

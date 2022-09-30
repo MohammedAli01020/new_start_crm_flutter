@@ -14,24 +14,29 @@ class CustomerLogsDataTable extends DataTableSource {
 
   @override
   DataRow? getRow(int index) {
-    final currentCustomerLog = customerLogsCubit.customerLogs[index];
 
-    return DataRow.byIndex(
-        index: index,
-        onSelectChanged: (val) {
-          onSelect(val, currentCustomerLog);
-        },
-        cells: [
-          DataCell(SizedBox(
-            width: 300.0,
-            child: Text(
-              currentCustomerLog.description.toString(),
-              maxLines: 3,
-            ),
-          )),
-          DataCell(
-              Text(Constants.timeAgoSinceDate(currentCustomerLog.dateTime))),
-        ]);
+    try {
+      final currentCustomerLog = customerLogsCubit.customerLogs[index];
+      return DataRow.byIndex(
+          index: index,
+          onSelectChanged: (val) {
+            onSelect(val, currentCustomerLog);
+          },
+          cells: [
+            DataCell(SizedBox(
+              width: 300.0,
+              child: Text(
+                currentCustomerLog.description.toString(),
+                maxLines: 3,
+              ),
+            )),
+            DataCell(
+                Text(Constants.timeAgoSinceDate(currentCustomerLog.dateTime))),
+          ]);
+    } catch(e) {
+      return null;
+    }
+
   }
 
   @override

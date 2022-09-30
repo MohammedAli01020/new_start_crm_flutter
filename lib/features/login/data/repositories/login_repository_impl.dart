@@ -1,4 +1,5 @@
 import 'package:crm_flutter_project/features/customer_table_config/data/models/customer_table_config_model.dart';
+import 'package:crm_flutter_project/features/employees/data/models/role_model.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/exceptions.dart';
@@ -79,6 +80,17 @@ class LoginRepositoryImpl implements LoginRepository {
       return Right(currentCustomerTableConfig);
     } on CacheException catch (e) {
       return Left(CacheFailure(msg: e.msg));
+    }
+  }
+
+  @override
+  Future<Either<Failure, RoleModel>> findRoleByEmployeeId(int employeeId) async {
+    try {
+      final roleModel =
+          await loginRemoteDataSource.findRoleByEmployeeId(employeeId);
+      return Right(roleModel);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(msg: e.msg));
     }
   }
 }

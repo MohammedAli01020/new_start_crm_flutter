@@ -49,6 +49,7 @@ class LoadNoMoreEmployees extends EmployeeState {}
 // modify
 
 class StartModifyEmployee extends EmployeeState {}
+
 class EndModifyEmployee extends EmployeeState {
   final EmployeeModel employeeModel;
 
@@ -88,14 +89,42 @@ class DeleteEmployeeError extends EmployeeState {
   List<Object> get props => [msg];
 }
 
-class StartUpdatePhoneNumber extends EmployeeState {}
-
-class EndUpdatePhoneNumber extends EmployeeState {}
-
 class StartUpdateRole extends EmployeeState {}
 
 class EndUpdateRole extends EmployeeState {}
 
 
-class StartUpdateCurrentEmployeeModel extends EmployeeState  {}
-class EndUpdateCurrentEmployeeModel extends EmployeeState  {}
+class StartUpdateCurrentEmployeeModel extends EmployeeState {}
+
+class EndUpdateCurrentEmployeeModel extends EmployeeState {}
+
+
+class StartFindRoleByEmployeeId extends EmployeeState {}
+
+class EndFindRoleByEmployeeId extends EmployeeState {
+  final RoleModel roleModel;
+
+  EndFindRoleByEmployeeId({required this.roleModel});
+
+  @override
+  List<Object> get props => [roleModel];
+}
+
+class FindRoleByEmployeeIdError extends EmployeeState {
+  final String msg;
+
+  FindRoleByEmployeeIdError({required this.msg});
+
+  @override
+  List<Object> get props => [msg];
+}
+
+
+class UploadImageFileError extends EmployeeState {
+  final String msg;
+
+  UploadImageFileError({required this.msg});
+
+  @override
+  List<Object> get props => [msg];
+}

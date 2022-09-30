@@ -15,7 +15,7 @@ class EmployeeFiltersModel extends EmployeeFilters {
         required int? excludeTeamLeader,
         required int? notInThisTeamId,
         required int? createdById,
-
+        required bool? availableToAssign
 
       })
       : super(
@@ -29,7 +29,8 @@ class EmployeeFiltersModel extends EmployeeFilters {
             endDateTime: endDateTime,
       excludeTeamLeader: excludeTeamLeader,
       notInThisTeamId: notInThisTeamId,
-      createdById: createdById);
+      createdById: createdById,
+      availableToAssign: availableToAssign);
 
   factory EmployeeFiltersModel.fromJson(Map<String, dynamic> json) =>
       EmployeeFiltersModel(
@@ -45,6 +46,7 @@ class EmployeeFiltersModel extends EmployeeFilters {
           notInThisTeamId: json["notInThisTeamId"],
 
           createdById: json["createdById"],
+          availableToAssign: json["availableToAssign"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -58,7 +60,8 @@ class EmployeeFiltersModel extends EmployeeFilters {
         "endDateTime": endDateTime,
     "excludeTeamLeader": excludeTeamLeader,
     "notInThisTeamId": notInThisTeamId,
-    "createdById": createdById
+    "createdById": createdById,
+    "availableToAssign": availableToAssign
   };
 
   EmployeeFiltersModel copyWith({
@@ -73,6 +76,9 @@ class EmployeeFiltersModel extends EmployeeFilters {
     Wrapped<int?>? excludeTeamLeader,
     Wrapped<int?>? notInThisTeamId,
     Wrapped<int?>? createdById,
+
+    Wrapped<bool?>? availableToAssign,
+
 
   }) {
     return EmployeeFiltersModel(
@@ -93,6 +99,7 @@ class EmployeeFiltersModel extends EmployeeFilters {
 
       notInThisTeamId: notInThisTeamId != null ? notInThisTeamId.value : this.notInThisTeamId,
       createdById: createdById != null ? createdById.value : this.createdById,
+      availableToAssign: availableToAssign != null ? availableToAssign.value : this.availableToAssign,
 
     );
   }
@@ -100,7 +107,7 @@ class EmployeeFiltersModel extends EmployeeFilters {
   factory EmployeeFiltersModel.initial() {
     return const EmployeeFiltersModel(
         pageNumber: 0,
-        pageSize: 12,
+        pageSize: 50,
         sortDirection: "DESC",
         sortBy: "createDateTime",
         fullNameOrPhoneNumber: null,
@@ -109,7 +116,8 @@ class EmployeeFiltersModel extends EmployeeFilters {
         employeeTypes: null,
        excludeTeamLeader: null,
        notInThisTeamId: null,
-       createdById: null
+       createdById: null,
+       availableToAssign: null
     );
   }
 }

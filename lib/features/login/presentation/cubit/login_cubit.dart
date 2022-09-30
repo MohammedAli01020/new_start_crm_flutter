@@ -1,5 +1,6 @@
 import 'package:crm_flutter_project/features/customer_table_config/data/models/customer_table_config_model.dart';
 import 'package:crm_flutter_project/core/utils/wrapper.dart';
+import 'package:crm_flutter_project/features/employees/data/models/role_model.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
@@ -67,28 +68,32 @@ class LoginCubit extends Cubit<LoginState> {
             loginUseCases.logout();
            return emit(GettingEmployeeError(msg: Constants.mapFailureToMsg(failure)));
           },
-          (newEmployee) {
+          (newEmployee) async {
         if (!newEmployee.enabled) {
           return emit(
               EmployeeIsNotEnabled(msg: AppStrings.userNotEnabledMessage));
         }
 
-        List<String> permissions = [];
+        // start fetch permissions by employeeId
+        Either<Failure, RoleModel> response = await loginUseCases.findRoleByEmployeeId(newEmployee.employeeId);
+        response.fold((failure) => emit(GettingEmployeeError(msg: Constants.mapFailureToMsg(failure))),
+                (role) {
+              List<String> permissions = [];
+              if (role.permissions.isNotEmpty) {
+                permissions.addAll(role.permissions.map((e) => e.name));
+              }
 
-        if (newEmployee.role != null && newEmployee.role!.permissions.isNotEmpty) {
-          permissions.addAll(newEmployee.role!.permissions.map((e) => e.name));
-        }
+              Constants.currentEmployee = Constants.currentEmployee!.copyWith(
+                enabled: Wrapped.value(newEmployee.enabled),
+                username: Wrapped.value(newEmployee.username),
+                fullName: Wrapped.value(newEmployee.fullName),
+                createDateTime: Wrapped.value(newEmployee.createDateTime),
+                permissions: Wrapped.value(permissions),
+                teamId: Wrapped.value(newEmployee.team),
+              );
 
-        Constants.currentEmployee = Constants.currentEmployee!.copyWith(
-          enabled: Wrapped.value(newEmployee.enabled),
-          username: Wrapped.value(newEmployee.username),
-          fullName: Wrapped.value(newEmployee.fullName),
-          createDateTime: Wrapped.value(newEmployee.createDateTime),
-          permissions: Wrapped.value(permissions),
-          teamId: Wrapped.value(newEmployee.team),
-        );
-
-        return emit(EndInit());
+              return emit(EndInit());
+            });
       });
     });
   }
@@ -115,36 +120,34 @@ class LoginCubit extends Cubit<LoginState> {
     response.fold(
             (failure) => emit(
             GettingEmployeeError(msg: Constants.mapFailureToMsg(failure))),
-    (newEmployee) {
+    (newEmployee) async {
       if (!newEmployee.enabled) {
         return emit(
             EmployeeIsNotEnabled(msg: AppStrings.userNotEnabledMessage));
       }
 
-      // start fetch permissions by role id
-      List<String> permissions = [];
+      // start fetch permissions by employeeId
+      Either<Failure, RoleModel> response = await loginUseCases.findRoleByEmployeeId(newEmployee.employeeId);
+      response.fold((failure) => emit(GettingEmployeeError(msg: Constants.mapFailureToMsg(failure))),
+              (role) {
+                List<String> permissions = [];
+                if (role.permissions.isNotEmpty) {
+                  permissions.addAll(role.permissions.map((e) => e.name));
+                }
 
-      if (newEmployee.role != null && newEmployee.role!.permissions.isNotEmpty) {
-        permissions.addAll(newEmployee.role!.permissions.map((e) => e.name));
-      }
+                Constants.currentEmployee = Constants.currentEmployee!.copyWith(
+                  enabled: Wrapped.value(newEmployee.enabled),
+                  username: Wrapped.value(newEmployee.username),
+                  fullName: Wrapped.value(newEmployee.fullName),
+                  createDateTime: Wrapped.value(newEmployee.createDateTime),
+                  permissions: Wrapped.value(permissions),
+                  teamId: Wrapped.value(newEmployee.team),
+                );
 
-      Constants.currentEmployee = Constants.currentEmployee!.copyWith(
-        enabled: Wrapped.value(newEmployee.enabled),
-        username: Wrapped.value(newEmployee.username),
-        fullName: Wrapped.value(newEmployee.fullName),
-        createDateTime: Wrapped.value(newEmployee.createDateTime),
-        permissions: Wrapped.value(permissions),
-        teamId: Wrapped.value(newEmployee.team),
-      );
+                return emit(EndGettingEmployee());
+              });
 
-      return emit(EndGettingEmployee());
     });
   }
-
-
-  void changeTheme() {
-
-  }
-
 
 }

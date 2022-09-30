@@ -51,6 +51,8 @@ abstract class CustomerRemoteDataSource {
   Future<CustomerModel> updateCustomerDevelopersAndProjects(
       UpdateCustomerDevelopersAndProjectsParam updateCustomerDevelopersAndProjectsParam);
 
+
+  Future<void> deleteAllCustomersByIds(CustomerIdsWrapper customerIdsWrapper);
 }
 class CustomerRemoteDataSourceImpl implements CustomerRemoteDataSource {
   final ApiConsumer apiConsumer;
@@ -168,6 +170,13 @@ class CustomerRemoteDataSourceImpl implements CustomerRemoteDataSource {
         body: updateCustomerDevelopersAndProjectsParam.toJson());
 
     return CustomerModel.fromJson(response);
+  }
+
+  @override
+  Future<void> deleteAllCustomersByIds(CustomerIdsWrapper customerIdsWrapper) async {
+    return await apiConsumer.delete(EndPoints.deleteAllCustomersByIds,
+        body: customerIdsWrapper.toJson()
+    );
   }
 
 

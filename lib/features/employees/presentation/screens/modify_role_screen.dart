@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:crm_flutter_project/core/utils/enums.dart';
 import 'package:crm_flutter_project/core/utils/media_query_values.dart';
 import 'package:crm_flutter_project/core/widgets/default_hieght_sized_box.dart';
 import 'package:crm_flutter_project/features/employees/data/models/role_model.dart';
@@ -9,12 +10,12 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../config/routes/app_routes.dart';
 import '../../../../core/utils/app_strings.dart';
 import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../../core/widgets/custom_edit_text.dart';
 import '../../../../core/widgets/default_button_widget.dart';
-import '../../../../core/widgets/error_item_widget.dart';
 
 class ModifyRoleScreen extends StatefulWidget {
   final RoleModel? roleModel;
@@ -51,39 +52,39 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
   int? roleId;
   final _roleNameController = TextEditingController();
 
-  Widget _buildListView(PermissionCubit cubit, PermissionState state) {
-    if (state is StartGetAllPermissionsByNameLike) {
-      return const CircularProgressIndicator();
-    }
-
-    if (state is GetAllPermissionsByNameLikeError) {
-      return ErrorItemWidget(
-        msg: state.msg,
-        onPress: () {
-          cubit.getAllPermissionsByNameLike();
-        },
-      );
-    }
-
-    return Expanded(
-        child: ListView.separated(
-      itemBuilder: (context, index) {
-        final currentPermission = cubit.permissions[index];
-
-        return CheckboxListTile(
-            value: cubit.selectedPermissions.contains(currentPermission),
-            title: Text(currentPermission.name),
-            selected: cubit.selectedPermissions.contains(currentPermission),
-            onChanged: (val) {
-              cubit.updateSelectedPermissions(currentPermission);
-            });
-      },
-      itemCount: cubit.permissions.length,
-      separatorBuilder: (BuildContext context, int index) {
-        return const Divider();
-      },
-    ));
-  }
+  // Widget _buildListView(PermissionCubit cubit, PermissionState state) {
+  //   if (state is StartGetAllPermissionsByNameLike) {
+  //     return const CircularProgressIndicator();
+  //   }
+  //
+  //   if (state is GetAllPermissionsByNameLikeError) {
+  //     return ErrorItemWidget(
+  //       msg: state.msg,
+  //       onPress: () {
+  //         cubit.getAllPermissionsByNameLike();
+  //       },
+  //     );
+  //   }
+  //
+  //   return Expanded(
+  //       child: ListView.separated(
+  //     itemBuilder: (context, index) {
+  //       final currentPermission = cubit.permissions[index];
+  //
+  //       return CheckboxListTile(
+  //           value: cubit.selectedPermissions.contains(currentPermission),
+  //           title: Text(currentPermission.name),
+  //           selected: cubit.selectedPermissions.contains(currentPermission),
+  //           onChanged: (val) {
+  //             cubit.updateSelectedPermissions(currentPermission);
+  //           });
+  //     },
+  //     itemCount: cubit.permissions.length,
+  //     separatorBuilder: (BuildContext context, int index) {
+  //       return const Divider();
+  //     },
+  //   ));
+  // }
 
   @override
   void initState() {
@@ -137,6 +138,33 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
               child: CustomScrollView(
                 controller: widget._scrollController,
                 slivers: [
+
+
+                  SliverToBoxAdapter(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Card(
+                          child: ListTile(
+                            onTap: () async {
+                              final result = await Navigator.pushNamed(context, Routes.preDefinedRolesRoute,
+                              arguments: PreDefinedRoleType.SELECT_PRE_DEFINED_ROLES.name);
+
+                              if (result != null && result is RoleModel) {
+                                permissionCubit.updateAllPermissions(result.permissions);
+                                _roleNameController.text = result.name;
+                              }
+                            },
+                            title: Text("اختر من الادوار المحفوظة", style: TextStyle(color: Theme.of(context).primaryColor),),
+                          ),
+                        ),
+                        const Divider(),
+                        const Text("او انشأ دور جديد"),
+                        const DefaultHeightSizedBox(),
+                      ],
+                    ),
+                  ),
+
                   SliverToBoxAdapter(
                     child: CustomEditText(
                         controller: _roleNameController,
@@ -482,6 +510,29 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                                   .updateSelectedPermissions(currentPermission);
                             });
                       }, childCount: Constants.logsPermissions.length)),
+
+
+                  SliverToBoxAdapter(
+                    child: Container(
+                        width: context.width,
+                        padding: const EdgeInsets.all(16.0),
+                        color: Colors.blueGrey[100],
+                        child: const Text("اذونات الادوار والاذونات")),
+                  ),
+                  SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final currentPermission = Constants.preDefinedRolesPermissions[index];
+                        return CheckboxListTile(
+                            value: permissionCubit.selectedPermissions
+                                .contains(currentPermission),
+                            title: Text(currentPermission.name),
+                            selected: permissionCubit.selectedPermissions
+                                .contains(currentPermission),
+                            onChanged: (val) {
+                              permissionCubit
+                                  .updateSelectedPermissions(currentPermission);
+                            });
+                      }, childCount: Constants.preDefinedRolesPermissions.length)),
                 ],
 
               ),
@@ -511,87 +562,6 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
           ),
         );
 
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(widget.roleModel != null ? "عدل الدور" : "انشأ الدور"),
-            actions: [
-              IconButton(
-                  onPressed: () {
-                    if (formKey.currentState!.validate()) {
-                      Navigator.pop(
-                          context,
-                          RoleModel(
-                              roleId: roleId,
-                              name: _roleNameController.text,
-                              permissions:
-                                  permissionCubit.selectedPermissions));
-                    }
-                  },
-                  icon: const Icon(Icons.done))
-            ],
-          ),
-
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: formKey,
-              child: Column(
-                children: [
-                  CustomEditText(
-                      controller: _roleNameController,
-                      hint: "اسم الدور بالانجليزية بدون مسافات",
-                      maxLength: 50,
-                      inputFormatter: <TextInputFormatter>[
-                        FilteringTextInputFormatter.allow(
-                            RegExp("[0-9a-zA-Z]")),
-                      ],
-                      validator: (v) {
-                        if (v == null || v.isEmpty) {
-                          return AppStrings.required;
-                        }
-
-                        if (v.length > 50) {
-                          return "اقصي عدد احرف 50";
-                        }
-
-                        if (v.length < 2) {
-                          return "اقل عدد احرف 2";
-                        }
-
-                        return null;
-                      },
-                      inputType: TextInputType.text),
-                  const DefaultHeightSizedBox(),
-                  _buildListView(permissionCubit, state),
-                ],
-              ),
-            ),
-          ),
-
-          // bottomNavigationBar: Row(
-          //   children: [
-          //     Expanded(
-          //       child: DefaultButtonWidget(
-          //         onTap: () {
-          //           _roleNameController.clear();
-          //           permissionCubit.updateAllPermissions([]);
-          //         },
-          //         text: "مسح الكل",
-          //       ),
-          //     ),
-          //
-          //     Expanded(
-          //       child: DefaultButtonWidget(
-          //         color: Colors.green,
-          //         onTap: () {
-          //           permissionCubit.updateAllPermissions(permissionCubit.permissions);
-          //         },
-          //         text: "تحديد الكل",
-          //       ),
-          //     ),
-          //   ],
-          // ),
-        );
       },
     );
   }

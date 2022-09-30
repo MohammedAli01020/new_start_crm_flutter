@@ -22,7 +22,7 @@ class FilterItem extends StatelessWidget {
       onTap: onTapCallback,
       child: Container(
         margin: const EdgeInsets.only(left: 10.0),
-        padding: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(5.0),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: value == currentValue

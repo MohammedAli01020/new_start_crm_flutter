@@ -95,9 +95,9 @@ class StartUpdateSelectedCustomers extends CustomerState {}
 class EndUpdateSelectedCustomers extends CustomerState {}
 
 
-class StartResetSelectedCustomers extends CustomerState {}
+class StartSetSelectedCustomers extends CustomerState {}
 
-class EndResetSelectedCustomers extends CustomerState {}
+class EndSetSelectedCustomers extends CustomerState {}
 
 // events
 class StartUpdateEvents extends CustomerState {}
@@ -108,7 +108,6 @@ class EndUpdateEvents extends CustomerState {}
 class StartUpdateSources extends CustomerState {}
 
 class EndUpdateSources extends CustomerState {}
-
 
 
 // developers
@@ -328,10 +327,9 @@ class UpdateCustomerPhoneError extends CustomerState {
 }
 
 
-
 class StartUpdateCustomerDevelopersAndProjects extends CustomerState {}
 
-class EndUpdateCustomerDevelopersAndProjects  extends CustomerState {
+class EndUpdateCustomerDevelopersAndProjects extends CustomerState {
   final CustomerModel customerModel;
 
   EndUpdateCustomerDevelopersAndProjects({required this.customerModel});
@@ -348,7 +346,6 @@ class UpdateCustomerDevelopersAndProjectsError extends CustomerState {
   @override
   List<Object> get props => [msg];
 }
-
 
 
 class StartUpdateCustomers extends CustomerState {}
@@ -371,6 +368,41 @@ class CacheCustomerTableConfigError extends CustomerState {
   final String msg;
 
   CacheCustomerTableConfigError({required this.msg});
+
+  @override
+  List<Object> get props => [msg];
+}
+
+
+class StartFetchCustomers extends CustomerState {}
+
+class EndFetchCustomers extends CustomerState {
+  final CustomersData customersData;
+
+  EndFetchCustomers({required this.customersData});
+
+  @override
+  List<Object> get props => [customersData];
+}
+
+class FetchCustomersError extends CustomerState {
+  final String msg;
+
+  FetchCustomersError({required this.msg});
+
+  @override
+  List<Object> get props => [msg];
+}
+
+
+class StartDeleteAllCustomersByIds extends CustomerState  {}
+class EndDeleteAllCustomersByIds extends CustomerState  {
+
+}
+class DeleteAllCustomersByIdsError extends CustomerState  {
+  final String msg;
+
+  DeleteAllCustomersByIdsError({required this.msg});
 
   @override
   List<Object> get props => [msg];

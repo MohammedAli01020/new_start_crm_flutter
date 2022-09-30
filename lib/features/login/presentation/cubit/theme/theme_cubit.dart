@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:crm_flutter_project/core/error/failures.dart';
 import 'package:crm_flutter_project/core/utils/constants.dart';
 import 'package:crm_flutter_project/features/login/domain/use_cases/theme_use_case.dart';
@@ -11,6 +11,7 @@ class ThemeCubit extends Cubit<ThemeState> {
   final ThemeUseCase themeUseCase;
   ThemeCubit({required this.themeUseCase}) : super(ThemeInitial());
 
+  static ThemeCubit get(context) => BlocProvider.of(context);
 
   Future<void> changeThemeToDark() async {
     emit(StartChangeThemeToDark());
@@ -30,7 +31,13 @@ class ThemeCubit extends Cubit<ThemeState> {
  }
 
 
- void fetchCurrentTheme() {
+ Future<void> fetchCurrentTheme() async {
+
+    emit(StartFetchCurrentTheme());
+   Either<Failure, bool> response = await themeUseCase.fetchCurrentTheme();
+
+   emit(response.fold((failure) => FetchCurrentThemeError(msg: Constants.mapFailureToMsg(failure)),
+           (value) => EndFetchCurrentTheme(currentThemeMode: value)));
 
  }
 }

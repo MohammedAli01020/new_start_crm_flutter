@@ -103,10 +103,12 @@ class AppStrings {
   static const String deleteEmployees  = 'حذف الموظفين';
   static const String viewEmployees  = 'مشاهدة الموظفين';
   static const String assignEmployees  = 'تعيين الموظفين';
-
   static const String availableToAssign  = 'متاح للتعيين';
-
   static const String viewCreatedEmployees  = 'مشاهدة موظفين اضفتهم';
+
+  static const String editEmployeeRole  = 'تعديل اذونات الموظف';
+  static const String disableEmployee  = 'ايقاف الموظف';
+
 
 
   // actions
@@ -174,6 +176,11 @@ class AppStrings {
 
 
 
+  // pred_defined_roes
+  static const String viewPreDefinedRoles = 'مشاهدة الادوار';
+  static const String editPreDefinedRoles =  'تعديل الادوار';
+  static const String createPreDefinedRoles = 'إضافة الادوار';
+  static const String deletePreDefinedRoles =  'حذف الادوار';
 
 
 

@@ -1,3 +1,4 @@
+import 'package:crm_flutter_project/bloc_observer.dart';
 import 'package:crm_flutter_project/core/utils/app_strings.dart';
 import 'package:crm_flutter_project/core/utils/constants.dart';
 import 'package:flutter/material.dart';

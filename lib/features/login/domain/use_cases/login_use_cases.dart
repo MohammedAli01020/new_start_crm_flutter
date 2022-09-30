@@ -6,6 +6,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../customer_table_config/data/models/customer_table_config_model.dart';
+import '../../../employees/data/models/role_model.dart';
 import '../repositories/login_repository.dart';
 
 abstract class LoginUseCases {
@@ -19,6 +20,8 @@ abstract class LoginUseCases {
 
   Future<Either<Failure, CustomerTableConfigModel>> loadLastCustomerTableConfig();
 
+
+  Future<Either<Failure, RoleModel>> findRoleByEmployeeId(int employeeId);
 }
 
 class LoginUseCasesImpl implements LoginUseCases {
@@ -49,6 +52,12 @@ class LoginUseCasesImpl implements LoginUseCases {
   @override
   Future<Either<Failure, CustomerTableConfigModel>> loadLastCustomerTableConfig() {
     return loginRepository.loadLastCustomerTableConfig();
+  }
+
+  @override
+  Future<Either<Failure, RoleModel>> findRoleByEmployeeId(int employeeId) {
+    return loginRepository.findRoleByEmployeeId(employeeId);
+
   }
 
 

@@ -185,6 +185,16 @@ class CustomerRepositoryImpl implements CustomerRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, void>> deleteAllCustomersByIds(CustomerIdsWrapper customerIdsWrapper) async {
+    try {
+      final response = await customerRemoteDataSource.deleteAllCustomersByIds(customerIdsWrapper);
+      return Right(response);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(msg: e.msg));
+    }
+  }
+
 
 
 }

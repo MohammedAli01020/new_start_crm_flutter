@@ -29,8 +29,8 @@ class ThemeUseCaseImpl implements ThemeUseCase {
 
   @override
   Future<Either<Failure, bool>> fetchCurrentTheme() {
-    // TODO: implement fetchCurrentTheme
-    throw UnimplementedError();
+    return themeRepository.fetchCurrentTheme();
+
   }
 
 }

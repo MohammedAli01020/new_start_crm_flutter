@@ -36,3 +36,25 @@ class ChangeThemeToLightError extends ThemeState {
   @override
   List<Object> get props => [msg];
 }
+
+
+class StartFetchCurrentTheme extends ThemeState {}
+
+class EndFetchCurrentTheme extends ThemeState {
+  final bool currentThemeMode;
+
+  EndFetchCurrentTheme({required this.currentThemeMode});
+
+
+  @override
+  List<Object> get props => [currentThemeMode];
+}
+
+class FetchCurrentThemeError extends ThemeState {
+  final String msg;
+
+  FetchCurrentThemeError({required this.msg});
+
+  @override
+  List<Object> get props => [msg];
+}

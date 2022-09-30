@@ -1,8 +1,6 @@
 class EndPoints {
   // static const String baseUrl = 'http://192.168.1.38:5000/';
 
-  // static const String baseUrl = 'http://construction-env.eba-ttpmkd5p.us-east-1.elasticbeanstalk.com/';
-
   static const String baseUrl = 'http://newstart-env.eba-xhzfkni9.us-east-1.elasticbeanstalk.com/';
 
   static const String login = '${baseUrl}login';
@@ -18,6 +16,9 @@ class EndPoints {
   static const String modifyCustomer = '${baseUrl}api/customers/modify';
   static const String pageCustomer = '${baseUrl}api/customers/all';
   static const String deleteCustomer= '${baseUrl}api/customers/delete/id/';
+
+  static const String deleteAllCustomersByIds = '${baseUrl}api/customers/delete_all_by_ids';
+
   static const String updateCustomerLastAction = '${baseUrl}api/customers/update_last_action';
   static const String updateCustomers = '${baseUrl}api/customers/update';
   static const String updateCustomerFullName = '${baseUrl}api/customers/update_full_name';
@@ -52,6 +53,8 @@ class EndPoints {
   static const String modifyRole = '${baseUrl}api/roles/modify';
   static const String allRoles = '${baseUrl}api/roles/all';
   static const String deleteRole= '${baseUrl}api/roles/delete/id/';
+  static const String roleByEmployeeId = '${baseUrl}api/roles/';
+
 
   // events
   static const String modifyEvent = '${baseUrl}api/events/modify';
@@ -90,4 +93,17 @@ class EndPoints {
 
   // employees own_reports
   static const String employeeOwnReports = '${baseUrl}api/statistics/employee';
+
+  // files
+  static const String uploadFiles = '${baseUrl}api/files/uploadFiles';
+  static const String deleteFiles = '${baseUrl}api/files/deleteFiles';
+  static const String uploadFile = '${baseUrl}api/files/uploadFile';
+  static const String deleteFile = '${baseUrl}api/files/deleteFile';
+
+
+  // pre_defined_roles
+  static const String modifyPreDefinedRole = '${baseUrl}api/pre_defined_roles/modify';
+  static const String allPreDefinedRoles = '${baseUrl}api/pre_defined_roles/all';
+  static const String deletePreDefinedRole= '${baseUrl}api/pre_defined_roles/delete/id/';
+
 }

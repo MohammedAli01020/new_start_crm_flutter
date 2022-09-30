@@ -2,7 +2,6 @@ import 'package:crm_flutter_project/features/customer_table_config/data/models/c
 import 'package:crm_flutter_project/features/customers/data/models/create_action_request_model.dart';
 import 'package:crm_flutter_project/features/customers/data/models/customer_filters_model.dart';
 import 'package:crm_flutter_project/features/customers/domain/repositories/customer_repository.dart';
-import 'package:crm_flutter_project/features/employees/data/models/phoneNumber_model.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import '../../../../core/error/failures.dart';
@@ -21,9 +20,8 @@ abstract class CustomerUseCases {
   Future<Either<Failure, List<CustomerModel>>> updateBulkCustomers(
       UpdateCustomerParam updateCustomerParam);
 
-  // Future<Either<Failure, void>> deleteAllCustomersByIds(
-  //     UserTeamIdsWrapper customerIdsWrapper);
-  // Future<Either<Failure, List<int>>> fetchAllCustomersByFilters(CustomerFiltersModel customerFiltersModel);
+  Future<Either<Failure, void>> deleteAllCustomersByIds(CustomerIdsWrapper customerIdsWrapper);
+
 
   Future<Either<Failure, CustomerModel>> updateCustomerLastAction(
       UpdateCustomerLastActionParam updateCustomerLastActionParam);
@@ -37,7 +35,6 @@ abstract class CustomerUseCases {
 
   Future<Either<Failure, List<CustomerModel>>> findDistinctCustomersByPhoneNumbers(
       PhoneNumbersWrapper phoneNumbersWrapper);
-
 
 
   Future<Either<Failure, CustomerModel>> updateCustomerSources(
@@ -62,7 +59,9 @@ abstract class CustomerUseCases {
   Future<Either<Failure, CustomerModel>> updateCustomerDevelopersAndProjects(
       UpdateCustomerDevelopersAndProjectsParam updateCustomerDevelopersAndProjectsParam);
 
-  Future<Either<Failure, void>> cacheCustomerTableConfig(CustomerTableConfigModel customerTableConfigModel);
+  Future<Either<Failure, void>> cacheCustomerTableConfig(
+      CustomerTableConfigModel customerTableConfigModel);
+
 
 }
 
@@ -96,66 +95,85 @@ class CustomerUseCasesImpl implements CustomerUseCases {
   }
 
   @override
-  Future<Either<Failure, List<CustomerModel>>> updateBulkCustomers(UpdateCustomerParam updateCustomerParam) {
+  Future<Either<Failure, List<CustomerModel>>> updateBulkCustomers(
+      UpdateCustomerParam updateCustomerParam) {
     return customerRepository.updateBulkCustomers(updateCustomerParam);
-
   }
 
   @override
-  Future<Either<Failure, CustomerModel>> updateCustomerFullName(UpdateCustomerNameOrDescParam updateCustomerNameOrDescParam) {
-    return customerRepository.updateCustomerFullName(updateCustomerNameOrDescParam);
-
+  Future<Either<Failure, CustomerModel>> updateCustomerFullName(
+      UpdateCustomerNameOrDescParam updateCustomerNameOrDescParam) {
+    return customerRepository.updateCustomerFullName(
+        updateCustomerNameOrDescParam);
   }
 
   @override
-  Future<Either<Failure, List<CustomerModel>>> findDistinctCustomersByPhoneNumbers(PhoneNumbersWrapper phoneNumbersWrapper) {
-    return customerRepository.findDistinctCustomersByPhoneNumber(phoneNumbersWrapper);
+  Future<
+      Either<Failure, List<CustomerModel>>> findDistinctCustomersByPhoneNumbers(
+      PhoneNumbersWrapper phoneNumbersWrapper) {
+    return customerRepository.findDistinctCustomersByPhoneNumber(
+        phoneNumbersWrapper);
   }
 
   @override
-  Future<Either<Failure, CustomerModel>> updateCustomerDescription(UpdateCustomerNameOrDescParam updateCustomerNameOrDescParam) {
-    return customerRepository.updateCustomerDescription(updateCustomerNameOrDescParam);
+  Future<Either<Failure, CustomerModel>> updateCustomerDescription(
+      UpdateCustomerNameOrDescParam updateCustomerNameOrDescParam) {
+    return customerRepository.updateCustomerDescription(
+        updateCustomerNameOrDescParam);
   }
 
   @override
-  Future<Either<Failure, CustomerModel>> updateCustomerSources(UpdateCustomerSourcesOrUnitTypesParam updateCustomerSourcesOrUnitTypesParam) {
-    return customerRepository.updateCustomerSources(updateCustomerSourcesOrUnitTypesParam);
-
+  Future<Either<Failure, CustomerModel>> updateCustomerSources(
+      UpdateCustomerSourcesOrUnitTypesParam updateCustomerSourcesOrUnitTypesParam) {
+    return customerRepository.updateCustomerSources(
+        updateCustomerSourcesOrUnitTypesParam);
   }
 
   @override
-  Future<Either<Failure, CustomerModel>> updateCustomerUnitTypes(UpdateCustomerSourcesOrUnitTypesParam updateCustomerSourcesOrUnitTypesParam) {
-    return customerRepository.updateCustomerUnitTypes(updateCustomerSourcesOrUnitTypesParam);
-
+  Future<Either<Failure, CustomerModel>> updateCustomerUnitTypes(
+      UpdateCustomerSourcesOrUnitTypesParam updateCustomerSourcesOrUnitTypesParam) {
+    return customerRepository.updateCustomerUnitTypes(
+        updateCustomerSourcesOrUnitTypesParam);
   }
 
   @override
-  Future<Either<Failure, CustomerModel>> deleteCustomerAssignedEmployee(DeleteCustomerAssignedEmployeeParam deleteCustomerAssignedEmployeeParam) {
-    return customerRepository.deleteCustomerAssignedEmployee(deleteCustomerAssignedEmployeeParam);
-
+  Future<Either<Failure, CustomerModel>> deleteCustomerAssignedEmployee(
+      DeleteCustomerAssignedEmployeeParam deleteCustomerAssignedEmployeeParam) {
+    return customerRepository.deleteCustomerAssignedEmployee(
+        deleteCustomerAssignedEmployeeParam);
   }
 
   @override
-  Future<Either<Failure, CustomerModel>> updateCustomerAssignedEmployee(UpdateCustomerAssignedEmployeeParam updateCustomerAssignedEmployeeParam) {
-    return customerRepository.updateCustomerAssignedEmployee(updateCustomerAssignedEmployeeParam);
-
+  Future<Either<Failure, CustomerModel>> updateCustomerAssignedEmployee(
+      UpdateCustomerAssignedEmployeeParam updateCustomerAssignedEmployeeParam) {
+    return customerRepository.updateCustomerAssignedEmployee(
+        updateCustomerAssignedEmployeeParam);
   }
 
   @override
-  Future<Either<Failure, CustomerModel>> updateCustomerPhoneNumber(UpdateCustomerPhoneNumberParam updateCustomerPhoneNumberParam) {
-    return customerRepository.updateCustomerPhoneNumber(updateCustomerPhoneNumberParam);
+  Future<Either<Failure, CustomerModel>> updateCustomerPhoneNumber(
+      UpdateCustomerPhoneNumberParam updateCustomerPhoneNumberParam) {
+    return customerRepository.updateCustomerPhoneNumber(
+        updateCustomerPhoneNumberParam);
   }
 
   @override
-  Future<Either<Failure, void>> cacheCustomerTableConfig(CustomerTableConfigModel customerTableConfigModel) {
-    return customerRepository.cacheCustomerTableConfig(customerTableConfigModel);
-
+  Future<Either<Failure, void>> cacheCustomerTableConfig(
+      CustomerTableConfigModel customerTableConfigModel) {
+    return customerRepository.cacheCustomerTableConfig(
+        customerTableConfigModel);
   }
 
   @override
-  Future<Either<Failure, CustomerModel>> updateCustomerDevelopersAndProjects(UpdateCustomerDevelopersAndProjectsParam updateCustomerDevelopersAndProjectsParam) {
-    return customerRepository.updateCustomerDevelopersAndProjects(updateCustomerDevelopersAndProjectsParam);
+  Future<Either<Failure, CustomerModel>> updateCustomerDevelopersAndProjects(
+      UpdateCustomerDevelopersAndProjectsParam updateCustomerDevelopersAndProjectsParam) {
+    return customerRepository.updateCustomerDevelopersAndProjects(
+        updateCustomerDevelopersAndProjectsParam);
+  }
 
+  @override
+  Future<Either<Failure, void>> deleteAllCustomersByIds(customerIdsWrapper) {
+    return customerRepository.deleteAllCustomersByIds(customerIdsWrapper);
   }
 
 
@@ -200,7 +218,8 @@ class ModifyCustomerParam {
     required this.logByEmployeeId
   });
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         "customerId": customerId,
         "fullName": fullName,
         "phoneNumbers": phoneNumbers,
@@ -229,15 +248,15 @@ class UpdateCustomerLastActionParam {
   final int lastActionByEmployeeId;
   final String? actionDescription;
 
-  UpdateCustomerLastActionParam(
-      {required this.customerId,
-      required this.dateTime,
-      required this.postponeDateTime,
-      required this.eventId,
-      required this.lastActionByEmployeeId,
-      required this.actionDescription});
+  UpdateCustomerLastActionParam({required this.customerId,
+    required this.dateTime,
+    required this.postponeDateTime,
+    required this.eventId,
+    required this.lastActionByEmployeeId,
+    required this.actionDescription});
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         "customerId": customerId,
         "dateTime": dateTime,
         "postponeDateTime": postponeDateTime,
@@ -261,16 +280,17 @@ class UpdateCustomerParam {
 
 
   UpdateCustomerParam({
-    required  this.assignedByEmployeeId,
+    required this.assignedByEmployeeId,
     required this.assignedToEmployeeId,
 
-    required  this.sources,
-    required  this.unitTypes,
+    required this.sources,
+    required this.unitTypes,
     required this.customerIds});
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         "assignedByEmployeeId": assignedByEmployeeId,
-        "assignedToEmployeeId" :assignedToEmployeeId,
+        "assignedToEmployeeId": assignedToEmployeeId,
         "sources": sources,
         "unitTypes": unitTypes,
         "customerIds": customerIds
@@ -285,17 +305,17 @@ class UpdateCustomerNameOrDescParam {
   final String updatedFullNameOrDesc;
 
   UpdateCustomerNameOrDescParam({
-    required this.updatedByEmployeeId, 
+    required this.updatedByEmployeeId,
     required this.customerId,
     required this.updatedFullNameOrDesc});
 
 
-
-  Map<String, dynamic> toJson() => {
-    "updatedByEmployeeId": updatedByEmployeeId,
-    "customerId" :customerId,
-    "updatedFullNameOrDesc": updatedFullNameOrDesc
-  };
+  Map<String, dynamic> toJson() =>
+      {
+        "updatedByEmployeeId": updatedByEmployeeId,
+        "customerId": customerId,
+        "updatedFullNameOrDesc": updatedFullNameOrDesc
+      };
 }
 
 class UpdateCustomerSourcesOrUnitTypesParam {
@@ -311,12 +331,12 @@ class UpdateCustomerSourcesOrUnitTypesParam {
     required this.updatedData});
 
 
-
-  Map<String, dynamic> toJson() => {
-    "updatedByEmployeeId": updatedByEmployeeId,
-    "customerId" :customerId,
-    "updatedData": updatedData
-  };
+  Map<String, dynamic> toJson() =>
+      {
+        "updatedByEmployeeId": updatedByEmployeeId,
+        "customerId": customerId,
+        "updatedData": updatedData
+      };
 }
 
 class UpdateCustomerAssignedEmployeeParam {
@@ -332,30 +352,30 @@ class UpdateCustomerAssignedEmployeeParam {
     required this.assignedEmployee});
 
 
-
-  Map<String, dynamic> toJson() => {
-    "updatedByEmployeeId": updatedByEmployeeId,
-    "customerId" :customerId,
-    "assignedEmployee": assignedEmployee
-  };
+  Map<String, dynamic> toJson() =>
+      {
+        "updatedByEmployeeId": updatedByEmployeeId,
+        "customerId": customerId,
+        "assignedEmployee": assignedEmployee
+      };
 }
 
 class DeleteCustomerAssignedEmployeeParam {
   final int updatedByEmployeeId;
 
   final int customerId;
-  
+
 
   DeleteCustomerAssignedEmployeeParam({
     required this.updatedByEmployeeId,
     required this.customerId});
 
 
-
-  Map<String, dynamic> toJson() => {
-    "updatedByEmployeeId": updatedByEmployeeId,
-    "customerId" :customerId
-  };
+  Map<String, dynamic> toJson() =>
+      {
+        "updatedByEmployeeId": updatedByEmployeeId,
+        "customerId": customerId
+      };
 }
 
 
@@ -369,23 +389,23 @@ class UpdateCustomerPhoneNumberParam {
   UpdateCustomerPhoneNumberParam({
     required this.updatedByEmployeeId,
     required this.customerId,
-  required this.phoneNumbers});
+    required this.phoneNumbers});
 
 
-  Map<String, dynamic> toJson() => {
-    "updatedByEmployeeId": updatedByEmployeeId,
-    "customerId" :customerId,
-    "phoneNumbers": phoneNumbers
-  };
+  Map<String, dynamic> toJson() =>
+      {
+        "updatedByEmployeeId": updatedByEmployeeId,
+        "customerId": customerId,
+        "phoneNumbers": phoneNumbers
+      };
 }
-
 
 
 class UpdateCustomerDevelopersAndProjectsParam {
   final int updatedByEmployeeId;
 
   final int customerId;
-  
+
   final List<String> updatedDevelopers;
 
   final List<String> updatedProjects;
@@ -400,14 +420,14 @@ class UpdateCustomerDevelopersAndProjectsParam {
   });
 
 
-  Map<String, dynamic> toJson() => {
-    "updatedByEmployeeId": updatedByEmployeeId,
-    "customerId" :customerId,
-    "updatedDevelopers": updatedDevelopers,
-    "updatedProjects": updatedProjects
-  };
+  Map<String, dynamic> toJson() =>
+      {
+        "updatedByEmployeeId": updatedByEmployeeId,
+        "customerId": customerId,
+        "updatedDevelopers": updatedDevelopers,
+        "updatedProjects": updatedProjects
+      };
 }
-
 
 
 class PhoneNumbersWrapper extends Equatable {
@@ -423,6 +443,23 @@ class PhoneNumbersWrapper extends Equatable {
 
   @override
   List<Object> get props => [phoneNumbers];
+}
+
+class CustomerIdsWrapper extends Equatable {
+
+  final List<int> customerIds;
+  final int employeeId;
+
+  const CustomerIdsWrapper({required this.customerIds, required this.employeeId, });
+
+
+  Map<String, dynamic> toJson() =>
+      {
+        "customerIds": customerIds,
+        "employeeId": employeeId
+      };
+  @override
+  List<Object> get props => [customerIds, employeeId];
 }
 
 

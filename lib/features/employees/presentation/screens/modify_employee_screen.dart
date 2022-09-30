@@ -1,10 +1,13 @@
+
+import 'dart:io';
+
 import 'package:crm_flutter_project/config/routes/app_routes.dart';
 import 'package:crm_flutter_project/features/employees/data/models/employee_model.dart';
-import 'package:crm_flutter_project/features/employees/data/models/phoneNumber_model.dart';
 import 'package:crm_flutter_project/features/employees/data/models/role_model.dart';
 import 'package:crm_flutter_project/features/employees/domain/use_cases/employee_use_cases.dart';
 import 'package:crm_flutter_project/features/employees/presentation/cubit/employee_cubit.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/utils/app_colors.dart';
 import '../../../../core/utils/app_strings.dart';
 import '../../../../core/utils/constants.dart';
 import '../../../../core/widgets/custom_edit_text.dart';
@@ -12,7 +15,8 @@ import '../../../../core/widgets/default_button_widget.dart';
 import '../../../../core/widgets/default_hieght_sized_box.dart';
 import '../../../../core/widgets/waiting_item_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ModifyEmployeeScreen extends StatefulWidget {
   final ModifyEmployeeArgs modifyEmployeeArgs;
@@ -31,7 +35,11 @@ class _ModifyEmployeeScreenState extends State<ModifyEmployeeScreen> {
   final _fullNameController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
+
   String? imageUrl;
+  File? toBeUploadedImageFile;
+  String? toBeDeletedImage;
 
   int createDateTime = DateTime.now().millisecondsSinceEpoch;
 
@@ -57,17 +65,10 @@ class _ModifyEmployeeScreenState extends State<ModifyEmployeeScreen> {
       _fullNameController.text = widget.modifyEmployeeArgs.employeeModel!.fullName;
       _usernameController.text = widget.modifyEmployeeArgs.employeeModel!.username;
 
+      _phoneNumberController.text = widget.modifyEmployeeArgs.employeeModel!.phoneNumber;
 
-      cubit.updateRole(widget.modifyEmployeeArgs.employeeModel!.role);
-
-      cubit.updatePhoneNumber(
-          PhoneNumberModel(phone: widget.modifyEmployeeArgs.employeeModel!.phoneNumber.phone.substring(1),
-              isoCode: widget.modifyEmployeeArgs.employeeModel!.phoneNumber.isoCode,
-            countryCode: widget.modifyEmployeeArgs.employeeModel!.phoneNumber.countryCode,));
+      cubit.findRoleByEmployeeId(employeeId!);
     } else {
-      cubit.updatePhoneNumber(const PhoneNumberModel(phone: "",
-        isoCode: "EG", countryCode: '+20'));
-
       cubit.updateRole(null);
     }
 
@@ -92,20 +93,18 @@ class _ModifyEmployeeScreenState extends State<ModifyEmployeeScreen> {
           // edit
           if (widget.modifyEmployeeArgs.employeeModel != null) {
             Constants.showToast(
-                msg: "تم تعديل الموظف بنجاح", color: Colors.green, context: context);
-
-            Navigator.pop(context, state.employeeModel);
-
+                msg: "تم تعديل الموظف بنجاح",
+                color: Colors.green,
+                context: context);
           } else {
             Constants.showToast(
-                msg: "تم أضافة الموظف بنجاح", color: Colors.green, context: context);
-
-            Navigator.popUntil(
-                context, ModalRoute.withName(widget.modifyEmployeeArgs.fromRoute));
+                msg: "تم أضافة الموظف بنجاح",
+                color: Colors.green,
+                context: context);
           }
 
-
-
+          Navigator.popUntil(context,
+              ModalRoute.withName(widget.modifyEmployeeArgs.fromRoute));
         }
       },
       builder: (context, state) {
@@ -130,6 +129,88 @@ class _ModifyEmployeeScreenState extends State<ModifyEmployeeScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
+                    Visibility(
+                        visible: imageUrl == null && toBeUploadedImageFile == null,
+                        child: TextButton(onPressed: () async {
+                          FilePickerResult? result = await FilePicker.platform.pickFiles(
+                              type: FileType.image
+                          );
+
+                          if (result != null && result.files.single.path != null) {
+                            toBeUploadedImageFile = File(result.files.single.path!);
+                            setState(() {});
+                          }
+
+                        }, child: const Text("اضف صورة"))),
+
+
+                    toBeUploadedImageFile != null?
+                    Stack(
+                      children: [
+                        Image.file(
+                          File(toBeUploadedImageFile!.path),
+                          fit: BoxFit.cover,
+                          height: 100.0,
+                          width: 100.0,
+                        ),
+                        Positioned(
+                            top: 0,
+                            left: 0,
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              icon:  Icon(
+                                Icons.delete,
+                                color: AppColors.primary,
+                              ),
+                              onPressed: () {
+                                toBeDeletedImage = imageUrl;
+                                toBeUploadedImageFile = null;
+                                imageUrl = null;
+                                setState(() {});
+                              },
+                            )),
+                      ],
+
+                    ): imageUrl != null
+                        ? Stack(
+                      children: [
+                        CachedNetworkImage(
+                          height: 100.0,
+                          width: 100.0,
+                          fit: BoxFit.cover,
+                          imageUrl: imageUrl!,
+                          placeholder: (context, url) => Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.hint.withOpacity(0.2),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
+                        ),
+                        Positioned(
+                            top: 0,
+                            left: 0,
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              icon:  Icon(
+                                Icons.delete,
+                                color: AppColors.primary,
+                              ),
+                              onPressed: () {
+                                toBeDeletedImage = imageUrl;
+                                toBeUploadedImageFile = null;
+                                imageUrl = null;
+                                setState(() {});
+                              },
+                            )),
+                      ],
+                    )
+                        : const Text("لا يوجد صورة"),
+
+                    const DefaultHeightSizedBox(),
+
+
                     CustomEditText(
                         controller: _fullNameController,
                         hint: "الاسم بالكامل",
@@ -172,7 +253,9 @@ class _ModifyEmployeeScreenState extends State<ModifyEmployeeScreen> {
                         inputType: TextInputType.emailAddress,
 
                     ),
+
                     const DefaultHeightSizedBox(),
+
                     CustomEditText(
                       maxLines: 1,
                       hint: widget.modifyEmployeeArgs.employeeModel != null ? "عدل كلمة السر او اتركها كما كانت":"كلمة السر",
@@ -187,59 +270,68 @@ class _ModifyEmployeeScreenState extends State<ModifyEmployeeScreen> {
                       },
                       inputType: TextInputType.visiblePassword,
                     ),
-                    const DefaultHeightSizedBox(),
-
-                    IntlPhoneField(
-                      decoration: const InputDecoration(
-                        labelText: 'رقم الهاتف',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(),
-                        ),
-                      ),
-                      validator: (v) {
-                        if (v != null) {
-                          return AppStrings.required;
-                        }
-
-                        return null;
-                      },
-
-                      invalidNumberMessage: "هذا الرقم غير صحيح",
-                      initialValue: cubit.phoneNumber?.phone,
-                      initialCountryCode: cubit.phoneNumber?.isoCode,
-
-                      onChanged: (phone) {
-                        cubit.updatePhoneNumber(PhoneNumberModel(phone: phone.number,
-                            isoCode: phone.countryISOCode,
-                            countryCode: phone.countryCode));
-                      },
-                    ),
-
 
                     const DefaultHeightSizedBox(),
 
-                     Card(
-                       child: ListTile(
-                        title: Text(
-                            cubit.currentRole != null ? "عدل الدور والاذونات":
-                        "انشأ الدور والاذونات"),
-                         subtitle: Text(cubit.currentRole != null ?
-                         cubit.currentRole!.name : "لم يتم اختيار اي دور لهذا المستخدم",
-                         maxLines: 1,
-                             overflow: TextOverflow.ellipsis,),
+                    CustomEditText(
+                        controller: _phoneNumberController,
+                        hint: "رقم الهاتف",
+                        maxLength: 50,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) {
+                            return AppStrings.required;
+                          }
 
-                         onTap: () {
-                          
-                          Navigator.pushNamed(context, Routes.modifyRole,
-                          arguments: cubit.currentRole).then((value) {
+                          if (v.length > 50) {
+                            return "اقصي عدد احرف 50";
+                          }
 
-                            if (value != null && value is RoleModel) {
-                              cubit.updateRole(value);
+                          return null;
+                        },
+                        inputType: TextInputType.phone),
+
+                    const DefaultHeightSizedBox(),
+
+
+
+                     Visibility(
+                       visible: state is! StartFindRoleByEmployeeId,
+                       replacement: const Text("جاري تحميل االاذونات ..."),
+                       child: Card(
+                         child: ListTile(
+                          title: Text(
+                              cubit.currentRole != null ? "عدل الدور والاذونات":
+                          "انشأ الدور والاذونات"),
+                           subtitle: Text(cubit.currentRole != null ?
+                           cubit.currentRole!.name : "لم يتم اختيار اي دور لهذا المستخدم",
+                           maxLines: 1,
+                               overflow: TextOverflow.ellipsis,),
+
+                           onTap: () {
+
+                            if (!Constants.currentEmployee!.permissions.contains(AppStrings.editEmployeeRole))  {
+                              Constants.showToast(msg: "غير مصرح لك", context: context);
+                              return;
                             }
 
-                          });
-                         },
+
+                            if (state is StartFindRoleByEmployeeId) {
+                              Constants.showToast(msg: "انتظر جاري تحميل الاذونات ...", context: context);
+                              return;
+                            }
+
+
+                            Navigator.pushNamed(context, Routes.modifyRole,
+                            arguments: cubit.currentRole).then((value) {
+
+                              if (value != null && value is RoleModel) {
+                                cubit.updateRole(value);
+                              }
+
+                            });
+                           },
                     ),
+                       ),
                      ),
 
                     const DefaultHeightSizedBox(),
@@ -259,16 +351,11 @@ class _ModifyEmployeeScreenState extends State<ModifyEmployeeScreen> {
                         onTap: () async {
                           if (formKey.currentState!.validate()) {
 
-                            if (cubit.phoneNumber == null) {
-                              Constants.showToast(msg: "رقم الهاتف مطلوب!", context: context);
-                              return;
-                            }
-
                             cubit.modifyEmployee(ModifyEmployeeParam(employeeId: employeeId,
                                 fullName: _fullNameController.text,
                                 imageUrl: imageUrl,
                                 createDateTime: createDateTime,
-                                phoneNumber: cubit.phoneNumber!,
+                                phoneNumber: _phoneNumberController.text.trim(),
                                 enabled: enabled,
                                 username: _usernameController.text.trim(),
                                 password: widget.modifyEmployeeArgs.employeeModel != null
@@ -277,7 +364,9 @@ class _ModifyEmployeeScreenState extends State<ModifyEmployeeScreen> {
                                     : null)
                                     : _passwordController.text,
                                 role: cubit.currentRole,
-                                createdByEmployeeId: createdByEmployeeId));
+                                createdByEmployeeId: createdByEmployeeId),
+                                toBeUploadedImageFile,
+                                toBeDeletedImage);
                           }
                         },
                         text: widget.modifyEmployeeArgs.employeeModel != null
@@ -331,6 +420,12 @@ class _EnabledWidgetState extends State<EnabledWidget> {
         subtitle: enabled ? const Text("نشط" ,style:  TextStyle(color: Colors.green)) : const Text("متوقف" ,style: TextStyle(color: Colors.red),),
         title: const Text("الحالة"),
         onChanged: (bool? value) {
+
+          if (!Constants.currentEmployee!.permissions.contains(AppStrings.disableEmployee)) {
+            Constants.showToast(msg: "غير مصرح لك", context: context);
+
+            return;
+          }
 
           if (value != null) {
             enabled = value;

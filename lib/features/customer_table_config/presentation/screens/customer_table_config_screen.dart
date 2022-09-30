@@ -28,7 +28,7 @@ class CustomerTableConfigScreen extends StatelessWidget {
             children: [
 
               SwitchListTile(
-                  title: const Text("اسم العيمل"),
+                  title: const Text("اسم العميل"),
                   value: Constants.customerTableConfigModel.showName,
                   onChanged: (val) {
 
@@ -40,7 +40,7 @@ class CustomerTableConfigScreen extends StatelessWidget {
               const Divider(),
 
               SwitchListTile(
-                  title: const Text("رقم العيمل"),
+                  title: const Text("رقم العميل"),
                   value: Constants.customerTableConfigModel.showPhone,
                   onChanged: (val) {
 

@@ -28,6 +28,7 @@ enum UnitTypesType { SELECT_UNIT_TYPES, VIEW_UNIT_TYPES }
 
 enum DevelopersType { SELECT_DEVELOPERS, VIEW_DEVELOPERS }
 
+enum PreDefinedRoleType { SELECT_PRE_DEFINED_ROLES, VIEW_PRE_DEFINED_ROLES, }
 
 enum ReminderTypes {
   ALL,

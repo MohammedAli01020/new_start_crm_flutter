@@ -105,8 +105,8 @@ class TeamFiltersModel extends TeamFilters {
             ? Constants.currentEmployee!.employeeId
             : null,
         teamTypes: Constants.currentEmployee!.permissions
-                .contains(AppStrings.viewOwnGroups)
-            ? TeamTypes.ME.name
-            : TeamTypes.ALL.name);
+                .contains(AppStrings.viewAllGroups)
+            ? TeamTypes.ALL.name
+            : TeamTypes.ME.name);
   }
 }

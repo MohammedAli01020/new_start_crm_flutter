@@ -51,15 +51,15 @@ class _TeamsAppBarState extends State<TeamsAppBar> {
             )
           : const Text("المجموعات"),
       actions: [
-        IconButton(
-            onPressed: () {
-              setState(() {
-                isSearch = !isSearch;
-              });
-
-              widget.onCancelTapCallback(isSearch);
-            },
-            icon: Icon(isSearch ? Icons.cancel : Icons.search)),
+        // IconButton(
+        //     onPressed: () {
+        //       setState(() {
+        //         isSearch = !isSearch;
+        //       });
+        //
+        //       widget.onCancelTapCallback(isSearch);
+        //     },
+        //     icon: Icon(isSearch ? Icons.cancel : Icons.search)),
         if (Constants.currentEmployee!.permissions
             .contains(AppStrings.createGroups))
           IconButton(
