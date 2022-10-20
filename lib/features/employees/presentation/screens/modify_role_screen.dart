@@ -152,7 +152,8 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
 
                               if (result != null && result is RoleModel) {
                                 permissionCubit.updateAllPermissions(result.permissions);
-                                _roleNameController.text = result.name;
+                                _roleNameController.text = result.name.substring(5);
+
                               }
                             },
                             title: Text("اختر من الادوار المحفوظة", style: TextStyle(color: Theme.of(context).primaryColor),),

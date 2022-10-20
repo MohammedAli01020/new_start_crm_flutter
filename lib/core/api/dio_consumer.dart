@@ -20,12 +20,15 @@ class DioConsumer implements ApiConsumer {
 
   DioConsumer({required this.client}) {
 
-    (client.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
-        (HttpClient client) {
-      client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-      return client;
-    };
+    if (!kIsWeb) {
+      (client.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+          (HttpClient client) {
+        client.badCertificateCallback =
+            (X509Certificate cert, String host, int port) => true;
+        return client;
+      };
+    }
+
 
 
     client.options

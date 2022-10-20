@@ -93,9 +93,13 @@ class PreDefinedRolesScreen extends StatelessWidget {
 
             (Constants.currentEmployee!.permissions.contains(AppStrings.deletePreDefinedRoles) ?
             IconButton(
-              onPressed: () {
+              onPressed: () async {
 
-                preDefinedRolesCubit.deletePreDefinedRole(currentRole.roleId!);
+                final confirmDelete = await Constants.showConfirmDialog(context: context, msg: "هل تريد تأكيد الحذف؟");
+                if (confirmDelete) {
+                  preDefinedRolesCubit.deletePreDefinedRole(currentRole.roleId!);
+                }
+
               },
               icon: const Icon(Icons.delete),
             ) : null),

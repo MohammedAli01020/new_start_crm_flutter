@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -25,7 +26,12 @@ class DefaultUserAvatarWidget extends StatelessWidget {
         alignment: Alignment.center,
         child: ClipOval(
             child: imageUrl != null
-                ? CachedNetworkImage(
+                ? kIsWeb ? Image.network(imageUrl!,
+              height: height,
+              width: height,
+              fit: BoxFit.cover,
+
+            ):CachedNetworkImage(
               height: height,
               width: height,
               fit: BoxFit.cover,

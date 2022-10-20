@@ -440,7 +440,7 @@ class AppRoutes {
                   ),
 
                 ],
-                child: const CustomerLogsScreen(),
+                child: CustomerLogsScreen(),
               );
 
             }));

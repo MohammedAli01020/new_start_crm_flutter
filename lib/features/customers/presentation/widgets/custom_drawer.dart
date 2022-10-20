@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:crm_flutter_project/core/utils/app_strings.dart';
 import 'package:crm_flutter_project/core/utils/enums.dart';
 import 'package:crm_flutter_project/core/utils/wrapper.dart';
@@ -7,10 +9,12 @@ import 'package:crm_flutter_project/features/events/presentation/screens/events_
 import 'package:crm_flutter_project/features/login/presentation/cubit/theme/theme_cubit.dart';
 import 'package:crm_flutter_project/features/unit_types/presentation/screens/unit_types_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../config/routes/app_routes.dart';
 import '../../../../core/utils/constants.dart';
+import '../../../../core/utils/responsive.dart';
 import '../../../../core/widgets/custom_list_tile.dart';
 import '../../../login/presentation/cubit/login_cubit.dart';
 import '../../../sources/presentation/screens/sources_screen.dart';
@@ -18,7 +22,25 @@ import '../../../sources/presentation/screens/sources_screen.dart';
 class CustomDrawer extends StatelessWidget {
   final CustomerCubit customerCubit;
 
-  const CustomDrawer({Key? key, required this.customerCubit}) : super(key: key);
+  final _scrollController = ScrollController();
+  static const _extraScrollSpeed = 80;
+   CustomDrawer({Key? key, required this.customerCubit}) : super(key: key) {
+    if (Responsive.isWindows || Responsive.isLinux || Responsive.isMacOS) {
+      _scrollController.addListener(() {
+        ScrollDirection scrollDirection =
+            _scrollController.position.userScrollDirection;
+        if (scrollDirection != ScrollDirection.idle) {
+          double scrollEnd = _scrollController.offset +
+              (scrollDirection == ScrollDirection.reverse
+                  ? _extraScrollSpeed
+                  : -_extraScrollSpeed);
+          scrollEnd = min(_scrollController.position.maxScrollExtent,
+              max(_scrollController.position.minScrollExtent, scrollEnd));
+          _scrollController.jumpTo(scrollEnd);
+        }
+      });
+    }
+  }
 
 
   void _getPageCustomers({bool refresh = false, required BuildContext context}) {
@@ -29,6 +51,7 @@ class CustomDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
+        controller: _scrollController,
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(

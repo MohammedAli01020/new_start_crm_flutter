@@ -1,7 +1,8 @@
-import 'package:crm_flutter_project/core/utils/app_strings.dart';
+
+import 'dart:math';
+
 import 'package:crm_flutter_project/core/utils/constants.dart';
 import 'package:crm_flutter_project/core/utils/media_query_values.dart';
-import 'package:crm_flutter_project/core/widgets/default_hieght_sized_box.dart';
 import 'package:crm_flutter_project/features/customer_logs/presentation/cubit/customer_logs_cubit.dart';
 import 'package:crm_flutter_project/features/customers/data/models/customer_model.dart';
 import 'package:crm_flutter_project/features/customers/presentation/cubit/customer_cubit.dart';
@@ -11,8 +12,8 @@ import 'package:crm_flutter_project/features/employees/presentation/cubit/employ
 import 'package:crm_flutter_project/features/employees/presentation/screens/employee_details_screen.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_members/team_members_cubit.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/employee_picker_screen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linkwell/linkwell.dart';
 import 'package:number_paginator/number_paginator.dart';
@@ -20,13 +21,32 @@ import 'package:number_paginator/number_paginator.dart';
 import '../../../../config/routes/app_routes.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/utils/enums.dart';
+import '../../../../core/utils/responsive.dart';
 import '../../../../core/utils/wrapper.dart';
 import '../../../../core/widgets/error_item_widget.dart';
 import '../../../customers/presentation/widgets/DateFilterPicker.dart';
 import '../../../customers/presentation/widgets/filter_field.dart';
 
 class CustomerLogsScreen extends StatelessWidget {
-  const CustomerLogsScreen({Key? key}) : super(key: key);
+  final _scrollController = ScrollController();
+  static const _extraScrollSpeed = 80;
+   CustomerLogsScreen({Key? key}) : super(key: key) {
+     if (Responsive.isWindows || Responsive.isLinux || Responsive.isMacOS) {
+       _scrollController.addListener(() {
+         ScrollDirection scrollDirection =
+             _scrollController.position.userScrollDirection;
+         if (scrollDirection != ScrollDirection.idle) {
+           double scrollEnd = _scrollController.offset +
+               (scrollDirection == ScrollDirection.reverse
+                   ? _extraScrollSpeed
+                   : -_extraScrollSpeed);
+           scrollEnd = min(_scrollController.position.maxScrollExtent,
+               max(_scrollController.position.minScrollExtent, scrollEnd));
+           _scrollController.jumpTo(scrollEnd);
+         }
+       });
+     }
+   }
 
   void _getPageCustomerLogs(
       {bool refresh = false, required BuildContext context}) {
@@ -73,6 +93,7 @@ class CustomerLogsScreen extends StatelessWidget {
 
         Expanded(
           child: ListView.separated(
+            controller: _scrollController,
             itemBuilder: (context, index) {
               final currentLog = customerLogsCubit.customerLogs[index];
               return Card(

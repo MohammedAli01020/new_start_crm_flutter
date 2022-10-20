@@ -112,7 +112,7 @@ class _DateFilterPickerState extends State<DateFilterPicker> {
                     child: ListTile(
                       onTap: () async {
                         final startPicked = await showDatePicker(context: context,
-                            initialDate: DateTime.now(),
+                            initialDate: start != null ?  DateTime.fromMillisecondsSinceEpoch(start!): DateTime.now(),
                             firstDate: DateTime(DateTime.now().year - 2),
                             lastDate: DateTime(DateTime.now().year + 2));
 
@@ -130,7 +130,7 @@ class _DateFilterPickerState extends State<DateFilterPicker> {
                     child: ListTile(
                       onTap: () async {
                         final endPicked = await showDatePicker(context: context,
-                            initialDate: DateTime.now(),
+                            initialDate: end != null ?  DateTime.fromMillisecondsSinceEpoch(end!): DateTime.now(),
                             firstDate: DateTime(DateTime.now().year - 2),
                             lastDate: DateTime(DateTime.now().year + 2));
 

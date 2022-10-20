@@ -111,6 +111,8 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                     widget.customerCubit.updateSelectedDevelopers([]);
                     widget.customerCubit.updateSelectedProjects([]);
 
+                    widget.customerCubit.setSelectedCustomers([]);
+
                     Constants.refreshCustomers(widget.customerCubit);
 
 
@@ -138,6 +140,7 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                                 Constants.currentEmployee?.employeeId),
                           ));
 
+                          widget.customerCubit.setSelectedCustomers([]);
 
                           widget.customerCubit.fetchCustomers(refresh: true);
                         },
@@ -178,7 +181,11 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                                 .copyWith(
                               reminderTypes: Wrapped.value(reminderTypes),
                             ));
-                            Constants.refreshCustomers(widget.customerCubit);
+
+                            widget.customerCubit.setSelectedCustomers([]);
+
+                            widget.customerCubit.fetchCustomers(refresh: true);
+                            // Constants.refreshCustomers(widget.customerCubit);
                           },
 
                         )
@@ -226,7 +233,12 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                             widget.customerCubit.updateSelectedEvents(
                                 selected.isEmpty ? null : selected);
 
-                          Constants.refreshCustomers(widget.customerCubit);
+
+                            widget.customerCubit.setSelectedCustomers([]);
+
+
+                            widget.customerCubit.fetchCustomers(refresh: true);
+                          // Constants.refreshCustomers(widget.customerCubit);
 
                           Navigator.of(context).pop(false);
 
@@ -283,7 +295,10 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                               endDateTime: Wrapped.value(end),
                             ));
 
-                            Constants.refreshCustomers(widget.customerCubit);
+                            widget.customerCubit.setSelectedCustomers([]);
+
+                            widget.customerCubit.fetchCustomers(refresh: true);
+                            // Constants.refreshCustomers(widget.customerCubit);
                           },
 
                         )
@@ -328,8 +343,11 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
 
                             widget.customerCubit.updateSelectedUnitTypes(
                                 selectedUnitTypes.isEmpty ? null : selectedUnitTypes);
+                            widget.customerCubit.setSelectedCustomers([]);
 
-                            Constants.refreshCustomers(widget.customerCubit);
+
+                            widget.customerCubit.fetchCustomers(refresh: true);
+                            // Constants.refreshCustomers(widget.customerCubit);
                             Navigator.of(context).pop(false);
                           },
 
@@ -382,8 +400,12 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
 
                             widget.customerCubit.updateSelectedSources(
                                 selectedSources.isEmpty ? null : selectedSources);
+                            widget.customerCubit.setSelectedCustomers([]);
 
-                            Constants.refreshCustomers(widget.customerCubit);
+
+                            widget.customerCubit.fetchCustomers(refresh: true);
+                            // Constants.refreshCustomers(widget.customerCubit);
+
                             Navigator.of(context).pop(false);
                           },
 
@@ -438,7 +460,11 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                             widget.customerCubit.updateSelectedDevelopers(
                                 selectedDevelopers.isEmpty ? null : selectedDevelopers);
 
-                            Constants.refreshCustomers(widget.customerCubit);
+                            widget.customerCubit.setSelectedCustomers([]);
+
+                            widget.customerCubit.fetchCustomers(refresh: true);
+                            // Constants.refreshCustomers(widget.customerCubit);
+
                             Navigator.of(context).pop(false);
                           },
 
@@ -493,7 +519,13 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                             widget.customerCubit.updateSelectedProjects(
                                 selectedProjects.isEmpty ? null : selectedProjects);
 
-                            Constants.refreshCustomers(widget.customerCubit);
+
+                            widget.customerCubit.setSelectedCustomers([]);
+
+
+                            widget.customerCubit.fetchCustomers(refresh: true);
+                            // Constants.refreshCustomers(widget.customerCubit);
+
                             Navigator.of(context).pop(false);
                           },
 
