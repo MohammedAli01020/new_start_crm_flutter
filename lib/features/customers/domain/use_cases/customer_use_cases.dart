@@ -200,6 +200,9 @@ class ModifyCustomerParam {
 
   final int? logByEmployeeId;
 
+
+  final bool? viewPreviousLog;
+
   ModifyCustomerParam({
     required this.customerId,
     required this.fullName,
@@ -215,7 +218,11 @@ class ModifyCustomerParam {
     required this.assignedEmployeeId,
     required this.assignedByEmployeeId,
     required this.assignedDateTime,
-    required this.logByEmployeeId
+    required this.logByEmployeeId,
+
+    required this.viewPreviousLog,
+
+
   });
 
   Map<String, dynamic> toJson() =>
@@ -236,7 +243,11 @@ class ModifyCustomerParam {
         "assignedEmployeeId": assignedEmployeeId,
         "assignedByEmployeeId": assignedByEmployeeId,
         "assignedDateTime": assignedDateTime,
-        "logByEmployeeId": logByEmployeeId
+        "logByEmployeeId": logByEmployeeId,
+
+        "viewPreviousLog": viewPreviousLog,
+
+
       };
 }
 
@@ -279,13 +290,22 @@ class UpdateCustomerParam {
   final List<int> customerIds;
 
 
+
+  final bool? viewPreviousLog;
+
+
   UpdateCustomerParam({
     required this.assignedByEmployeeId,
     required this.assignedToEmployeeId,
 
     required this.sources,
     required this.unitTypes,
-    required this.customerIds});
+    required this.customerIds,
+
+    required this.viewPreviousLog,
+
+
+  });
 
   Map<String, dynamic> toJson() =>
       {
@@ -293,7 +313,8 @@ class UpdateCustomerParam {
         "assignedToEmployeeId": assignedToEmployeeId,
         "sources": sources,
         "unitTypes": unitTypes,
-        "customerIds": customerIds
+        "customerIds": customerIds,
+        "viewPreviousLog": viewPreviousLog,
       };
 }
 

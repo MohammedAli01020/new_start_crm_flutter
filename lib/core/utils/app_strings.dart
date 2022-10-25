@@ -39,6 +39,12 @@ class AppStrings {
   static const String noEvent = "no event";
 
 
+
+  static const String delete = "حذف";
+  static const String bulkAssign = "تعيين";
+  static const String export = "تصدير";
+
+
   // permissions
   // leads
   //1- view
@@ -77,10 +83,10 @@ class AppStrings {
   static const String viewLeadPhone  = 'مشاهدة رقم العميل';
   static const String viewLeadDescription  = 'مشاهدة ملاحظات عن العميل';
   static const String viewLeadLog  = 'مشاهدة سجل العميل';
+  static const String viewLeadSources  = 'مشاهدة مصدر العميل';
 
   // edit
   static const String editLeadName  = 'تعديل اسم العميل';
-  static const String editLeadCreator  = 'تعديل مدخل العميل';
   static const String editLeadPhone  = 'تعديل رقم العميل';
   static const String editLeadDescription  = 'تعديل ملاحظات عن العميل';
 

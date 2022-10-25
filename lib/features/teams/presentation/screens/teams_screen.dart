@@ -1,15 +1,14 @@
 import 'dart:math';
 
 import 'package:crm_flutter_project/core/utils/constants.dart';
-import 'package:crm_flutter_project/core/utils/media_query_values.dart';
 import 'package:crm_flutter_project/core/utils/wrapper.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_cubit.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_members/team_members_cubit.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/team_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:number_paginator/number_paginator.dart';
 import '../../../../config/routes/app_routes.dart';
+import '../../../../core/utils/app_colors.dart';
 import '../../../../core/widgets/error_item_widget.dart';
 import '../widgets/teams_app_bar.dart';
 
@@ -17,7 +16,7 @@ class TeamsScreen extends StatelessWidget {
   const TeamsScreen({Key? key}) : super(key: key);
 
   void _getPageTeams({bool refresh = false, required BuildContext context}) {
-    BlocProvider.of<TeamCubit>(context).fetchTeams(refresh: refresh, isWebPagination: true);
+    BlocProvider.of<TeamCubit>(context).fetchTeams(refresh: refresh);
   }
 
 
@@ -48,7 +47,7 @@ class TeamsScreen extends StatelessWidget {
 
             return GridView.builder(
                 padding: const EdgeInsets.all(8.0),
-                itemCount: cubit.teams.length,
+                itemCount: cubit.teams.length + 1,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: colCount,
                     childAspectRatio: 1,
@@ -58,48 +57,75 @@ class TeamsScreen extends StatelessWidget {
                 ),
                 itemBuilder: (context, index) {
 
-                  final currentTeam = cubit.teams[index];
 
-                  return InkWell(
-                    onTap: () {
+                  if (index < cubit.teams.length) {
 
-                      Navigator.pushNamed(context, Routes.teamsDetailsRoute,
-                      arguments: TeamDetailsArgs(teamModel: currentTeam, teamCubit: cubit, fromRoute: Routes.teamsRoute));
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: Colors.blueGrey[100],
-                        borderRadius: BorderRadius.circular(5),
+                    final currentTeam = cubit.teams[index];
+
+                    return InkWell(
+                      onTap: () {
+
+                        Navigator.pushNamed(context, Routes.teamsDetailsRoute,
+                            arguments: TeamDetailsArgs(teamModel: currentTeam, teamCubit: cubit, fromRoute: Routes.teamsRoute));
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: Colors.blueGrey[100],
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(currentTeam.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold,),
+                              textAlign: TextAlign.center,),
+                            const Divider(),
+
+                            Text(
+                              currentTeam.description ?? "لا يوجد",
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                            ),
+                            const Divider(),
+
+                            Text("اليدر: " + (currentTeam.teamLeader != null ? currentTeam.teamLeader!.fullName : "لا يوجد")),
+
+
+                            Text("بواسطة: " + (currentTeam.createdBy != null ? currentTeam.createdBy!.fullName : "لا يوجد"), style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500),),
+                            Text("بتاريخ: " + Constants.dateTimeFromMilliSeconds(currentTeam.createDateTime), style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500),)
+
+                          ],
+                        ),
                       ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(currentTeam.title,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold,),
-                          textAlign: TextAlign.center,),
-                          const Divider(),
+                    );
+                  } else {
+                    if (cubit.isNoMoreData) {
+                      return Text("وصلت للنهاية", style: TextStyle(fontSize: 15.0,color: AppColors.hint),);
+                    }  else {
 
-                          Text(
-                            currentTeam.description ?? "لا يوجد",
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
+
+                      if( state is StartLoadingTeams) {
+                        return const Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Center(
+                            child: CircularProgressIndicator(),
                           ),
-                          const Divider(),
+                        );
+                      } else {
+                        return ElevatedButton(
+                          onPressed: () {
+                            _getPageTeams(context: context);
+                          },
+                          child: const Text("حمل المزيد"),
+                        );
+                      }
+                    }
+                  }
 
-                          Text("اليدر: " + (currentTeam.teamLeader != null ? currentTeam.teamLeader!.fullName : "لا يوجد")),
-
-
-                          Text("بواسطة: " + (currentTeam.createdBy != null ? currentTeam.createdBy!.fullName : "لا يوجد"), style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500),),
-                          Text("بتاريخ: " + Constants.dateTimeFromMilliSeconds(currentTeam.createDateTime), style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500),)
-
-                        ],
-                      ),
-                    ),
-                  );
                 });
 
           },
@@ -108,36 +134,38 @@ class TeamsScreen extends StatelessWidget {
         ));
 
   }
-  Widget _buildBody(
-      {required TeamCubit cubit,
-      required TeamState state,
-      required BuildContext context}) {
-
-    return Column(
-      children: [
-
-        Expanded(child: _buildList(cubit, state, context)),
-
-        if (cubit.teams.isNotEmpty) SizedBox(
-          width: context.width,
-          child: NumberPaginator(
-              onPageChange: (index) {
-
-                cubit.setCurrentPage(index);
-                cubit.updateFilter(cubit.teamFiltersModel.copyWith(
-                  pageNumber: Wrapped.value(index)
-                ));
-                _getPageTeams(context: context, refresh: true);
-              },
-
-              initialPage: cubit.teamCurrentPage,
-              numberPages: cubit.teamPagesCount),
-        ),
 
 
-      ],
-    );
-  }
+  // Widget _buildBody(
+  //     {required TeamCubit cubit,
+  //     required TeamState state,
+  //     required BuildContext context}) {
+  //
+  //   return Column(
+  //     children: [
+  //
+  //       Expanded(child: _buildList(cubit, state, context)),
+  //
+  //       if (cubit.teams.isNotEmpty) SizedBox(
+  //         width: context.width,
+  //         child: NumberPaginator(
+  //             onPageChange: (index) {
+  //
+  //               cubit.setCurrentPage(index);
+  //               cubit.updateFilter(cubit.teamFiltersModel.copyWith(
+  //                 pageNumber: Wrapped.value(index)
+  //               ));
+  //               _getPageTeams(context: context, refresh: true);
+  //             },
+  //
+  //             initialPage: cubit.teamCurrentPage,
+  //             numberPages: cubit.teamPagesCount),
+  //       ),
+  //
+  //
+  //     ],
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +180,7 @@ class TeamsScreen extends StatelessWidget {
                 search: Wrapped.value(search)
               ));
 
-              teamCubit.fetchTeams(isWebPagination: true, refresh: true);
+              teamCubit.fetchTeams(refresh: true);
             },
             onCancelTapCallback: () {
 
@@ -160,12 +188,12 @@ class TeamsScreen extends StatelessWidget {
                   search: const Wrapped.value(null)
               ));
 
-              teamCubit.fetchTeams(isWebPagination: true, refresh: true);
+              teamCubit.fetchTeams(refresh: true);
             },
             teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context),
             teamCubit: teamCubit,
           ),
-          body: _buildBody(context: context, state: state, cubit: teamCubit),
+          body: _buildList(teamCubit, state, context),
         );
       },
     );

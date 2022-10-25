@@ -1,9 +1,12 @@
 
+import 'package:crm_flutter_project/core/widgets/default_hieght_sized_box.dart';
 import 'package:crm_flutter_project/core/widgets/error_item_widget.dart';
 import 'package:crm_flutter_project/core/widgets/waiting_item_widget.dart';
 import 'package:crm_flutter_project/features/own_reports/presentation/cubit/own_reports_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../config/routes/app_routes.dart';
 
 class OwnReportsScreen extends StatelessWidget {
   const OwnReportsScreen({Key? key}) : super(key: key);
@@ -39,7 +42,12 @@ class OwnReportsScreen extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
-              title: const Text("احصائياتي"),
+              title: const Text("نظره عامة"),
+              actions: [
+                IconButton(onPressed: () {
+                  ownReportsCubit.fetchEmployeeReports();
+                }, icon: const Icon(Icons.refresh))
+              ],
             ),
 
             body: Padding(
@@ -47,6 +55,28 @@ class OwnReportsScreen extends StatelessWidget {
               child: CustomScrollView(
                 slivers: [
 
+
+                  SliverToBoxAdapter(
+                    child: Column(
+                  children: [
+                    Card(
+                      child: ListTile(
+                        onTap: () {
+                          Navigator.pushNamed(context, Routes.customersRoute);
+                        },
+                        leading: const Icon(Icons.people),
+                        trailing: const Icon(Icons.arrow_forward),
+                        title: const Text("الي صفحة العملاء"),
+                      ),
+                    ),
+                    const DefaultHeightSizedBox(),
+                    const Divider(),
+                    const DefaultHeightSizedBox(),
+                ],
+              )
+
+
+                  ),
 
                   SliverToBoxAdapter(
                     child: Wrap(

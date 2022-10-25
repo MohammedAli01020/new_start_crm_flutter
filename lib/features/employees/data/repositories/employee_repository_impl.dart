@@ -59,6 +59,16 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, EmployeeModel>> getEmployeeById(int employeeId) async {
+    try {
+      final response = await employeeRemoteDataSource.getEmployeeById(employeeId);
+      return Right(response);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(msg: e.msg));
+    }
+  }
+
 
 
 }

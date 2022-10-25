@@ -146,6 +146,8 @@ class CustomDrawer extends StatelessWidget {
               ),
               accountName: Text(Constants.currentEmployee!.fullName),
               accountEmail: Text(Constants.currentEmployee!.username)),
+
+
           BlocConsumer<ThemeCubit, ThemeState>(
             listener: (context, state) {
               if (state is ChangeThemeToLightError) {
@@ -265,13 +267,25 @@ class CustomDrawer extends StatelessWidget {
                   arguments: customerCubit);
             },
           ),
+          // CustomListTile(
+          //   title: 'تقاريري',
+          //   trailing: const Icon(Icons.stacked_line_chart),
+          //   onTapCallback: () {
+          //     Navigator.popAndPushNamed(context, Routes.ownReportsRoute);
+          //   },
+          // ),
+
+
+          if (Constants.currentEmployee!.permissions
+              .contains(AppStrings.viewAllStatistics))
           CustomListTile(
-            title: 'تقاريري',
-            trailing: const Icon(Icons.stacked_line_chart),
+            title: 'التقارير',
+            trailing: const Icon(Icons.add_chart_outlined),
             onTapCallback: () {
-              Navigator.popAndPushNamed(context, Routes.ownReportsRoute);
+              Navigator.popAndPushNamed(context, Routes.reportRoute);
             },
           ),
+
 
           if (Constants.currentEmployee!.permissions
               .contains(AppStrings.viewPreDefinedRoles))

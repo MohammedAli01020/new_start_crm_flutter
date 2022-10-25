@@ -86,9 +86,21 @@ class DeveloperCubit extends Cubit<DeveloperState> {
 
   void filterDevelopers(String name) {
     emit(StartFilterDevelopers());
-    filteredDevelopers = filteredDevelopers.where((element) {
-      return element.name.toLowerCase().contains(name.toLowerCase());
-    }).toList();
+
+    if (name.isNotEmpty) {
+
+      if (filteredDevelopers.isEmpty) {
+        filteredDevelopers = developers;
+      }
+
+      filteredDevelopers = filteredDevelopers.where((element) {
+        return element.name.toLowerCase().contains(name.toLowerCase());
+      }).toList();
+
+
+    } else {
+      filteredDevelopers = developers;
+    }
 
     emit(EndFilterDevelopers());
 

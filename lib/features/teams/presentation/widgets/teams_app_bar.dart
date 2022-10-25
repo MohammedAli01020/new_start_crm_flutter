@@ -94,7 +94,7 @@ class _TeamsAppBarState extends State<TeamsAppBar> {
                         widget.teamCubit.teamFiltersModel.copyWith(
                             teamTypes: Wrapped.value(TeamTypes.ALL.name)));
                     widget.teamCubit
-                        .fetchTeams(refresh: true, isWebPagination: true);
+                        .fetchTeams(refresh: true);
                   },
                   text: 'الكل',
                   value: TeamTypes.ALL.name,
@@ -112,7 +112,7 @@ class _TeamsAppBarState extends State<TeamsAppBar> {
                               teamLeaderId: Wrapped.value(
                                   Constants.currentEmployee!.employeeId)));
                       widget.teamCubit
-                          .fetchTeams(refresh: true, isWebPagination: true);
+                          .fetchTeams(refresh: true);
                     },
                     text: 'اللي ضفتهم والتابعين لي',
                     value: TeamTypes.ME.name),
@@ -127,7 +127,7 @@ class _TeamsAppBarState extends State<TeamsAppBar> {
                             startDateTime: const Wrapped.value(null),
                             endDateTime: const Wrapped.value(null)));
                     widget.teamCubit
-                        .fetchTeams(refresh: true, isWebPagination: true);
+                        .fetchTeams(refresh: true);
                   },
                   text: "كل الاوقات",
                   startDateMillis: null,
@@ -145,7 +145,7 @@ class _TeamsAppBarState extends State<TeamsAppBar> {
                             endDateTime: Wrapped.value(
                                 DateTime.now().lastTimOfCurrentMonthMillis)));
                     widget.teamCubit
-                        .fetchTeams(refresh: true, isWebPagination: true);
+                        .fetchTeams(refresh: true);
                   },
                   text: "هذا الشهر",
                   startDateMillis: DateTime.now().firstTimeOfCurrentMonthMillis,
@@ -164,7 +164,7 @@ class _TeamsAppBarState extends State<TeamsAppBar> {
                                 DateTime.now().lastTimOfPreviousMonthMillis)));
 
                     widget.teamCubit
-                        .fetchTeams(refresh: true, isWebPagination: true);
+                        .fetchTeams(refresh: true);
                   },
                   text: "الشهر السابق",
                   startDateMillis: DateTime.now().firstTimePreviousMonthMillis,

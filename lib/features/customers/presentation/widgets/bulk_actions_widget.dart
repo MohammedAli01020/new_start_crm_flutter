@@ -8,7 +8,7 @@ import '../../../../core/widgets/default_hieght_sized_box.dart';
 import '../../../employees/data/models/employee_model.dart';
 import '../../../sources/presentation/screens/sources_screen.dart';
 import '../../../teams/presentation/cubit/team_members/team_members_cubit.dart';
-import '../../../teams/presentation/screens/employee_picker_screen.dart';
+import '../../../employees/presentation/screens/employee_picker_screen.dart';
 import '../../domain/use_cases/customer_use_cases.dart';
 
 class BulkActionsWidget extends StatefulWidget {
@@ -31,11 +31,15 @@ class _BulkActionsWidgetState extends State<BulkActionsWidget> {
 
   List<String>? sourcesNames;
   List<String>? unitTypesNames;
-  EmployeeModel? assignedByEmployee;
+  EmployeeModel? assignedToEmployee;
+
+  bool? viewPreviousLog;
+
 
   void _resetData() {
     sourcesNames = null;
     unitTypesNames = null;
+    assignedToEmployee = null;
   }
 
   @override
@@ -43,30 +47,60 @@ class _BulkActionsWidgetState extends State<BulkActionsWidget> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Card(
-          child:ListTile(
-            onTap: () {
-              Navigator.pushNamed(context, Routes.employeePickerRoute,
-                  arguments: EmployeePickerArgs(
-                    teamMembersCubit: widget.teamMembersCubit,
-                    employeePickerTypes: EmployeePickerTypes.ASSIGN_MEMBER.name,
-                  )).then((value) {
 
-                if (value != null && value is Map<String, dynamic>) {
-                  debugPrint(value.toString());
-                  assignedByEmployee = EmployeeModel.fromJson(value);
-                }
+        Row(
+          children: [
+            Expanded(
+              child: Card(
+                child:ListTile(
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.employeePickerRoute,
+                        arguments: EmployeePickerArgs(
+                          teamMembersCubit: widget.teamMembersCubit,
+                          employeePickerTypes: EmployeePickerTypes.ASSIGN_MEMBER.name,
+                        )).then((value) {
 
+                      if (value != null && value is Map<String, dynamic>) {
+                        debugPrint(value.toString());
+                        assignedToEmployee = EmployeeModel.fromJson(value);
+                      }
+
+                      setState(() {});
+                    });
+                  },
+                  title: const Text("اختر الموظف"),
+                  subtitle: Text(assignedToEmployee != null
+                      ? assignedToEmployee!.fullName
+                      : "اختر"),
+                  trailing: const Icon(Icons.arrow_forward_ios),
+                ),
+              ),
+            ),
+            if (assignedToEmployee != null)
+              IconButton(onPressed: () {
+
+                assignedToEmployee = null;
                 setState(() {});
-              });
-            },
-            title: const Text("اختر الموظف"),
-            subtitle: Text(assignedByEmployee != null
-                ? assignedByEmployee!.fullName
-                : "اختر"),
-            trailing: const Icon(Icons.arrow_forward_ios),
-          ),
+              }, icon: const Icon(Icons.delete))
+          ],
         ),
+
+
+        if (assignedToEmployee != null)
+        Card(
+          child: CheckboxListTile(
+
+              title: const Text("مشاهدة سجل العميل السابقة"),
+              value: viewPreviousLog ?? true, onChanged: (val) {
+
+            viewPreviousLog = val;
+            setState(() {
+
+            });
+          }),
+        ),
+
+
         const DefaultHeightSizedBox(),
         Card(
           child: ListTile(
@@ -122,7 +156,7 @@ class _BulkActionsWidgetState extends State<BulkActionsWidget> {
               onPressed: () {
                 if (sourcesNames == null &&
                     unitTypesNames == null &&
-                    assignedByEmployee == null) {
+                    assignedToEmployee == null) {
                   Constants.showToast(msg: "لا يوجد اي تغير", context: context);
                   return;
                 }
@@ -132,7 +166,8 @@ class _BulkActionsWidgetState extends State<BulkActionsWidget> {
                     sources: sourcesNames,
                     unitTypes: unitTypesNames,
                     customerIds: widget.selectedCustomersIds,
-                    assignedToEmployeeId: assignedByEmployee?.employeeId));
+                    assignedToEmployeeId: assignedToEmployee?.employeeId,
+                    viewPreviousLog: assignedToEmployee != null ?  viewPreviousLog : null));
               },
               style: TextButton.styleFrom(
                   primary: Colors.black,

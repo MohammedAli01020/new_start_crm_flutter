@@ -8,14 +8,14 @@ enum EmployeeTypes {
   I_CREATED
 }
 
-enum CustomerTypes { ALL, ME, ME_AND_TEAM, TEAM, NOT_ASSIGNED }
+enum CustomerTypes { ALL, ME, ME_AND_TEAM, TEAM, NOT_ASSIGNED, OWN}
 
 enum EmployeePickerTypes {
   SELECT_TEAM_LEADER,
   SELECT_TEAM_MEMBER,
   ASSIGN_MEMBER,
-  SELECT_EMPLOYEE
-
+  SELECT_EMPLOYEE,
+  SELECT_MULTIPLE_EMPLOYEE,
 }
 
 enum RoleType { SELECT_ROLES, VIEW_ROLES }

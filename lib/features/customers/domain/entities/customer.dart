@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../employees/data/models/employee_model.dart';
+import '../../../employees/data/models/employee_response_model.dart';
 import '../../data/models/last_action_model.dart';
 
 
@@ -20,7 +21,11 @@ class Customer extends Equatable {
     required this.assignedEmployee,
     required this.assignedBy,
     required this.assignedDateTime,
-    required this.duplicateNo
+    required this.duplicateNo,
+
+    required this.viewPreviousLog,
+
+
   });
 
   final int customerId;
@@ -34,13 +39,15 @@ class Customer extends Equatable {
 
   final List<String> unitTypes;
   final List<String> sources;
-  final EmployeeModel? createdBy;
+  final EmployeeResponseModel? createdBy;
   final LastActionModel? lastAction;
-  final EmployeeModel? assignedEmployee;
-  final EmployeeModel? assignedBy;
+  final EmployeeResponseModel? assignedEmployee;
+  final EmployeeResponseModel? assignedBy;
   final int? assignedDateTime;
 
   final int? duplicateNo;
+
+  final bool? viewPreviousLog;
 
   @override
   List<Object?> get props =>
@@ -59,6 +66,7 @@ class Customer extends Equatable {
         assignedEmployee,
         assignedBy,
         assignedDateTime,
-        duplicateNo
+        duplicateNo,
+        viewPreviousLog
       ];
 }

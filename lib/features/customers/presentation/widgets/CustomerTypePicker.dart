@@ -46,6 +46,17 @@ class _CustomerTypePickerState extends State<CustomerTypePicker> {
                     Navigator.pop(context);
                   }),
 
+
+            if (Constants.currentEmployee!.permissions.contains(AppStrings.viewOwnLeads))
+              CustomListTile(title: "عملائي",
+                  isSelected: currentSelectedType == CustomerTypes.OWN.name,
+                  onTapCallback: () {
+                    currentSelectedType = CustomerTypes.OWN.name;
+                    setState(() {});
+                    widget.onSelectTypeCallback(CustomerTypes.OWN.name);
+                    Navigator.pop(context);
+                  }),
+
             if (Constants.currentEmployee!.permissions.contains(AppStrings.viewMyAssignedLeads))
             CustomListTile(title: "المعينين لي",
                 isSelected: currentSelectedType == CustomerTypes.ME.name,

@@ -52,7 +52,7 @@ class DefaultUserAvatarWidget extends StatelessWidget {
                 child: Text(
                   fullName != null ? fullName!.characters.first : "NO",
                   style: const TextStyle(
-                      fontSize: 25.0,
+                      fontSize: 20.0,
                       fontWeight: FontWeight.w500,
                       color: Colors.white),
                 ))),

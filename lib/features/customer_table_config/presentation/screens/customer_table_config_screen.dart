@@ -27,6 +27,22 @@ class CustomerTableConfigScreen extends StatelessWidget {
           return ListView(
             children: [
 
+
+              SwitchListTile(
+                  title: const Text("عرض قائمه"),
+                  value: Constants.customerTableConfigModel.isVertical ?? false,
+                  onChanged: (val) {
+
+                    cubit.cacheCustomerTableConfig(Constants.customerTableConfigModel.copyWith(
+                        isVertical: Wrapped.value(val)
+                    ));
+                  }),
+
+              const Divider(),
+
+
+
+
               SwitchListTile(
                   title: const Text("اسم العميل"),
                   value: Constants.customerTableConfigModel.showName,

@@ -21,6 +21,7 @@ class CustomersDataTable extends DataTableSource {
   final TeamMembersCubit teamMembersCubit;
   final EmployeeCubit employeeCubit;
   final Function onSelect;
+  final Function onLongPressCallback;
   final BuildContext context;
 
   CustomersDataTable({
@@ -29,12 +30,12 @@ class CustomersDataTable extends DataTableSource {
     required this.teamMembersCubit,
     required this.employeeCubit,
     required this.onSelect,
+    required this.onLongPressCallback,
     required this.context,
   });
 
   @override
   DataRow? getRow(int index) {
-
     try {
       final currentCustomer = customerCubit.customers[index];
 
@@ -43,6 +44,9 @@ class CustomersDataTable extends DataTableSource {
           selected: customerCubit.selectedCustomers.contains(currentCustomer),
           onSelectChanged: (val) {
             onSelect(val, currentCustomer);
+          },
+          onLongPress: () {
+            onLongPressCallback(currentCustomer);
           },
           cells: [
             if (Constants.customerTableConfigModel.showName)
@@ -56,164 +60,170 @@ class CustomersDataTable extends DataTableSource {
                             teamMembersCubit: teamMembersCubit));
                   },
                   child: Constants.currentEmployee!.permissions
-                      .contains(AppStrings.viewLeadName)
-                      ? Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(currentCustomer.fullName),
-                  )
+                          .contains(AppStrings.viewLeadName)
+                      ? Container(
+                          color: Theme.of(context).highlightColor,
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(currentCustomer.fullName.length < 15
+                              ? currentCustomer.fullName
+                              : "${currentCustomer.fullName.substring(0, 15)}..."),
+                        )
                       : const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text("عرض التفاصيل"),
-                  ))),
+                          padding: EdgeInsets.all(8.0),
+                          child: Text("عرض التفاصيل"),
+                        ))),
             if (Constants.customerTableConfigModel.showPhone)
               DataCell(Constants.currentEmployee!.permissions
-                  .contains(AppStrings.viewLeadPhone)
+                      .contains(AppStrings.viewLeadPhone)
                   ? Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextButton(
-                      onPressed: () {
-                        Constants.showDialogBox(
-                            context: context,
-                            title: "رقم الهاتف",
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                TextButton.icon(
-                                  label: const Text("اتصال"),
-                                  icon: const Icon(Icons.call),
-                                  onPressed: () {
-                                    try {
-                                      Constants.launchCallerV2(
-                                          currentCustomer.phoneNumbers[0]);
-                                    } catch (e) {
-                                      debugPrint(e.toString());
-                                      Constants.showToast(
-                                          msg: "تعذر الاتصال",
-                                          context: context);
-                                    }
-                                  },
-                                ),
-                                const DefaultHeightSizedBox(),
-                                TextButton.icon(
-                                  label: const Text("رسالة واتس"),
-                                  icon: const Icon(Icons.whatsapp),
-                                  onPressed: () {
-                                    try {
-                                      Constants.launchWhatsAppV2(
-                                          currentCustomer.phoneNumbers[0],
-                                          "message");
-                                    } catch (e) {
-                                      debugPrint(e.toString());
-                                      Constants.showToast(
-                                          msg: "تعذر فتح الواتس اب",
-                                          context: context);
-                                    }
-                                  },
-                                ),
-                                const DefaultHeightSizedBox(),
-                                TextButton.icon(
-                                  label: const Text("نسخ الرقم"),
-                                  icon: const Icon(
-                                    Icons.copy,
-                                  ),
-                                  onPressed: () {
-                                    try {
-                                      Constants.copyText(currentCustomer
-                                          .phoneNumbers.first)
-                                          .then((value) {
-                                        Constants.showToast(
-                                            msg: "تم النسخ",
-                                            context: context);
-                                      });
-                                    } catch (e) {
-                                      debugPrint(e.toString());
-                                      Constants.showToast(
-                                          msg: "تعذر الاتصال",
-                                          context: context);
-                                    }
-                                  },
-                                ),
-                              ],
-                            ));
-                      },
-                      child: Text(currentCustomer.phoneNumbers[0])),
-                  if (currentCustomer.phoneNumbers.length > 1)
-                    const Text(" - "),
-                  if (currentCustomer.phoneNumbers.length > 1)
-                    TextButton(
-                        onPressed: () {
-                          Constants.showDialogBox(
-                              context: context,
-                              title: "رقم الهاتف",
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                children: [
-                                  TextButton.icon(
-                                    label: const Text("اتصال"),
-                                    icon: const Icon(Icons.call),
-                                    onPressed: () {
-                                      try {
-                                        Constants.launchCallerV2(
-                                            currentCustomer
-                                                .phoneNumbers[1]);
-                                      } catch (e) {
-                                        debugPrint(e.toString());
-                                        Constants.showToast(
-                                            msg: "تعذر الاتصال",
-                                            context: context);
-                                      }
-                                    },
-                                  ),
-                                  const DefaultHeightSizedBox(),
-                                  TextButton.icon(
-                                    label: const Text("رسالة واتس"),
-                                    icon: const Icon(Icons.whatsapp),
-                                    onPressed: () {
-                                      try {
-                                        Constants.launchWhatsAppV2(
-                                            currentCustomer.phoneNumbers[1],
-                                            "message");
-                                      } catch (e) {
-                                        debugPrint(e.toString());
-                                        Constants.showToast(
-                                            msg: "تعذر فتح الواتس اب",
-                                            context: context);
-                                      }
-                                    },
-                                  ),
-                                  const DefaultHeightSizedBox(),
-                                  TextButton.icon(
-                                    label: const Text("نسخ الرقم"),
-                                    icon: const Icon(
-                                      Icons.copy,
-                                    ),
-                                    onPressed: () {
-                                      try {
-                                        Constants.copyText(currentCustomer
-                                            .phoneNumbers[1])
-                                            .then((value) {
-                                          Constants.showToast(
-                                              msg: "تم النسخ",
-                                              context: context);
-                                        });
-                                      } catch (e) {
-                                        debugPrint(e.toString());
-                                        Constants.showToast(
-                                            msg: "تعذر الاتصال",
-                                            context: context);
-                                      }
-                                    },
-                                  ),
-                                ],
-                              ));
-                        },
-                        child: Text(currentCustomer.phoneNumbers[1])),
-                ],
-              )
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextButton(
+                            onPressed: () {
+                              Constants.showDialogBox(
+                                  context: context,
+                                  title: "رقم الهاتف",
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      TextButton.icon(
+                                        label: const Text("اتصال"),
+                                        icon: const Icon(Icons.call),
+                                        onPressed: () {
+                                          try {
+                                            Constants.launchCallerV2(
+                                                currentCustomer
+                                                    .phoneNumbers[0]);
+                                          } catch (e) {
+                                            debugPrint(e.toString());
+                                            Constants.showToast(
+                                                msg: "تعذر الاتصال",
+                                                context: context);
+                                          }
+                                        },
+                                      ),
+                                      const DefaultHeightSizedBox(),
+                                      TextButton.icon(
+                                        label: const Text("رسالة واتس"),
+                                        icon: const Icon(Icons.whatsapp),
+                                        onPressed: () {
+                                          try {
+                                            Constants.launchWhatsAppV2(
+                                                currentCustomer.phoneNumbers[0],
+                                                "message");
+                                          } catch (e) {
+                                            debugPrint(e.toString());
+                                            Constants.showToast(
+                                                msg: "تعذر فتح الواتس اب",
+                                                context: context);
+                                          }
+                                        },
+                                      ),
+                                      const DefaultHeightSizedBox(),
+                                      TextButton.icon(
+                                        label: const Text("نسخ الرقم"),
+                                        icon: const Icon(
+                                          Icons.copy,
+                                        ),
+                                        onPressed: () {
+                                          try {
+                                            Constants.copyText(currentCustomer
+                                                    .phoneNumbers.first)
+                                                .then((value) {
+                                              Constants.showToast(
+                                                  msg: "تم النسخ",
+                                                  context: context);
+                                            });
+                                          } catch (e) {
+                                            debugPrint(e.toString());
+                                            Constants.showToast(
+                                                msg: "تعذر الاتصال",
+                                                context: context);
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ));
+                            },
+                            child: Text(currentCustomer.phoneNumbers[0])),
+                        if (currentCustomer.phoneNumbers.length > 1)
+                          const Text(" - "),
+                        if (currentCustomer.phoneNumbers.length > 1)
+                          TextButton(
+                              onPressed: () {
+                                Constants.showDialogBox(
+                                    context: context,
+                                    title: "رقم الهاتف",
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        TextButton.icon(
+                                          label: const Text("اتصال"),
+                                          icon: const Icon(Icons.call),
+                                          onPressed: () {
+                                            try {
+                                              Constants.launchCallerV2(
+                                                  currentCustomer
+                                                      .phoneNumbers[1]);
+                                            } catch (e) {
+                                              debugPrint(e.toString());
+                                              Constants.showToast(
+                                                  msg: "تعذر الاتصال",
+                                                  context: context);
+                                            }
+                                          },
+                                        ),
+                                        const DefaultHeightSizedBox(),
+                                        TextButton.icon(
+                                          label: const Text("رسالة واتس"),
+                                          icon: const Icon(Icons.whatsapp),
+                                          onPressed: () {
+                                            try {
+                                              Constants.launchWhatsAppV2(
+                                                  currentCustomer
+                                                      .phoneNumbers[1],
+                                                  "message");
+                                            } catch (e) {
+                                              debugPrint(e.toString());
+                                              Constants.showToast(
+                                                  msg: "تعذر فتح الواتس اب",
+                                                  context: context);
+                                            }
+                                          },
+                                        ),
+                                        const DefaultHeightSizedBox(),
+                                        TextButton.icon(
+                                          label: const Text("نسخ الرقم"),
+                                          icon: const Icon(
+                                            Icons.copy,
+                                          ),
+                                          onPressed: () {
+                                            try {
+                                              Constants.copyText(currentCustomer
+                                                      .phoneNumbers[1])
+                                                  .then((value) {
+                                                Constants.showToast(
+                                                    msg: "تم النسخ",
+                                                    context: context);
+                                              });
+                                            } catch (e) {
+                                              debugPrint(e.toString());
+                                              Constants.showToast(
+                                                  msg: "تعذر الاتصال",
+                                                  context: context);
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    ));
+                              },
+                              child: Text(currentCustomer.phoneNumbers[1])),
+                      ],
+                    )
                   : const Text("مخفي")),
             if (Constants.customerTableConfigModel.showAssignedTo)
               DataCell(Row(
@@ -222,14 +232,16 @@ class CustomersDataTable extends DataTableSource {
                   DefaultUserAvatarWidget(
                     onTap: () {
                       if (currentCustomer.assignedEmployee != null) {
-                        Navigator.pushNamed(context, Routes.employeesDetailsRoute,
+                        Navigator.pushNamed(
+                            context, Routes.employeesDetailsRoute,
                             arguments: EmployeeDetailsArgs(
-                                employeeModel: currentCustomer.assignedEmployee!,
+                                employeeId: currentCustomer
+                                    .assignedEmployee!.employeeId,
                                 employeeCubit: employeeCubit,
                                 fromRoute: Routes.customersRoute));
                       }
                     },
-                    imageUrl: currentCustomer.assignedEmployee?.imageUrl,
+                    imageUrl: null,
                     fullName: currentCustomer.assignedEmployee?.fullName,
                     height: 40.0,
                   ),
@@ -237,76 +249,96 @@ class CustomersDataTable extends DataTableSource {
                     width: 5.0,
                   ),
                   Text(currentCustomer.assignedEmployee != null
-                      ? currentCustomer.assignedEmployee!.fullName
+                      ? (currentCustomer.assignedEmployee!.fullName.length < 15
+                          ? currentCustomer.assignedEmployee!.fullName
+                          : "${currentCustomer.assignedEmployee!.fullName.substring(0, 15)}...")
                       : "لا يوجد")
                 ],
               )),
             if (Constants.customerTableConfigModel.showLastAction)
               DataCell(customerCubit.currentUpdateActions.contains(index)
                   ? const Center(
-                child: SizedBox(
-                    height: 20.0,
-                    width: 20.0,
-                    child: CircularProgressIndicator()),
-              )
+                      child: SizedBox(
+                          height: 20.0,
+                          width: 20.0,
+                          child: CircularProgressIndicator()),
+                    )
                   : InkWell(
-                onTap: () {
-                  if (Constants.currentEmployee!.permissions
-                      .contains(AppStrings.createActions)) {
-                    Constants.showDialogBox(
-                      context: context,
-                      title: currentCustomer.lastAction == null
-                          ? "ادخل حدث جديد"
-                          : "غير الحدث او عدلة",
-                      content: CreateNewAction(
-                        lastActionModel: currentCustomer.lastAction,
-                        onConfirmAction:
-                            (UpdateCustomerLastActionParam param) {
-                          customerCubit.updateCustomerLastAction(
-                              param, index);
-                          Navigator.of(context).pop(true);
-                        },
-                        customerId: currentCustomer.customerId,
+                      onTap: () {
+                        if (Constants.currentEmployee!.permissions
+                            .contains(AppStrings.createActions)) {
+                          Constants.showDialogBox(
+                            context: context,
+                            title: currentCustomer.lastAction == null
+                                ? "ادخل حدث جديد"
+                                : "غير الحدث او عدلة",
+                            content: CreateNewAction(
+                              lastActionModel: currentCustomer.lastAction,
+                              onConfirmAction:
+                                  (UpdateCustomerLastActionParam param) {
+                                customerCubit.updateCustomerLastAction(
+                                    param, index);
+                                Navigator.of(context).pop(true);
+                              },
+                              customerId: currentCustomer.customerId,
+                            ),
+                          );
+                        } else {
+                          Constants.showToast(
+                              msg: "غير مصرح", context: context);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(2.0),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            border: Border.all(color: Colors.blueGrey)),
+                        child: Text(currentCustomer.lastAction != null &&
+                                currentCustomer.lastAction!.event != null
+                            ? currentCustomer.lastAction!.event!.name
+                            : "لا يوجد"),
                       ),
-                    );
-                  } else {
-                    Constants.showToast(msg: "غير مصرح", context: context);
-                  }
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(2.0),
-                  decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      border: Border.all(color: Colors.blueGrey)),
-                  child: Text(currentCustomer.lastAction != null &&
-                      currentCustomer.lastAction!.event != null
-                      ? currentCustomer.lastAction!.event!.name
-                      : "لا يوجد"),
-                ),
+                    )),
+            if (Constants.customerTableConfigModel.showLastComment)
+              DataCell(Text(
+                currentCustomer.lastAction != null &&
+                        currentCustomer.lastAction!.actionDescription != null &&
+                        currentCustomer
+                            .lastAction!.actionDescription!.isNotEmpty
+                    ? (currentCustomer.lastAction!.actionDescription!.length >
+                            20
+                        ? currentCustomer.lastAction!.actionDescription!
+                                .substring(0, 20) +
+                            " ..."
+                        : currentCustomer.lastAction!.actionDescription!)
+                    : "لا يوجد",
+                maxLines: 1,
               )),
             if (Constants.customerTableConfigModel.showSources)
               DataCell(Text(
-                currentCustomer.sources.isNotEmpty
-                    ? currentCustomer.sources.length > 2
-                    ? currentCustomer.sources
-                    .sublist(0, 2)
-                    .map((e) => e)
-                    .toString() +
-                    ", ${currentCustomer.sources.length - 2} "
-                    : currentCustomer.sources.map((e) => e).toString()
-                    : "لا يوجد",
+                Constants.currentEmployee!.permissions
+                        .contains(AppStrings.viewLeadSources)
+                    ? currentCustomer.sources.isNotEmpty
+                        ? currentCustomer.sources.length > 2
+                            ? currentCustomer.sources
+                                    .sublist(0, 2)
+                                    .map((e) => e)
+                                    .toString() +
+                                ", ${currentCustomer.sources.length - 2} "
+                            : currentCustomer.sources.map((e) => e).toString()
+                        : "لا يوجد" : "مخفي",
                 maxLines: 1,
               )),
             if (Constants.customerTableConfigModel.showUnitTypes)
               DataCell(Text(
                 currentCustomer.unitTypes.isNotEmpty
                     ? currentCustomer.unitTypes.length > 2
-                    ? currentCustomer.unitTypes
-                    .sublist(0, 2)
-                    .map((e) => e)
-                    .toString() +
-                    ", ${currentCustomer.unitTypes.length - 2} "
-                    : currentCustomer.unitTypes.map((e) => e).toString()
+                        ? currentCustomer.unitTypes
+                                .sublist(0, 2)
+                                .map((e) => e)
+                                .toString() +
+                            ", ${currentCustomer.unitTypes.length - 2} "
+                        : currentCustomer.unitTypes.map((e) => e).toString()
                     : "لا يوجد",
                 maxLines: 1,
               )),
@@ -314,12 +346,12 @@ class CustomersDataTable extends DataTableSource {
               DataCell(Text(
                 currentCustomer.developers.isNotEmpty
                     ? currentCustomer.developers.length > 2
-                    ? currentCustomer.developers
-                    .sublist(0, 2)
-                    .map((e) => e)
-                    .toString() +
-                    ", ${currentCustomer.developers.length - 2} "
-                    : currentCustomer.developers.map((e) => e).toString()
+                        ? currentCustomer.developers
+                                .sublist(0, 2)
+                                .map((e) => e)
+                                .toString() +
+                            ", ${currentCustomer.developers.length - 2} "
+                        : currentCustomer.developers.map((e) => e).toString()
                     : "لا يوجد",
                 maxLines: 1,
               )),
@@ -327,63 +359,51 @@ class CustomersDataTable extends DataTableSource {
               DataCell(Text(
                 currentCustomer.projects.isNotEmpty
                     ? currentCustomer.projects.length > 2
-                    ? currentCustomer.projects
-                    .sublist(0, 2)
-                    .map((e) => e)
-                    .toString() +
-                    ", ${currentCustomer.projects.length - 2} "
-                    : currentCustomer.projects.map((e) => e).toString()
+                        ? currentCustomer.projects
+                                .sublist(0, 2)
+                                .map((e) => e)
+                                .toString() +
+                            ", ${currentCustomer.projects.length - 2} "
+                        : currentCustomer.projects.map((e) => e).toString()
                     : "لا يوجد",
                 maxLines: 1,
               )),
             if (Constants.customerTableConfigModel.showLastActionTime)
               DataCell(Text(Constants.timeAgoSinceDate(
                   currentCustomer.lastAction?.dateTime))),
-            if (Constants.customerTableConfigModel.showLastComment)
-              DataCell(Text(
-                currentCustomer.lastAction != null &&
-                    currentCustomer.lastAction!.actionDescription != null &&
-                    currentCustomer.lastAction!.actionDescription!.isNotEmpty
-                    ? (currentCustomer.lastAction!.actionDescription!.length > 20
-                    ? currentCustomer.lastAction!.actionDescription!
-                    .substring(0, 20) +
-                    " ..."
-                    : currentCustomer.lastAction!.actionDescription!)
-                    : "لا يوجد",
-                maxLines: 1,
-              )),
             if (Constants.customerTableConfigModel.showInsertDate)
               DataCell(Text(
                   Constants.timeAgoSinceDate(currentCustomer.createDateTime))),
             if (Constants.customerTableConfigModel.showCreateBy)
               DataCell(Constants.currentEmployee!.permissions
-                  .contains(AppStrings.viewLeadCreator)
+                      .contains(AppStrings.viewLeadCreator)
                   ? Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  DefaultUserAvatarWidget(
-                    onTap: () {
-                      if (currentCustomer.createdBy != null) {
-                        Navigator.pushNamed(
-                            context, Routes.employeesDetailsRoute,
-                            arguments: EmployeeDetailsArgs(
-                                employeeModel: currentCustomer.createdBy!,
-                                employeeCubit: employeeCubit,
-                                fromRoute: Routes.customersRoute));
-                      }
-                    },
-                    imageUrl: currentCustomer.createdBy?.imageUrl,
-                    fullName: currentCustomer.createdBy?.fullName,
-                    height: 40.0,
-                  ),
-                  const SizedBox(
-                    width: 5.0,
-                  ),
-                  Text(currentCustomer.createdBy != null
-                      ? currentCustomer.createdBy!.fullName
-                      : "لا يوجد")
-                ],
-              )
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        DefaultUserAvatarWidget(
+                          onTap: () {
+                            if (currentCustomer.createdBy != null) {
+                              Navigator.pushNamed(
+                                  context, Routes.employeesDetailsRoute,
+                                  arguments: EmployeeDetailsArgs(
+                                      employeeId:
+                                          currentCustomer.createdBy!.employeeId,
+                                      employeeCubit: employeeCubit,
+                                      fromRoute: Routes.customersRoute));
+                            }
+                          },
+                          imageUrl: null,
+                          fullName: currentCustomer.createdBy?.fullName,
+                          height: 40.0,
+                        ),
+                        const SizedBox(
+                          width: 5.0,
+                        ),
+                        Text(currentCustomer.createdBy != null
+                            ? currentCustomer.createdBy!.fullName
+                            : "لا يوجد")
+                      ],
+                    )
                   : const Text("مخفي")),
             if (Constants.customerTableConfigModel.showAssignedBy)
               DataCell(Row(
@@ -392,14 +412,16 @@ class CustomersDataTable extends DataTableSource {
                   DefaultUserAvatarWidget(
                     onTap: () {
                       if (currentCustomer.assignedBy != null) {
-                        Navigator.pushNamed(context, Routes.employeesDetailsRoute,
+                        Navigator.pushNamed(
+                            context, Routes.employeesDetailsRoute,
                             arguments: EmployeeDetailsArgs(
-                                employeeModel: currentCustomer.assignedBy!,
+                                employeeId:
+                                    currentCustomer.assignedBy!.employeeId,
                                 employeeCubit: employeeCubit,
                                 fromRoute: Routes.customersRoute));
                       }
                     },
-                    imageUrl: currentCustomer.assignedBy?.imageUrl,
+                    imageUrl: null,
                     fullName: currentCustomer.assignedBy?.fullName,
                     height: 40.0,
                   ),
@@ -413,62 +435,56 @@ class CustomersDataTable extends DataTableSource {
               )),
             if (Constants.customerTableConfigModel.showReminderTime)
               DataCell(Text(currentCustomer.lastAction != null &&
-                  currentCustomer.lastAction!.postponeDateTime != null
+                      currentCustomer.lastAction!.postponeDateTime != null
                   ? Constants.dateTimeFromMilliSeconds(
-                  currentCustomer.lastAction!.postponeDateTime)
+                      currentCustomer.lastAction!.postponeDateTime)
                   : "لا يوجد")),
             if (Constants.customerTableConfigModel.showDuplicateNumber)
               DataCell(Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (Constants.currentEmployee!.permissions
-                      .contains(AppStrings.viewDuplicatesLeads))
-                    Text(currentCustomer.duplicateNo.toString()),
+                  Text(currentCustomer.duplicateNo.toString()),
                   const SizedBox(
                     width: 10.0,
                   ),
-                  IconButton(
-                    onPressed: () {
-                      if (!Constants.currentEmployee!.permissions
-                          .contains(AppStrings.viewDuplicatesLeads)) {
-                        Constants.showToast(msg: "غير مصرح", context: context);
-                        return;
-                      }
+                  if (!Constants.currentEmployee!.permissions
+                      .contains(AppStrings.viewDuplicatesLeads))
+                    IconButton(
+                      onPressed: () {
+                        if (currentCustomer.duplicateNo == 0) {
+                          Constants.showToast(
+                              msg: "لا يوجد تكرارات لهذا العميل",
+                              context: context);
+                          return;
+                        }
 
-                      if (currentCustomer.duplicateNo == 0) {
-                        Constants.showToast(
-                            msg: "لا يوجد تكرارات لهذا العميل", context: context);
-                        return;
-                      }
-
-                      Constants.showDialogBox(
-                          context: context,
-                          title: "تكرارات العميل" " " +
-                              currentCustomer.duplicateNo.toString(),
-                          content: DuplicatesCustomers(
-                            phoneNumbersWrapper: PhoneNumbersWrapper(
-                                phoneNumbers: currentCustomer.phoneNumbers),
-                            teamMembersCubit: teamMembersCubit,
-                            customerCubit: customerCubit,
-                            employeeCubit: employeeCubit,
-                          ));
-                    },
-                    icon: Icon(
-                      Icons.visibility_outlined,
-                      color: currentCustomer.duplicateNo == 0 ||
-                          !Constants.currentEmployee!.permissions
-                              .contains(AppStrings.viewDuplicatesLeads)
-                          ? Colors.grey
-                          : AppColors.primary,
+                        Constants.showDialogBox(
+                            context: context,
+                            title: "تكرارات العميل" " " +
+                                currentCustomer.duplicateNo.toString(),
+                            content: DuplicatesCustomers(
+                              phoneNumbersWrapper: PhoneNumbersWrapper(
+                                  phoneNumbers: currentCustomer.phoneNumbers),
+                              teamMembersCubit: teamMembersCubit,
+                              customerCubit: customerCubit,
+                              employeeCubit: employeeCubit,
+                            ));
+                      },
+                      icon: Icon(
+                        Icons.visibility_outlined,
+                        color: currentCustomer.duplicateNo == 0 ||
+                                !Constants.currentEmployee!.permissions
+                                    .contains(AppStrings.viewDuplicatesLeads)
+                            ? Colors.grey
+                            : AppColors.primary,
+                      ),
                     ),
-                  ),
                 ],
               ))
           ]);
-    } catch(e) {
+    } catch (e) {
       return null;
     }
-
   }
 
   @override

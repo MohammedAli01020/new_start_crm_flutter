@@ -33,11 +33,13 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocConsumer<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state is LoginError) {
-          Constants.showErrorDialog(context: context, msg: state.msg);
+          Constants.showErrorDialog(context: context, msg: "تأكد من الايميل وكلمة السر");
         }
 
         if (state is EndLogin || state is EndInit) {
-          Navigator.pushNamedAndRemoveUntil(context, Routes.customersRoute, (route) => false);
+          // Navigator.pushNamedAndRemoveUntil(context, Routes.customersRoute, (route) => false);
+          Navigator.pushNamedAndRemoveUntil(context, Routes.ownReportsRoute, (route) => false);
+
         }
 
       },
@@ -60,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (state is LoginError) {
 
           return ErrorItemWidget(
-            msg: state.msg,
+            msg: "تأكد من الايميل وكلمة السر",
             onPress: () {
               loginCubit.init();
             },

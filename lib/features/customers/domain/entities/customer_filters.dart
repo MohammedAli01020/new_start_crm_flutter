@@ -13,32 +13,33 @@ class CustomerFilters extends Equatable {
   final int? employeeId;
   final int? teamId;
   final String? reminderTypes;
-
   final List<String>? unitTypes;
   final List<String>? sources;
-
   final List<String>? projects;
   final List<String>? developers;
+  final List<int>? assignedEmployeeIds;
+  final List<int>? createdByIds;
 
-  const CustomerFilters(
-      {required this.pageNumber,
-      required this.pageSize,
-      required this.sortDirection,
-      required this.sortBy,
-      required this.fullNameOrPhoneNumber,
-      required this.customerTypes,
-      required this.lastEventIds,
-      required this.startDateTime,
-      required this.endDateTime,
-      required this.employeeId,
-      required this.teamId,
-      required this.reminderTypes,
-      required this.unitTypes,
-      required this.sources,
-        required this.projects,
-        required this.developers,
-
-      });
+  const CustomerFilters({
+    required this.pageNumber,
+    required this.pageSize,
+    required this.sortDirection,
+    required this.sortBy,
+    required this.fullNameOrPhoneNumber,
+    required this.customerTypes,
+    required this.lastEventIds,
+    required this.startDateTime,
+    required this.endDateTime,
+    required this.employeeId,
+    required this.teamId,
+    required this.reminderTypes,
+    required this.unitTypes,
+    required this.sources,
+    required this.projects,
+    required this.developers,
+    required this.assignedEmployeeIds,
+    required this.createdByIds,
+  });
 
   @override
   List<Object?> get props => [
@@ -56,7 +57,9 @@ class CustomerFilters extends Equatable {
         reminderTypes,
         unitTypes,
         sources,
-    projects,
-    developers
+        projects,
+        developers,
+        assignedEmployeeIds,
+        createdByIds
       ];
 }

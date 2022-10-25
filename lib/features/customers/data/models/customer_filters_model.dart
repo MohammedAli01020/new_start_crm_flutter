@@ -18,7 +18,12 @@ class CustomerFiltersModel extends CustomerFilters {
       required List<String>? unitTypes,
       required List<String>? sources,
       required List<String>? projects,
-      required List<String>? developers})
+      required List<String>? developers,
+
+      required List<int>? assignedEmployeeIds,
+      required List<int>? createdByIds,
+
+      })
       : super(
             pageNumber: pageNumber,
             pageSize: pageSize,
@@ -35,7 +40,10 @@ class CustomerFiltersModel extends CustomerFilters {
             unitTypes: unitTypes,
             sources: sources,
             projects: projects,
-            developers: developers);
+            developers: developers,
+      assignedEmployeeIds: assignedEmployeeIds,
+      createdByIds: createdByIds
+  );
 
   factory CustomerFiltersModel.fromJson(Map<String, dynamic> json) =>
       CustomerFiltersModel(
@@ -55,6 +63,11 @@ class CustomerFiltersModel extends CustomerFilters {
         sources: json["sources"],
         projects: json["projects"],
         developers: json["developers"],
+
+        assignedEmployeeIds: json["assignedEmployeeIds"],
+        createdByIds: json["createdByIds"],
+
+
       );
 
   Map<String, dynamic> toJson() => {
@@ -73,8 +86,12 @@ class CustomerFiltersModel extends CustomerFilters {
         "unitTypes": unitTypes,
         "sources": sources,
         "projects": projects,
-        "developers": developers
-      };
+        "developers": developers,
+
+    "assignedEmployeeIds": assignedEmployeeIds,
+    "createdByIds": createdByIds,
+
+  };
 
   CustomerFiltersModel copyWith({
     Wrapped<int>? pageNumber,
@@ -93,6 +110,11 @@ class CustomerFiltersModel extends CustomerFilters {
     Wrapped<List<String>?>? sources,
     Wrapped<List<String>?>? projects,
     Wrapped<List<String>?>? developers,
+
+    Wrapped<List<int>?>? assignedEmployeeIds,
+    Wrapped<List<int>?>? createdByIds,
+
+
   }) {
     return CustomerFiltersModel(
       pageNumber: pageNumber != null ? pageNumber.value : this.pageNumber,
@@ -118,6 +140,10 @@ class CustomerFiltersModel extends CustomerFilters {
       sources: sources != null ? sources.value : this.sources,
       projects: projects != null ? projects.value : this.projects,
       developers: developers != null ? developers.value : this.developers,
+
+      assignedEmployeeIds: assignedEmployeeIds != null ? assignedEmployeeIds.value : this.assignedEmployeeIds,
+      createdByIds: createdByIds != null ? createdByIds.value : this.createdByIds,
+
     );
   }
 
@@ -138,6 +164,8 @@ class CustomerFiltersModel extends CustomerFilters {
         unitTypes: null,
         sources: null,
         projects: null,
-        developers: null);
+        developers: null,
+    assignedEmployeeIds: null,
+    createdByIds: null);
   }
 }

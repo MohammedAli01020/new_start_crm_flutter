@@ -16,6 +16,8 @@ abstract class EmployeeRemoteDataSource {
   Future<void> deleteEmployee(int costId);
 
   Future<RoleModel> findRoleByEmployeeId(int employeeId);
+
+  Future<EmployeeModel> getEmployeeById(int employeeId);
 }
 
 class EmployeeRemoteDataSourceImpl implements EmployeeRemoteDataSource {
@@ -54,5 +56,12 @@ class EmployeeRemoteDataSourceImpl implements EmployeeRemoteDataSource {
     final response = await apiConsumer.get(EndPoints.roleByEmployeeId + employeeId.toString());
 
     return RoleModel.fromJson(response);
+  }
+
+  @override
+  Future<EmployeeModel> getEmployeeById(int employeeId) async {
+    final response = await apiConsumer.get(EndPoints.findEmployeeById + employeeId.toString());
+
+    return EmployeeModel.fromJson(response);
   }
 }

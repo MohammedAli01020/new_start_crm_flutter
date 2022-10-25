@@ -9,7 +9,7 @@ import 'package:crm_flutter_project/features/teams/data/models/team_member_model
 import 'package:crm_flutter_project/features/teams/data/models/team_model.dart';
 import 'package:crm_flutter_project/features/teams/data/models/user_team_id_model.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_cubit.dart';
-import 'package:crm_flutter_project/features/teams/presentation/screens/employee_picker_screen.dart';
+import 'package:crm_flutter_project/features/employees/presentation/screens/employee_picker_screen.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/modify_team_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';

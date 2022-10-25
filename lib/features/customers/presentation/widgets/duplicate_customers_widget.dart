@@ -95,11 +95,13 @@ class DuplicatesCustomers extends StatelessWidget {
                               onTap: () {
 
                                 if (currentCustomer.assignedEmployee != null) {
-                                  Navigator.pushNamed(context, Routes.employeesDetailsRoute,
-                                      arguments: EmployeeDetailsArgs(
-                                          employeeModel: currentCustomer.assignedEmployee!,
-                                          employeeCubit: employeeCubit,
-                                          fromRoute: Routes.customersRoute));
+
+                                  // Navigator.pushNamed(context, Routes.employeesDetailsRoute,
+                                  //     arguments: EmployeeDetailsArgs(
+                                  //         employeeModel: currentCustomer.assignedEmployee!,
+                                  //         employeeCubit: employeeCubit,
+                                  //         fromRoute: Routes.customersRoute));
+
                                 }
 
                               },

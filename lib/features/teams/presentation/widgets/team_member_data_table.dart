@@ -44,7 +44,7 @@ class TeamMembersDataTable extends DataTableSource {
                               currentTeamMember.userTeamId.teamId) {
                         Navigator.pushNamed(context, Routes.employeesDetailsRoute,
                             arguments: EmployeeDetailsArgs(
-                                employeeModel: currentTeamMember.employee,
+                                employeeId: currentTeamMember.employee.employeeId,
                                 employeeCubit: cubit,
                                 fromRoute: Routes.teamsDetailsRoute));
                       }

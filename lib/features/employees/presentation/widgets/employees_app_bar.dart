@@ -15,12 +15,14 @@ class EmployeesAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Function onSearchChangeCallback;
   final Function onCancelTapCallback;
   final EmployeeCubit employeeCubit;
+  final VoidCallback onFilterCallback;
 
   const EmployeesAppBar(
       {Key? key,
         required this.onSearchChangeCallback,
         required this.onCancelTapCallback,
-        required this.employeeCubit})
+        required this.employeeCubit,
+        required this.onFilterCallback})
       : super(key: key);
 
   @override
@@ -88,6 +90,8 @@ class _EmployeesAppBarState extends State<EmployeesAppBar> {
                   widget.employeeCubit.updateFilter(widget
                       .employeeCubit.employeeFiltersModel
                       .copyWith(employeeTypes: Wrapped.value(EmployeeTypes.ALL.name)));
+
+                  widget.onFilterCallback();
                   widget.employeeCubit.fetchEmployees(refresh: true);
                 },
                 text: 'الكل',
@@ -106,6 +110,8 @@ class _EmployeesAppBarState extends State<EmployeesAppBar> {
                       .copyWith(
                       createdById: Wrapped.value(Constants.currentEmployee!.employeeId),
                       employeeTypes: Wrapped.value(EmployeeTypes.I_CREATED.name)));
+
+                  widget.onFilterCallback();
                   widget.employeeCubit.fetchEmployees(refresh: true);
                 },
                 text: 'اللي ضفتهم',
@@ -121,6 +127,8 @@ class _EmployeesAppBarState extends State<EmployeesAppBar> {
                       widget.employeeCubit.employeeFiltersModel.copyWith(
                           employeeTypes:
                           Wrapped.value(EmployeeTypes.NOT_ASSIGNED.name)));
+
+                  widget.onFilterCallback();
                   widget.employeeCubit.fetchEmployees(refresh: true);
                 },
                 text: 'ليس له عميل',
@@ -135,6 +143,9 @@ class _EmployeesAppBarState extends State<EmployeesAppBar> {
                       widget.employeeCubit.employeeFiltersModel.copyWith(
                           employeeTypes:
                           Wrapped.value(EmployeeTypes.TEAM_LEADERS.name)));
+
+
+                  widget.onFilterCallback();
                   widget.employeeCubit.fetchEmployees(refresh: true);
                 },
                 text: 'تيم ليدرز',
@@ -150,6 +161,9 @@ class _EmployeesAppBarState extends State<EmployeesAppBar> {
                       widget.employeeCubit.employeeFiltersModel.copyWith(
                           employeeTypes:
                           Wrapped.value(EmployeeTypes.NOT_IN_MEMBER.name)));
+
+
+                  widget.onFilterCallback();
                   widget.employeeCubit.fetchEmployees(refresh: true);
                 },
                 text: 'ليس له تيم',
@@ -164,6 +178,9 @@ class _EmployeesAppBarState extends State<EmployeesAppBar> {
                         widget.employeeCubit.employeeFiltersModel.copyWith(
                             startDateTime: const Wrapped.value(null),
                             endDateTime: const Wrapped.value(null)));
+
+
+                    widget.onFilterCallback();
                     widget.employeeCubit.fetchEmployees(refresh: true);
                   },
                   text: "كل الاوقات",
@@ -183,6 +200,9 @@ class _EmployeesAppBarState extends State<EmployeesAppBar> {
                                 DateTime.now().firstTimeOfCurrentMonthMillis),
                             endDateTime: Wrapped.value(
                                 DateTime.now().lastTimOfCurrentMonthMillis)));
+
+
+                    widget.onFilterCallback();
                     widget.employeeCubit.fetchEmployees(refresh: true);
                   },
 
@@ -203,6 +223,8 @@ class _EmployeesAppBarState extends State<EmployeesAppBar> {
                             endDateTime: Wrapped.value(
                                 DateTime.now().lastTimOfPreviousMonthMillis)));
 
+
+                    widget.onFilterCallback();
                     widget.employeeCubit.fetchEmployees(refresh: true);
                   },
                   text: "الشهر السابق",

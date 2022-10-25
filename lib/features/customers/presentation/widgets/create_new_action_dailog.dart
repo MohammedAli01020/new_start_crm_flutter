@@ -7,6 +7,7 @@ import 'package:crm_flutter_project/features/events/presentation/screens/events_
 import 'package:flutter/material.dart';
 
 import '../../../../config/routes/app_routes.dart';
+import '../../../../core/utils/app_strings.dart';
 import '../../../../core/widgets/custom_edit_text.dart';
 import '../../../../core/widgets/default_hieght_sized_box.dart';
 import '../../data/models/event_model.dart';
@@ -41,13 +42,15 @@ class _CreateNewActionState extends State<CreateNewAction> {
   void initState() {
     super.initState();
     if (widget.lastActionModel != null) {
-      event = widget.lastActionModel!.event;
-      postponeDateTime = widget.lastActionModel!.postponeDateTime;
-      _actionDescriptionController.text =
-          widget.lastActionModel!.actionDescription != null &&
-                  widget.lastActionModel!.actionDescription!.isNotEmpty
-              ? widget.lastActionModel!.actionDescription!
-              : "";
+
+      // event = widget.lastActionModel!.event;
+      // postponeDateTime = widget.lastActionModel!.postponeDateTime;
+      // _actionDescriptionController.text =
+      //     widget.lastActionModel!.actionDescription != null &&
+      //             widget.lastActionModel!.actionDescription!.isNotEmpty
+      //         ? widget.lastActionModel!.actionDescription!
+      //         : "";
+
     }
   }
 
@@ -91,7 +94,12 @@ class _CreateNewActionState extends State<CreateNewAction> {
                 controller: _actionDescriptionController,
                 hint: "الوصف",
                 validator: (v) {
-                  if (v == null && v!.isNotEmpty) {
+
+                  if (v == null || v.isEmpty) {
+                    return AppStrings.required;
+                  }
+
+                  if ( v.isNotEmpty) {
                     if (v.length > 5000) {
                       return "اقصي عدد احرف 5000";
                     }

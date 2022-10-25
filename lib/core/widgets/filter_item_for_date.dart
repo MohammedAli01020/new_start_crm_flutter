@@ -35,7 +35,7 @@ class FilterItemForDate extends StatelessWidget {
               endDateMillis == currentEndDateMillis
               ? AppColors.primary.withOpacity(0.1)
               : Colors.white,
-          borderRadius: BorderRadius.circular(25.0),
+          // borderRadius: BorderRadius.circular(25.0),
           border: Border.all(
               color: startDateMillis == currentStartDateMillis &&
                   endDateMillis == currentEndDateMillis

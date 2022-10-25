@@ -11,7 +11,7 @@ import '../../../../core/widgets/custom_edit_text.dart';
 import '../../../../core/widgets/default_button_widget.dart';
 import '../../../../core/widgets/default_hieght_sized_box.dart';
 import '../../../../core/widgets/waiting_item_widget.dart';
-import '../../../employees/data/models/employee_model.dart';
+import '../../../employees/data/models/employee_response_model.dart';
 import '../../../teams/presentation/cubit/team_members/team_members_cubit.dart';
 import '../../data/models/create_action_request_model.dart';
 import '../../domain/use_cases/customer_use_cases.dart';
@@ -56,11 +56,13 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
 
   CreateActionRequestModel? createActionRequest;
 
-  EmployeeModel? assignedEmployee;
+  EmployeeResponseModel? assignedEmployee;
 
   int? assignedEmployeeId;
   int? assignedByEmployeeId;
   int? assignedDateTime;
+
+  bool? viewPreviousLog;
 
   @override
   void dispose() {
@@ -73,11 +75,14 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
 
   @override
   void initState() {
-    final cubit = BlocProvider.of<CustomerCubit>(context);
 
     super.initState();
     if (widget.modifyCustomerArgs.customerModel != null) {
       customerId = widget.modifyCustomerArgs.customerModel!.customerId;
+
+
+
+      viewPreviousLog = widget.modifyCustomerArgs.customerModel!.viewPreviousLog;
 
       assignedDateTime =
           widget.modifyCustomerArgs.customerModel!.assignedDateTime;
@@ -199,11 +204,59 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
                         },
                         inputType: TextInputType.text),
                     const DefaultHeightSizedBox(),
+
+
+                    CustomEditText(
+                        controller: _firstPhoneController,
+                        hint: "رقم الهاتف الأول",
+                        maxLength: 50,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) {
+                            return AppStrings.required;
+                          }
+
+                          if (v.length > 50) {
+                            return "اقصي عدد احرف 50";
+                          }
+
+                          if (v.length < 11) {
+                            return "اقل عدد احرف 11";
+                          }
+
+                          return null;
+                        },
+                        inputType: TextInputType.phone),
+                    const DefaultHeightSizedBox(),
+                    CustomEditText(
+                        controller: _secondPhoneController,
+                        hint: "رقم الهاتف الثاني",
+                        maxLength: 50,
+                        validator: (v) {
+
+                          if (v != null && v.length > 50) {
+                            return "اقصي عدد احرف 50";
+                          }
+
+
+                          if (v != null && v.isNotEmpty && v.length < 11) {
+                            return "اقل عدد احرف 11";
+                          }
+
+                          return null;
+                        },
+                        inputType: TextInputType.phone),
+                    const DefaultHeightSizedBox(),
+
                     CustomEditText(
                         controller: _descriptionController,
                         hint: "ملاحظة عن العميل",
                         validator: (v) {
-                          if (v == null && v!.isNotEmpty) {
+
+                          if (v == null || v.isEmpty) {
+                            return AppStrings.required;
+                          }
+
+                          if ( v.isNotEmpty) {
                             if (v.length > 5000) {
                               return "اقصي عدد احرف 5000";
                             }
@@ -255,13 +308,15 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
                     const DefaultHeightSizedBox(),
                     AssignToEmployee(
                       currentEmployee: assignedEmployee,
-                      onAssignedCallback: (EmployeeModel? newAssignedEmployee) {
+                      onAssignedCallback: (EmployeeResponseModel? newAssignedEmployee, bool? viewLog) {
                         assignedEmployeeId = newAssignedEmployee?.employeeId;
                         assignedEmployee = newAssignedEmployee;
                         assignedByEmployeeId =
                             Constants.currentEmployee?.employeeId;
                         assignedDateTime =
                             DateTime.now().millisecondsSinceEpoch;
+                        viewPreviousLog = viewLog;
+
                       },
                       teamMembersCubit:
                           widget.modifyCustomerArgs.teamMembersCubit,
@@ -270,41 +325,12 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
                         assignedEmployee = null;
                         assignedByEmployeeId = null;
                         assignedDateTime = null;
-                      },
+                        viewPreviousLog = null;
+
+                      }, viewPreviousLog: viewPreviousLog,
                     ),
                     const DefaultHeightSizedBox(),
 
-                    CustomEditText(
-                        controller: _firstPhoneController,
-                        hint: "رقم الهاتف الأول",
-                        maxLength: 50,
-                        validator: (v) {
-                          if (v == null || v.isEmpty) {
-                            return AppStrings.required;
-                          }
-
-                          if (v.length > 50) {
-                            return "اقصي عدد احرف 50";
-                          }
-
-                          return null;
-                        },
-                        inputType: TextInputType.phone),
-                    const DefaultHeightSizedBox(),
-                    CustomEditText(
-                        controller: _secondPhoneController,
-                        hint: "رقم الهاتف الثاني",
-                        maxLength: 50,
-                        validator: (v) {
-
-                          if (v != null && v.length > 50) {
-                            return "اقصي عدد احرف 50";
-                          }
-
-                          return null;
-                        },
-                        inputType: TextInputType.phone),
-                    const DefaultHeightSizedBox(),
 
 
                     const DefaultHeightSizedBox(),
@@ -318,6 +344,7 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
                               return;
                             }
 
+
                             if (_firstPhoneController.text.isNotEmpty && _secondPhoneController.text.isNotEmpty) {
                               phoneNumbers = [
                                 _firstPhoneController.text.trim(),
@@ -328,6 +355,23 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
                                 _firstPhoneController.text.trim()
                               ];
                             }
+
+                            if (unitTypes.isEmpty) {
+                              Constants.showToast(msg: "يجب تحديد اهتمامات العميل", context: context);
+                              return;
+                            }
+
+                            if (sources.isEmpty) {
+                              Constants.showToast(msg: "يجب تحديد مصدر العميل", context: context);
+                              return;
+                            }
+
+                            if (developers.isEmpty || projects.isEmpty ) {
+                              Constants.showToast(msg: "يجب تحديد المطورين والمشاريع", context: context);
+                              return;
+                            }
+
+
 
                             cubit.modifyCustomer(ModifyCustomerParam(
                                 customerId: customerId,
@@ -345,7 +389,8 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
                                 assignedByEmployeeId: assignedByEmployeeId,
                                 assignedDateTime: assignedDateTime,
                                 logByEmployeeId:
-                                    Constants.currentEmployee?.employeeId));
+                                    Constants.currentEmployee?.employeeId,
+                                viewPreviousLog: assignedEmployeeId != null ? viewPreviousLog : true));
                           }
                         },
                         text: widget.modifyCustomerArgs.customerModel != null

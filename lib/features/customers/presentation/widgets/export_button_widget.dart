@@ -43,7 +43,7 @@ class _ExportButtonState extends State<ExportButtonWidget> {
               isExporting = false;
             });
           },
-          icon: const FaIcon(FontAwesomeIcons.fileExport));
+          icon: const FaIcon(FontAwesomeIcons.fileExport, color: Colors.white));
     }
 
   }

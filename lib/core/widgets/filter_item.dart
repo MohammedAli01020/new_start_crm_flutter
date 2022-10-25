@@ -28,7 +28,7 @@ class FilterItem extends StatelessWidget {
           color: value == currentValue
               ? AppColors.primary.withOpacity(0.1)
               : Colors.white,
-          borderRadius: BorderRadius.circular(25.0),
+          // borderRadius: BorderRadius.circular(25.0),
           border: Border.all(
               color:
               value == currentValue ? AppColors.primary : AppColors.hint),

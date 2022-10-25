@@ -5,7 +5,7 @@ import 'package:crm_flutter_project/features/teams/data/models/team_model.dart';
 import 'package:crm_flutter_project/features/teams/domain/use_cases/team_use_cases.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_cubit.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_members/team_members_cubit.dart';
-import 'package:crm_flutter_project/features/teams/presentation/screens/employee_picker_screen.dart';
+import 'package:crm_flutter_project/features/employees/presentation/screens/employee_picker_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';

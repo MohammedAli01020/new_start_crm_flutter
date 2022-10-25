@@ -128,3 +128,25 @@ class UploadImageFileError extends EmployeeState {
   @override
   List<Object> get props => [msg];
 }
+
+class StartGetEmployeeById extends EmployeeState {}
+
+class EndGetEmployeeById extends EmployeeState {
+  final EmployeeModel employeeModel;
+
+  EndGetEmployeeById({required this.employeeModel});
+
+  @override
+  List<Object> get props => [employeeModel];
+
+}
+
+class GetEmployeeByIdError extends EmployeeState {
+  final String msg;
+
+  GetEmployeeByIdError({required this.msg});
+
+  @override
+  List<Object> get props => [msg];
+
+}

@@ -57,6 +57,7 @@ import 'package:crm_flutter_project/features/pre_defined_roles/data/data_sources
 import 'package:crm_flutter_project/features/pre_defined_roles/data/repositories/pre_defined_roles_repository_impl.dart';
 import 'package:crm_flutter_project/features/pre_defined_roles/domain/use_cases/pre_defined_roles_use_cases.dart';
 import 'package:crm_flutter_project/features/pre_defined_roles/presentation/cubit/pre_defined_roles_cubit.dart';
+import 'package:crm_flutter_project/features/reports/domain/use_cases/report_use_cases.dart';
 import 'package:crm_flutter_project/features/sources/data/data_sources/source_remote_data_source.dart';
 import 'package:crm_flutter_project/features/sources/data/repositories/source_repository_impl.dart';
 import 'package:crm_flutter_project/features/sources/domain/repositories/source_repository.dart';
@@ -92,6 +93,10 @@ import 'features/login/domain/repositories/login_repository.dart';
 import 'features/login/domain/use_cases/login_use_cases.dart';
 import 'features/login/presentation/cubit/login_cubit.dart';
 import 'features/pre_defined_roles/domain/repositories/pre_defined_roles_repository.dart';
+import 'features/reports/data/data_sources/report_remote_data_source.dart';
+import 'features/reports/data/repositories/report_repository_impl.dart';
+import 'features/reports/domain/repositories/report_repository.dart';
+import 'features/reports/presentation/cubit/report_cubit.dart';
 import 'features/teams/presentation/cubit/team_members/team_members_cubit.dart';
 
 final sl = GetIt.instance;
@@ -134,6 +139,9 @@ Future<void> init() async {
 
 
   sl.registerFactory(() => PreDefinedRolesCubit(preDefinedRolesUseCases: sl()));
+
+
+  sl.registerFactory(() => ReportCubit(reportUseCases: sl()));
 
 
 
@@ -194,6 +202,10 @@ Future<void> init() async {
   sl.registerLazySingleton<PreDefinedRolesUseCases>(
           () => PreDefinedRolesUseCasesImpl(preDefinedRolesRepository:  sl()));
 
+
+  sl.registerLazySingleton<ReportUseCases>(
+          () => ReportUseCasesImpl(reportRepository:  sl()));
+
   // Repository
   sl.registerLazySingleton<LoginRepository>(() => LoginRepositoryImpl(
       loginLocalDataSource: sl(), loginRemoteDataSource: sl()));
@@ -248,6 +260,10 @@ Future<void> init() async {
 
   sl.registerLazySingleton<PreDefinedRolesRepository>(() => PreDefinedRolesRepositoryImpl(
       preDefinedRolesRemoteDateSource: sl()));
+
+
+  sl.registerLazySingleton<ReportRepository>(() => ReportRepositoryImpl(
+      reportRemoteDataSource: sl()));
 
   // Data Sources
   sl.registerLazySingleton<LoginRemoteDataSource>(
@@ -310,6 +326,9 @@ Future<void> init() async {
 
   sl.registerLazySingleton<PreDefinedRolesRemoteDateSource>(
           () => PreDefinedRolesRemoteDateSourceImpl(apiConsumer: sl()));
+
+  sl.registerLazySingleton<ReportRemoteDataSource>(
+          () => ReportRemoteDataSourceImpl(apiConsumer: sl()));
   //! Core
   sl.registerLazySingleton<NetworkInfo>(
       () => NetworkInfoImpl(internetConnectionChecker: sl()));

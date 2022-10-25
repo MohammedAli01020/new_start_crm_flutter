@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../employees/data/models/employee_model.dart';
+import '../../../employees/data/models/employee_response_model.dart';
 import '../../data/models/event_model.dart';
 
 class LastAction extends Equatable {
@@ -16,7 +17,7 @@ class LastAction extends Equatable {
   final int? dateTime;
   final int? postponeDateTime;
   final EventModel? event;
-  final EmployeeModel? lastActionBy;
+  final EmployeeResponseModel? lastActionBy;
   final String? actionDescription;
 
   @override

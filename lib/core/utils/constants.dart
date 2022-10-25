@@ -353,6 +353,13 @@ class Constants {
           customerTypes: Wrapped.value(CustomerTypes.ME.name)));
       cubit.fetchCustomers(refresh: true);
     } else if (Constants.currentEmployee!.permissions
+        .contains(AppStrings.viewOwnLeads)) {
+      cubit.updateFilter(cubit.customerFiltersModel.copyWith(
+          teamId: const Wrapped.value(null),
+          employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
+          customerTypes: Wrapped.value(CustomerTypes.OWN.name)));
+      cubit.fetchCustomers(refresh: true);
+    } else if (Constants.currentEmployee!.permissions
         .contains(AppStrings.viewNotAssignedLeads)) {
       cubit.updateFilter(cubit.customerFiltersModel.copyWith(
           teamId: const Wrapped.value(null),
@@ -455,6 +462,8 @@ class Constants {
   // (17, 'مشاهدة مدخل العميل'),
   // (18, 'مشاهدة رقم العميل'),
   // (19, 'مشاهدة ملاحظات عن العميل'),
+  // (78, 'مشاهدة مصدر العميل'),
+
   static List<PermissionModel> leadsInsidePermissions = [
     const PermissionModel(permissionId: 16, name: AppStrings.viewLeadName),
     const PermissionModel(permissionId: 17, name: AppStrings.viewLeadCreator),
@@ -463,17 +472,18 @@ class Constants {
         permissionId: 19, name: AppStrings.viewLeadDescription),
 
     const PermissionModel(permissionId: 67, name: AppStrings.viewLeadLog),
+    const PermissionModel(permissionId: 78, name: AppStrings.viewLeadSources),
+
+
 
     // edit
     // (20, 'تعديل اسم العميل'),
-    // (21, 'تعديل مدخل العميل'),
     // (22, 'تعديل رقم العميل'),
     // (23, 'تعديل ملاحظات عن العميل'),
     // (64, 'تعديل مصادر العميل'),
     // (65, 'تعديل مشاريع العميل'),
     // (66, 'تعديل اهتمامات العميل')
     const PermissionModel(permissionId: 20, name: AppStrings.editLeadName),
-    const PermissionModel(permissionId: 21, name: AppStrings.editLeadCreator),
     const PermissionModel(permissionId: 22, name: AppStrings.editLeadPhone),
     const PermissionModel(
         permissionId: 23, name: AppStrings.editLeadDescription),
@@ -602,5 +612,13 @@ class Constants {
     const PermissionModel(permissionId: 75, name: AppStrings.editPreDefinedRoles),
     const PermissionModel(permissionId: 76, name: AppStrings.createPreDefinedRoles),
     const PermissionModel(permissionId: 77, name: AppStrings.deletePreDefinedRoles),
+  ];
+
+
+  // actions on customers
+  static List<String> actionsOnCustomers = [
+    AppStrings.delete,
+    AppStrings.bulkAssign,
+    AppStrings.export
   ];
 }

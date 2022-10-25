@@ -20,6 +20,9 @@ abstract class EmployeeUseCases {
 
   Future<Either<Failure, RoleModel>> findRoleByEmployeeId(int employeeId);
 
+  Future<Either<Failure, EmployeeModel>> getEmployeeById(int employeeId);
+
+
 }
 
 class EmployeeUseCasesImpl implements EmployeeUseCases {
@@ -47,6 +50,12 @@ class EmployeeUseCasesImpl implements EmployeeUseCases {
   @override
   Future<Either<Failure, RoleModel>> findRoleByEmployeeId(int employeeId) {
     return employeeRepository.findRoleByEmployeeId(employeeId);
+  }
+
+  @override
+  Future<Either<Failure, EmployeeModel>> getEmployeeById(int employeeId) {
+    return employeeRepository.getEmployeeById(employeeId);
+
   }
 }
 

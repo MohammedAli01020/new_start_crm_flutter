@@ -10,6 +10,7 @@ import '../../../../config/routes/app_routes.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../../core/utils/wrapper.dart';
 import '../../../../core/widgets/error_item_widget.dart';
+import '../../data/models/employee_model.dart';
 import '../widgets/employees_app_bar.dart';
 import '../widgets/employees_data_table.dart';
 
@@ -42,10 +43,12 @@ class EmployeesScreen extends StatelessWidget {
   void exportToExcel() {
 
   }
-  void _getPageEmployees(
-      {bool refresh = false, required BuildContext context}) {
-    BlocProvider.of<EmployeeCubit>(context).fetchEmployees(refresh: refresh);
+
+  Future<void> _getPageEmployees ({bool refresh = false, required BuildContext context}) async {
+    await BlocProvider.of<EmployeeCubit>(context).fetchEmployees(refresh: refresh);
   }
+
+  final tableKey = GlobalKey<PaginatedDataTableState>();
 
   Widget _buildBodyTable(
       {required EmployeeCubit cubit,
@@ -85,17 +88,24 @@ class EmployeesScreen extends StatelessWidget {
                 ],
                 rowsPerPage: cubit.employeeFiltersModel.pageSize ~/ 2,
                 showCheckboxColumn: false,
-                onPageChanged: (pageIndex) {
+                onPageChanged: (pageIndex) async {
 
-                  _getPageEmployees(context: context);
+                  // if (state is StartRefreshEmployees || state is StartLoadingEmployees ) {
+                  //   if (pageIndex > 0) {
+                  //     tableKey.currentState?.pageTo(pageIndex - 1);
+                  //   }
+                  //   return;
+                  // }
+
+                  await _getPageEmployees(context: context);
                 },
                 source: EmployeesDataTable(
                     employeeCubit: cubit,
-                    onSelect: (val, currentEmployee) {
+                    onSelect: (val, EmployeeModel currentEmployee) {
 
                       Navigator.pushNamed(context, Routes.employeesDetailsRoute,
                       arguments: EmployeeDetailsArgs(
-                          employeeModel: currentEmployee,
+                          employeeId: currentEmployee.employeeId,
                           employeeCubit: cubit,
                           fromRoute: Routes.employeesRoute));
 
@@ -128,7 +138,9 @@ class EmployeesScreen extends StatelessWidget {
 
                 _getPageEmployees(refresh: true, context: context);
               }
-            },
+            }, onFilterCallback: () {
+              tableKey.currentState?.pageTo(0);
+          },
           ),
           body: _buildBodyTable(
               cubit: employeeCubit, state: state, context: context),

@@ -72,7 +72,7 @@ class CustomerLogFiltersModel extends CustomerLogFilters {
   factory CustomerLogFiltersModel.initial() {
     return const CustomerLogFiltersModel(
       pageNumber: 0,
-      pageSize: 12,
+      pageSize: 100,
       sortDirection: "DESC",
       sortBy: "dateTime",
       customerId: null,

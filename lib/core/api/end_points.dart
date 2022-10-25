@@ -1,5 +1,5 @@
 class EndPoints {
-  // static const String baseUrl = 'http://192.168.1.38:5000/';
+  // static const String baseUrl = 'http://192.168.1.22:5000/';
 
   static const String baseUrl = 'http://newstart-env.eba-xhzfkni9.us-east-1.elasticbeanstalk.com/';
 
@@ -10,6 +10,8 @@ class EndPoints {
   static const String pageEmployee = '${baseUrl}api/employees/all';
   static const String deleteEmployee= '${baseUrl}api/employees/delete/id/';
   static const String findEmployeeById = '${baseUrl}api/employees/id/';
+
+  static const String employeeReports = '${baseUrl}api/employees/report';
 
 
   // customers

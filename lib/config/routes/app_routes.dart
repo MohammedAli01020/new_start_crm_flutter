@@ -22,7 +22,7 @@ import 'package:crm_flutter_project/features/pre_defined_roles/presentation/scre
 import 'package:crm_flutter_project/features/pre_defined_roles/presentation/screens/pre_defined_roles_screen.dart';
 import 'package:crm_flutter_project/features/sources/presentation/screens/sources_screen.dart';
 import 'package:crm_flutter_project/features/teams/data/models/team_members_filters_model.dart';
-import 'package:crm_flutter_project/features/teams/presentation/screens/employee_picker_screen.dart';
+import 'package:crm_flutter_project/features/employees/presentation/screens/employee_picker_screen.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/modify_team_screen.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/team_description_screen.dart';
 import 'package:crm_flutter_project/features/teams/presentation/screens/team_details_screen.dart';
@@ -45,6 +45,9 @@ import '../../features/login/presentation/screens/login_screen.dart';
 import '../../features/own_reports/presentation/cubit/own_reports_cubit.dart';
 import '../../features/permissions/presentation/cubit/permission_cubit.dart';
 import '../../features/pre_defined_roles/presentation/cubit/pre_defined_roles_cubit.dart';
+import '../../features/reports/domain/use_cases/report_use_cases.dart';
+import '../../features/reports/presentation/cubit/report_cubit.dart';
+import '../../features/reports/presentation/screens/report_screen.dart';
 import '../../features/sources/presentation/cubit/source_cubit.dart';
 import '../../features/teams/presentation/cubit/team_cubit.dart';
 import '../../features/teams/presentation/cubit/team_members/team_members_cubit.dart';
@@ -58,6 +61,7 @@ class Routes {
   static const String employeesRoute = '/employeesRoute';
   static const String employeesDetailsRoute = '/employeesDetailsRoute';
   static const String employeePickerRoute = '/employeePickerRoute';
+  static const String reportRoute = '/reportRoute';
 
   // customers
   static const String modifyCustomerRoute = '/modifyCustomerRoute';
@@ -184,13 +188,20 @@ class AppRoutes {
                     value: customerDetailsArgs.teamMembersCubit,
                   ),
 
+
                   BlocProvider(
                     create: (context) {
                       return di.sl<CustomerLogsCubit>()
                         ..updateFilter(CustomerLogFiltersModel.initial().copyWith(
+                          startDateTime: Constants.currentEmployee!.permissions.contains(AppStrings.viewLeadLog) ?
+                          const Wrapped.value(null) : (
+                              (Constants.currentEmployee!.employeeId == customerDetailsArgs.customerModel.assignedEmployee?.employeeId)
+                                  && customerDetailsArgs.customerModel.viewPreviousLog == true ?
+                              Wrapped.value(customerDetailsArgs.customerModel.assignedDateTime) : null
+                          ) ,
                           customerId: Wrapped.value(customerDetailsArgs.customerModel.customerId)))
 
-                        ..fetchCustomerLogs(isWebPagination: false, refresh: true);
+                        ..fetchCustomerLogs( refresh: true);
                     }
                   ),
 
@@ -226,7 +237,7 @@ class AppRoutes {
               final employeeDetailsArgs = routeSettings.arguments as EmployeeDetailsArgs;
 
               return BlocProvider.value(
-                value: employeeDetailsArgs.employeeCubit,
+                value: employeeDetailsArgs.employeeCubit..getEmployeeById(employeeDetailsArgs.employeeId),
                 child: EmployeeDetailsScreen(employeeDetailsArgs: employeeDetailsArgs),
               );
             }));
@@ -298,7 +309,7 @@ class AppRoutes {
                   BlocProvider(
                     create: (context) {
                       return di.sl<TeamCubit>()
-                        ..fetchTeams(refresh: true, isWebPagination: true);
+                        ..fetchTeams(refresh: true);
                     },
                   ),
                   BlocProvider(
@@ -417,7 +428,7 @@ class AppRoutes {
                   BlocProvider(
                     create: (context) {
                       return di.sl<CustomerLogsCubit>()
-                        ..fetchCustomerLogs(isWebPagination: true, refresh: true);
+                        ..fetchCustomerLogs(refresh: true);
                     },
                   ),
 
@@ -547,10 +558,28 @@ class AppRoutes {
         return MaterialPageRoute(
             settings: routeSettings,
             builder: ((context) {
+
+
               final modifyPreDefinedRoleArgs = routeSettings.arguments as ModifyPreDefinedRoleArgs;
               return BlocProvider.value(
                 value: modifyPreDefinedRoleArgs.preDefinedRolesCubit,
                 child: ModifyPreDefinedRoleScreen(modifyPreDefinedRoleArgs: modifyPreDefinedRoleArgs),
+              );
+
+            }));
+
+
+      case Routes.reportRoute:
+        return MaterialPageRoute(
+            settings: routeSettings,
+            builder: ((context) {
+
+
+              return BlocProvider(
+                create: (context) {
+                  return di.sl<ReportCubit>()..fetchEmployeeCustomerReports();
+                },
+                child: const ReportScreen(),
               );
 
             }));

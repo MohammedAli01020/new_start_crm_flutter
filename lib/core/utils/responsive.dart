@@ -32,11 +32,16 @@ class Responsive extends StatelessWidget {
   static bool isLinux = UniversalPlatform.isLinux;
   static bool isWindows = UniversalPlatform.isWindows;
 
+  static bool isDesktopDevice = UniversalPlatform.isWindows || UniversalPlatform.isLinux || UniversalPlatform.isMacOS;
+  static bool isMobileDevice = UniversalPlatform.isAndroid || UniversalPlatform.isIOS;
+
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       // If our width is more than 1100 then we consider it a desktop
       builder: (context, constraints) {
+        print("maxWidth" + constraints.maxWidth.toString());
         if (constraints.maxWidth >= 1100) {
           return desktop;
         }

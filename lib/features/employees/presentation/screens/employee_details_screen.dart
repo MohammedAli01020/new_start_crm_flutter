@@ -7,29 +7,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../config/routes/app_routes.dart';
 import '../../../../core/utils/constants.dart';
 import '../../../../core/widgets/default_user_avatar_widget.dart';
+import '../../../../core/widgets/error_item_widget.dart';
+import '../../../../core/widgets/waiting_item_widget.dart';
 import '../cubit/employee_cubit.dart';
 import 'modify_employee_screen.dart';
 
-class EmployeeDetailsScreen extends StatefulWidget {
+class EmployeeDetailsScreen extends StatelessWidget {
   final EmployeeDetailsArgs employeeDetailsArgs;
 
   const EmployeeDetailsScreen({Key? key, required this.employeeDetailsArgs}) : super(key: key);
 
-  @override
-  State<EmployeeDetailsScreen> createState() => _EmployeeDetailsScreenState();
-}
-
-class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
-
-
-  @override
-  void initState() {
-    super.initState();
-
-    final cubit = BlocProvider.of<EmployeeCubit>(context);
-    cubit.updateCurrentEmployeeModel(widget.employeeDetailsArgs.employeeModel);
-
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +32,36 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
         }
       },
       builder: (context, state) {
-        final  employeeCubit = EmployeeCubit.get(context);
+        final employeeCubit = EmployeeCubit.get(context);
+
+
+        if (state is StartGetEmployeeById) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator()
+            ),
+          );
+        }
+
+
+        if (state is GetEmployeeByIdError) {
+
+          return Scaffold(
+            body: ErrorItemWidget(
+              msg: state.msg,
+              onPress: () {
+                employeeCubit.getEmployeeById(employeeDetailsArgs.employeeId);
+              },
+            ),
+          );
+        }
+
+
+        if (state is StartDeleteEmployee) {
+          return const WaitingItemWidget();
+        }
+
+
 
         return Scaffold(
           appBar: AppBar(),
@@ -71,7 +87,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                   Text("الاسم بالكامل: "  + employeeCubit.currentEmployee.fullName),
                   const DefaultHeightSizedBox(),
                   Text("تاريخ الاضافة: " + Constants.dateTimeFromMilliSeconds(
-                     employeeCubit.currentEmployee.createDateTime)),
+                      employeeCubit.currentEmployee.createDateTime)),
                   const DefaultHeightSizedBox(),
 
 
@@ -94,6 +110,9 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                   Text("الحالة: " + (employeeCubit.currentEmployee.enabled ? "نشط" : "متوقف")),
                   const DefaultHeightSizedBox(),
                   Text("الايميل: "  + employeeCubit.currentEmployee.username),
+
+                  const DefaultHeightSizedBox(),
+                  Text("ID: "  + employeeCubit.currentEmployee.employeeId.toString()),
                 ],
               ),
             ),
@@ -104,6 +123,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
             withDelete: Constants.currentEmployee!.permissions.contains(AppStrings.deleteEmployees),
 
             omDeleteCallback: (bool result) {
+
               if (result) {
                 employeeCubit.deleteEmployee(employeeCubit.currentEmployee.employeeId);
               }
@@ -116,7 +136,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                   arguments: ModifyEmployeeArgs(
                       employeeModel: employeeCubit.currentEmployee,
                       employeeCubit: employeeCubit,
-                      fromRoute: widget.employeeDetailsArgs.fromRoute)).then((value) {
+                      fromRoute: employeeDetailsArgs.fromRoute)).then((value) {
                         if (value != null && value is EmployeeModel) {
                           employeeCubit.updateCurrentEmployeeModel(value);
                         }
@@ -132,10 +152,10 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
 }
 
 class EmployeeDetailsArgs {
-  final EmployeeModel employeeModel;
+  final int employeeId;
   final EmployeeCubit employeeCubit;
   final String fromRoute;
 
   EmployeeDetailsArgs(
-      {required this.employeeModel, required this.employeeCubit, required this.fromRoute});
+      {required this.employeeId, required this.employeeCubit, required this.fromRoute});
 }

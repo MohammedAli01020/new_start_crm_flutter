@@ -66,6 +66,12 @@ class EventsScreen extends StatelessWidget {
 
                 if (Constants.currentEmployee!.permissions.contains(AppStrings.editEvents)) {
 
+
+                  if (currentEvent.name == "No Action") {
+                    Constants.showToast(msg: "غير قابله للتعديل", context: context);
+                    return;
+                  }
+
                   Constants.showDialogBox(context: context,
                       title: "عدل الحدث",
                       content: ModifyEventWidget(

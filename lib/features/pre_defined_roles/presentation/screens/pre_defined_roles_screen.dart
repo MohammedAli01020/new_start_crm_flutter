@@ -84,7 +84,7 @@ class PreDefinedRolesScreen extends StatelessWidget {
               }
             },
             title: Text(currentRole.name),
-            trailing: state is StartDeletePredefinedRole ?
+            trailing: preDefinedRolesCubit.currentDeleting.contains(currentRole.roleId) ?
 
             const SizedBox(
                 height: 20.0,

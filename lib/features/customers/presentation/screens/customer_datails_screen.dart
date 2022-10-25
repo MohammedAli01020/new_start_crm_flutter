@@ -12,7 +12,6 @@ import 'package:crm_flutter_project/features/customers/domain/use_cases/customer
 import 'package:crm_flutter_project/features/customers/presentation/cubit/customer_cubit.dart';
 import 'package:crm_flutter_project/features/customers/presentation/widgets/modify_customer_desc_widget.dart';
 import 'package:crm_flutter_project/features/developers_and_projects/presentation/screens/developers_screen.dart';
-import 'package:crm_flutter_project/features/employees/presentation/cubit/employee_cubit.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_members/team_members_cubit.dart';
 import 'package:crm_flutter_project/features/unit_types/presentation/screens/unit_types_screen.dart';
 import 'package:flutter/material.dart';
@@ -21,15 +20,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linkwell/linkwell.dart';
 
 import '../../../../config/routes/app_routes.dart';
+import '../../../../core/utils/app_colors.dart';
 import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../../core/utils/wrapper.dart';
+import '../../../../core/widgets/default_user_avatar_widget.dart';
 import '../../../../core/widgets/error_item_widget.dart';
 import '../../../../core/widgets/waiting_item_widget.dart';
 import '../../../employees/data/models/employee_model.dart';
+import '../../../employees/presentation/cubit/employee_cubit.dart';
+import '../../../employees/presentation/screens/employee_details_screen.dart';
 import '../../../sources/presentation/screens/sources_screen.dart';
-import '../../../teams/presentation/screens/employee_picker_screen.dart';
+import '../../../employees/presentation/screens/employee_picker_screen.dart';
 import '../widgets/customer_log_data_table.dart';
 import '../widgets/edit_customer_phone_widget.dart';
 import '../widgets/modify_customer_name_widget.dart';
@@ -39,6 +42,7 @@ class CustomerDetailsScreen extends StatefulWidget {
   final CustomerDetailsArgs customerDetailsArgs;
 
   final _scrollController = ScrollController();
+  final _secondScrollController = ScrollController();
   static const _extraScrollSpeed = 80;
 
   CustomerDetailsScreen({Key? key, required this.customerDetailsArgs})
@@ -57,6 +61,21 @@ class CustomerDetailsScreen extends StatefulWidget {
           _scrollController.jumpTo(scrollEnd);
         }
       });
+
+
+      _secondScrollController.addListener(() {
+        ScrollDirection scrollDirection =
+            _secondScrollController.position.userScrollDirection;
+        if (scrollDirection != ScrollDirection.idle) {
+          double scrollEnd = _secondScrollController.offset +
+              (scrollDirection == ScrollDirection.reverse
+                  ? _extraScrollSpeed
+                  : -_extraScrollSpeed);
+          scrollEnd = min(_secondScrollController.position.maxScrollExtent,
+              max(_secondScrollController.position.minScrollExtent, scrollEnd));
+          _secondScrollController.jumpTo(scrollEnd);
+        }
+      });
     }
   }
 
@@ -68,7 +87,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
   void _getPageCustomerLogs(
       {bool refresh = false, required BuildContext context}) {
     BlocProvider.of<CustomerLogsCubit>(context)
-        .fetchCustomerLogs(refresh: refresh, isWebPagination: false);
+        .fetchCustomerLogs(refresh: refresh);
   }
 
   // late int customerId;
@@ -99,6 +118,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
   void dispose() {
     super.dispose();
     widget._scrollController.dispose();
+    widget._secondScrollController.dispose();
+
   }
 
   @override
@@ -202,7 +223,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
         }
       },
       builder: (context, state) {
-        if (state is StartDeleteEmployee) {
+
+        if (state is StartDeleteCustomer) {
           return const WaitingItemWidget();
         }
 
@@ -371,6 +393,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                     ),
                   const DefaultHeightSizedBox(),
 
+
+                if (Constants.currentEmployee!.permissions.contains(AppStrings.viewLeadSources))
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -411,7 +435,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                             icon: const Icon(Icons.edit))
                     ],
                   ),
-
+                if (Constants.currentEmployee!.permissions.contains(AppStrings.viewLeadSources))
                   const DefaultHeightSizedBox(),
 
                   Row(
@@ -669,9 +693,19 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                     margin: const EdgeInsets.symmetric(vertical: 16.0),
                   ),
 
-                  if (Constants.currentEmployee!.permissions.contains(
-                      AppStrings.viewLeadLog))
-                    _buildCustomerLogs(),
+                  if (Constants.currentEmployee!.permissions.contains(AppStrings.viewLeadLog) ||
+                      ( (Constants.currentEmployee!.employeeId == cubit.currentCustomer.assignedEmployee?.employeeId) &&
+                          cubit.currentCustomer.viewPreviousLog == true) )
+
+
+                    BlocBuilder<CustomerLogsCubit, CustomerLogsState>(
+                      builder: (context, state) {
+                        final cubit = CustomerLogsCubit.get(context);
+                        return _buildList(cubit, state, context);
+                      },
+                    ),
+                    
+                    // _buildCustomerLogs(),
                 ],
               ),
             ),
@@ -691,7 +725,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                     .contains(AppStrings.deleteOwnLeads) &&
                     cubit.currentCustomer.createdBy?.employeeId ==
                         Constants.currentEmployee!.employeeId),
-            omDeleteCallback: () {},
+            omDeleteCallback: (bool result) {
+
+              if (result) {
+                cubit.deleteCustomer(cubit.currentCustomer.customerId);
+              }
+
+
+            },
 
 
             withEdit: false,
@@ -727,6 +768,203 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
     );
   }
 
+  
+
+  Widget _buildList(CustomerLogsCubit customerLogsCubit,
+      CustomerLogsState state, BuildContext context) {
+
+    // if (state is StartRefreshCustomerLogs ||
+    //     state is StartLoadingCustomerLogs) {
+    //   return const Center(child: CircularProgressIndicator());
+    // }
+
+    if (state is RefreshCustomerLogsError) {
+      return ErrorItemWidget(
+        msg: state.msg,
+        onPress: () {
+          _getPageCustomerLogs(context: context, refresh: true);
+        },
+      );
+    }
+
+    if (customerLogsCubit.customerLogs.isEmpty &&
+        (state is EndRefreshCustomerLogs)) {
+      return const Center(
+        child: Text("فارغ"),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text("النتائج: ${customerLogsCubit.customerLogTotalElements}"),
+        ),
+
+        SizedBox(
+          height: 500.0,
+          child: Scrollbar(
+            controller: widget._secondScrollController,
+            child: ListView.separated(
+              itemBuilder: (context, index) {
+
+                if (index < customerLogsCubit.customerLogs.length) {
+                  final currentLog = customerLogsCubit.customerLogs[index];
+                  return Card(
+                    color: Colors.blueGrey[100],
+                    child: ListTile(
+                      leading:  SizedBox(
+                        width: 50.0,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            DefaultUserAvatarWidget(
+                                onTap: () {
+                                  if (currentLog.employee != null) {
+                                    Navigator.pushNamed(context, Routes.employeesDetailsRoute,
+                                        arguments: EmployeeDetailsArgs(
+                                            employeeId: currentLog.employee!.employeeId,
+                                            employeeCubit: BlocProvider.of<EmployeeCubit>(context),
+                                            fromRoute: Routes.customerLogsRoute));
+                                  }
+                                },
+                                imageUrl: null,
+                                height: 50.0,
+                                fullName: currentLog.employee?.fullName),
+
+                            Text(currentLog.employee != null ?
+                            currentLog.employee!.fullName : "غير معرف", style: const TextStyle(
+                                fontSize: 9.0
+                            ),)
+                          ],
+                        ),
+                      ),
+                      title: LinkWell(
+                        currentLog.description != null
+                            ? (currentLog.description!)
+                            : "لا يوجد",
+                        // maxLines: 3,
+                        // overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.w600),
+                      ),
+                      subtitle: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Flexible(
+                                child: InkWell(
+                                  onTap: () {
+                                    if (currentLog.customer != null) {
+                                      Navigator.pushNamed(context, Routes.customersDetailsRoute,
+                                          arguments: CustomerDetailsArgs(
+                                              customerModel: currentLog.customer!,
+                                              customerCubit: BlocProvider.of<CustomerCubit>(context),
+                                              teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context),
+                                              fromRoute: Routes.customerLogsRoute));
+                                    }
+
+                                  },
+                                  child: Text(getCustomerName(
+                                      currentLog.customer), style: const TextStyle(
+                                      fontSize: 14.0
+                                  )),
+                                ),
+                              ),
+
+                              const SizedBox(width: 5.0,),
+                              Flexible(
+                                child: InkWell(
+                                    onTap: () {
+                                      if (currentLog.employee != null) {
+                                        Navigator.pushNamed(context, Routes.employeesDetailsRoute,
+                                            arguments: EmployeeDetailsArgs(
+                                                employeeId: currentLog.employee!.employeeId,
+                                                employeeCubit: BlocProvider.of<EmployeeCubit>(context),
+                                                fromRoute: Routes.customerLogsRoute));
+                                      }
+                                    },
+
+                                    child: Text(getEmployeeName(currentLog.employee), style: const TextStyle(
+                                        fontSize: 14.0
+                                    ),)),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5.0,),
+                          Text(Constants.timeAgoSinceDate(currentLog.dateTime), style: const TextStyle(fontSize: 14.0))
+
+                        ],
+                      ),
+
+
+                    ),
+                  );
+                } else {
+                  if (customerLogsCubit.isNoMoreData) {
+                    return Text("وصلت للنهاية", style: TextStyle(fontSize: 15.0,color: AppColors.hint),);
+                  }  else {
+                    if( state is StartLoadingCustomerLogs) {
+                      return const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    } else {
+                      return ElevatedButton(
+                        onPressed: () {
+                          _getPageCustomerLogs(context: context);
+                        },
+                        child: const Text("حمل المزيد"),
+                      );
+                    }
+                  }
+                }
+
+              },
+
+
+              itemCount: customerLogsCubit.customerLogs.length + 1,
+              separatorBuilder: (BuildContext context, int index) {
+                return const SizedBox(
+                  height: 16.0,
+                );
+              },
+            ),
+          ),
+        ),
+
+      ],
+    );
+  }
+
+  String getCustomerName(
+      CustomerModel? customerModel) {
+    String customerName = customerModel != null
+        ? "العميل: " + customerModel.fullName
+        : "غير معرف";
+
+
+    return customerName;
+  }
+
+  String getEmployeeName(
+      EmployeeModel? employeeModel) {
+
+    String employeeName = employeeModel != null
+        ? "بواسطة: " + employeeModel.fullName
+        : "غير معرف";
+
+    return  employeeName;
+  }
+  
   Widget _buildCustomerLogs() {
     return BlocBuilder<CustomerLogsCubit, CustomerLogsState>(
       builder: (context, state) {

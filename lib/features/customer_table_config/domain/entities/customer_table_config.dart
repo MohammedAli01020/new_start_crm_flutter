@@ -17,6 +17,8 @@ class CustomerTableConfig extends Equatable {
   final bool showReminderTime;
   final bool showDuplicateNumber;
 
+  final bool isVertical;
+
   const CustomerTableConfig(
       {required this.showName,
       required this.showPhone,
@@ -32,7 +34,10 @@ class CustomerTableConfig extends Equatable {
       required this.showCreateBy,
       required this.showAssignedBy,
       required this.showReminderTime,
-      required this.showDuplicateNumber});
+      required this.showDuplicateNumber,
+        required this.isVertical,
+
+      });
 
   @override
   List<Object> get props => [
@@ -51,5 +56,6 @@ class CustomerTableConfig extends Equatable {
         showAssignedBy,
         showReminderTime,
         showDuplicateNumber,
+        isVertical
       ];
 }

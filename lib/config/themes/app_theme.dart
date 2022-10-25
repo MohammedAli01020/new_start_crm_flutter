@@ -15,6 +15,7 @@ ThemeData appTheme() {
       brightness: Brightness.light,
       scaffoldBackgroundColor: Colors.white,
       fontFamily: AppStrings.fontFamily,
+
       iconTheme: IconThemeData(
         color: AppColors.primary,
       ),
@@ -31,7 +32,7 @@ ThemeData appTheme() {
 
 
     scrollbarTheme: ScrollbarThemeData(
-        thickness: MaterialStateProperty.all(5),
+        thickness: MaterialStateProperty.all(10),
         // thumbColor: MaterialStateProperty.all(Colors.blue),
         radius: const Radius.circular(10),
         // minThumbLength: 100

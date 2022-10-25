@@ -10,6 +10,7 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/wrapper.dart';
 import '../../../customer_table_config/data/models/customer_table_config_model.dart';
+import '../../../employees/data/models/employee_model.dart';
 import '../../../employees/data/models/phoneNumber_model.dart';
 import '../../data/models/customer_model.dart';
 import '../../data/models/event_model.dart';
@@ -92,12 +93,12 @@ class CustomerCubit extends Cubit<CustomerState> {
       emit(response.fold(
           (failure) =>
               RefreshCustomersError(msg: Constants.mapFailureToMsg(failure)),
-          (realestatesData) => EndRefreshCustomers()));
+          (customersData) => EndRefreshCustomers()));
     } else {
       emit(response.fold(
           (failure) =>
               LoadingCustomersError(msg: Constants.mapFailureToMsg(failure)),
-          (realestatesData) => EndLoadingCustomers()));
+          (customersData) => EndLoadingCustomers()));
     }
   }
 
@@ -193,6 +194,25 @@ class CustomerCubit extends Cubit<CustomerState> {
     selectedEvents = newEvents;
     emit(EndUpdateEvents());
   }
+
+
+  List<EmployeeModel>? assignEmployees = [];
+
+  void updateSelectedAssignEmployeeIds(List<EmployeeModel>? newAssignEmployees) {
+    emit(StartUpdateAssignEmployeeIds());
+    assignEmployees = newAssignEmployees;
+    emit(EndUpdateAssignEmployeeIds());
+  }
+
+
+  List<EmployeeModel>? createdByEmployees = [];
+
+  void updateSelectedCreatedByEmployeeIds(List<EmployeeModel>? newCreatedByEmployees) {
+    emit(StartUpdateCreatedByEmployeeIds());
+    createdByEmployees = newCreatedByEmployees;
+    emit(EndUpdateCreatedByEmployeeIds());
+  }
+
 
   List<String>? selectedSources = [];
 
@@ -514,7 +534,7 @@ class CustomerCubit extends Cubit<CustomerState> {
     });
   }
 
-  int currentTablePageIndex = 0;
+  int currentTablePageIndex = 1;
 
   void updateTableIndex(int newIndex) {
     currentTablePageIndex = newIndex;
@@ -543,5 +563,11 @@ class CustomerCubit extends Cubit<CustomerState> {
 
       return emit(EndDeleteAllCustomersByIds());
     });
+  }
+
+
+  bool isAllSelected = false;
+  void toggleSelectAll() {
+    isAllSelected = !isAllSelected;
   }
 }

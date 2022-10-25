@@ -127,6 +127,18 @@ class StartUpdateUnitTypes extends CustomerState {}
 
 class EndUpdateUnitTypes extends CustomerState {}
 
+
+// assign_employee_ids
+class StartUpdateAssignEmployeeIds extends CustomerState {}
+
+class EndUpdateAssignEmployeeIds extends CustomerState {}
+
+// created_by_employee_ids
+class StartUpdateCreatedByEmployeeIds extends CustomerState {}
+
+class EndUpdateCreatedByEmployeeIds extends CustomerState {}
+
+
 // last action
 class StartUpdateCustomerLastAction extends CustomerState {}
 

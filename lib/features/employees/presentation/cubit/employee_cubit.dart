@@ -264,7 +264,6 @@ class EmployeeCubit extends Cubit<EmployeeState> {
 
   }
 
-
   Future<void> findRoleByEmployeeId(int employeeId) async {
     emit(StartFindRoleByEmployeeId());
 
@@ -280,4 +279,21 @@ class EmployeeCubit extends Cubit<EmployeeState> {
 
   }
 
+
+
+  Future<void> getEmployeeById(int employeeId) async {
+
+    emit(StartGetEmployeeById());
+
+    Either<Failure, EmployeeModel> response =
+        await employeeUseCases.getEmployeeById(employeeId);
+
+
+    response.fold((failure) => emit(GetEmployeeByIdError(msg: Constants.mapFailureToMsg(failure))),
+            (employee) {
+          currentEmployee = employee;
+          return emit(EndGetEmployeeById(employeeModel: employee));
+        });
+
+  }
 }

@@ -63,11 +63,17 @@ class PreDefinedRolesCubit extends Cubit<PreDefinedRolesState> {
 
   }
 
+
+  List<int> currentDeleting = [];
+
   Future<void> deletePreDefinedRole(int preDefinedRoleId) async {
+    currentDeleting.add(preDefinedRoleId);
     emit(StartDeletePredefinedRole());
 
     Either<Failure, void> response =
     await preDefinedRolesUseCases.deletePreDefinedRole(preDefinedRoleId);
+
+    currentDeleting.remove(preDefinedRoleId);
 
     response.fold((failure) => emit(DeletePredefinedRoleError(msg: Constants.mapFailureToMsg(failure))),
             (success) {

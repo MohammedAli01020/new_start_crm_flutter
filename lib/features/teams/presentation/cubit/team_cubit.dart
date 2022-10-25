@@ -48,21 +48,17 @@ class TeamCubit extends Cubit<TeamState> {
     emit(EndChangeCurrentPage());
   }
 
-  Future<void> fetchTeams({bool refresh = false, required bool isWebPagination}) async {
+  Future<void> fetchTeams({bool refresh = false}) async {
     if (state is StartRefreshTeams || state is StartLoadingTeams) {
       return;
     }
 
-    if (refresh && isWebPagination) {
-      isNoMoreData = false;
-      emit(StartRefreshTeams());
-    }
-    
-    if (refresh && !isWebPagination) {
+
+    if (refresh) {
       teamCurrentPage = 0;
       isNoMoreData = false;
       emit(StartRefreshTeams());
-    } else if (!isWebPagination) {
+    } else  {
       if (teamCurrentPage >= teamPagesCount) {
         isNoMoreData = true;
         emit(LoadNoMoreTeams());
@@ -73,41 +69,43 @@ class TeamCubit extends Cubit<TeamState> {
     }
 
     Either<Failure, TeamsData> response =
-        await teamUseCases.getAllTeamsWithFilters(teamFiltersModel.copyWith(
-            pageNumber: Wrapped.value(teamCurrentPage)));
+    await teamUseCases.getAllTeamsWithFilters(teamFiltersModel.copyWith(
+        pageNumber: Wrapped.value(teamCurrentPage)));
 
     if (response.isRight()) {
       setTeamsData(
           result: response.getOrElse(() => throw Exception()),
-          refresh: refresh, isWebPagination: isWebPagination);
+          refresh: refresh);
     }
 
     if (refresh) {
       emit(response.fold(
-          (failure) =>
+              (failure) =>
               RefreshTeamsError(msg: Constants.mapFailureToMsg(failure)),
-          (realestatesData) => EndRefreshTeams()));
+              (teamsData) => EndRefreshTeams()));
     } else {
       emit(response.fold(
-          (failure) =>
+              (failure) =>
               LoadingTeamsError(msg: Constants.mapFailureToMsg(failure)),
-          (realestatesData) => EndLoadingTeams()));
+              (teamsData) => EndLoadingTeams()));
     }
   }
 
-  void setTeamsData({required TeamsData result, required bool refresh,required bool isWebPagination}) {
+  void setTeamsData({required TeamsData result, required bool refresh}) {
     List<TeamModel> newTeams = result.teams;
 
-    if (!isWebPagination) {
-      teamCurrentPage++;
-    }
-   
+
+    teamCurrentPage++;
     teamTotalElements = result.totalElements;
     teamPagesCount = result.totalPages;
     if (refresh) {
       teams = newTeams;
     } else {
       teams.addAll(newTeams);
+    }
+
+    if (teamCurrentPage >= teamPagesCount) {
+      isNoMoreData = true;
     }
   }
 

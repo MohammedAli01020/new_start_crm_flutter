@@ -39,11 +39,25 @@ class ProjectCubit extends Cubit<ProjectState> {
     emit(EndUpdateSelectedProjectsNames());
   }
 
+
   void filterProjects(String name) {
     emit(StartFilterProjects());
-    filteredProjects = filteredProjects.where((element) {
-      return element.name.toLowerCase().contains(name.toLowerCase());
-    }).toList();
+
+
+    if (name.isNotEmpty) {
+
+      if (filteredProjects.isEmpty) {
+        filteredProjects = projects;
+      }
+
+      filteredProjects = filteredProjects.where((element) {
+        return element.name.toLowerCase().contains(name.toLowerCase());
+      }).toList();
+
+
+    } else {
+      filteredProjects = projects;
+    }
 
     emit(EndFilterProjects());
   }

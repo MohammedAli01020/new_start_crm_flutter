@@ -286,6 +286,10 @@ class _ModifyEmployeeScreenState extends State<ModifyEmployeeScreen> {
                             return "اقصي عدد احرف 50";
                           }
 
+                          if (v != null && v.length < 11) {
+                            return "اقل عدد احرف 11";
+                          }
+
                           return null;
                         },
                         inputType: TextInputType.phone),

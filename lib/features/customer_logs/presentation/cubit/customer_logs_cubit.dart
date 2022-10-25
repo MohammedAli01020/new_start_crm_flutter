@@ -61,23 +61,19 @@ class CustomerLogsCubit extends Cubit<CustomerLogsState> {
 
   }
 
-  Future<void> fetchCustomerLogs(
-      {bool refresh = false, required bool isWebPagination}) async {
+  Future<void> fetchCustomerLogs({bool refresh = false}) async {
     if (state is StartRefreshCustomerLogs ||
         state is StartLoadingCustomerLogs) {
       return;
     }
 
-    if (refresh && isWebPagination) {
-      isNoMoreData = false;
-      emit(StartRefreshCustomerLogs());
-    }
 
-    if (refresh && !isWebPagination) {
+
+    if (refresh) {
       customerLogCurrentPage = 0;
       isNoMoreData = false;
       emit(StartRefreshCustomerLogs());
-    } else if (!isWebPagination) {
+    } else {
       if (customerLogCurrentPage >= customerLogPagesCount) {
         isNoMoreData = true;
         emit(LoadNoMoreCustomerLogs());
@@ -94,39 +90,39 @@ class CustomerLogsCubit extends Cubit<CustomerLogsState> {
     if (response.isRight()) {
       setCustomerLogsData(
           result: response.getOrElse(() => throw Exception()),
-          refresh: refresh,
-          isWebPagination: isWebPagination);
+          refresh: refresh);
     }
 
     if (refresh) {
       emit(response.fold(
           (failure) =>
               RefreshCustomerLogsError(msg: Constants.mapFailureToMsg(failure)),
-          (realestatesData) => EndRefreshCustomerLogs()));
+          (customerLogsData) => EndRefreshCustomerLogs()));
     } else {
       emit(response.fold(
           (failure) =>
               LoadingCustomerLogsError(msg: Constants.mapFailureToMsg(failure)),
-          (realestatesData) => EndLoadingCustomerLogs()));
+          (customerLogsData) => EndLoadingCustomerLogs()));
     }
   }
 
   void setCustomerLogsData(
       {required CustomerLogsData result,
-      required bool refresh,
-      required bool isWebPagination}) {
+      required bool refresh}) {
     List<CustomerLogModel> newCustomerLogs = result.customerLogs;
 
-    if (!isWebPagination) {
-      customerLogCurrentPage++;
-    }
-
+    customerLogCurrentPage++;
     customerLogTotalElements = result.totalElements;
     customerLogPagesCount = result.totalPages;
     if (refresh) {
       customerLogs = newCustomerLogs;
     } else {
       customerLogs.addAll(newCustomerLogs);
+    }
+
+
+    if (customerLogCurrentPage >= customerLogPagesCount) {
+      isNoMoreData = true;
     }
   }
 }

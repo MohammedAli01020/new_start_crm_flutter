@@ -2,6 +2,7 @@ import 'package:crm_flutter_project/features/customers/data/models/last_action_m
 import 'package:crm_flutter_project/features/employees/data/models/employee_model.dart';
 
 import '../../../../core/utils/wrapper.dart';
+import '../../../employees/data/models/employee_response_model.dart';
 import '../../domain/entities/customer.dart';
 
 class CustomerModel extends Customer {
@@ -17,13 +18,16 @@ class CustomerModel extends Customer {
 
       required List<String> unitTypes,
       required List<String> sources,
-      required EmployeeModel? createdBy,
+      required EmployeeResponseModel? createdBy,
       required LastActionModel? lastAction,
-      required EmployeeModel? assignedEmployee,
-      required EmployeeModel? assignedBy,
+      required EmployeeResponseModel? assignedEmployee,
+      required EmployeeResponseModel? assignedBy,
       required int? assignedDateTime,
 
-      required int? duplicateNo})
+      required int? duplicateNo,
+
+      required bool? viewPreviousLog
+      })
       : super(
             customerId: customerId,
             fullName: fullName,
@@ -40,7 +44,8 @@ class CustomerModel extends Customer {
             assignedBy: assignedBy,
             assignedDateTime: assignedDateTime,
 
-            duplicateNo: duplicateNo);
+            duplicateNo: duplicateNo,
+  viewPreviousLog: viewPreviousLog);
 
   factory CustomerModel.fromJson(Map<String, dynamic> json) => CustomerModel(
         customerId: json["customerId"],
@@ -62,20 +67,23 @@ class CustomerModel extends Customer {
             ? List<String>.from(json["sources"].map((x) => x))
             : [],
         createdBy: json["createdBy"] != null
-            ? EmployeeModel.fromJson(json["createdBy"])
+            ? EmployeeResponseModel.fromJson(json["createdBy"])
             : null,
         lastAction: json["lastAction"] != null
             ? LastActionModel.fromJson(json["lastAction"])
             : null,
         assignedEmployee: json["assignedEmployee"] != null
-            ? EmployeeModel.fromJson(json["assignedEmployee"])
+            ? EmployeeResponseModel.fromJson(json["assignedEmployee"])
             : null,
         assignedBy: json["assignedBy"] != null
-            ? EmployeeModel.fromJson(json["assignedBy"])
+            ? EmployeeResponseModel.fromJson(json["assignedBy"])
             : null,
         assignedDateTime: json["assignedDateTime"],
         duplicateNo: json["duplicateNo"],
-      );
+
+    viewPreviousLog: json["viewPreviousLog"],
+
+  );
 
   Map<String, dynamic> toJson() => {
         "customerId": customerId,
@@ -93,6 +101,8 @@ class CustomerModel extends Customer {
         "assignedBy": assignedBy?.toJson(),
         "assignedDateTime": assignedDateTime,
 
+    "viewPreviousLog": viewPreviousLog,
+
       };
 
   CustomerModel copyWith({
@@ -106,13 +116,17 @@ class CustomerModel extends Customer {
 
     Wrapped<List<String>>? unitTypes,
     Wrapped<List<String>>? sources,
-    Wrapped<EmployeeModel?>? createdBy,
+    Wrapped<EmployeeResponseModel?>? createdBy,
     Wrapped<LastActionModel?>? lastAction,
-    Wrapped<EmployeeModel?>? assignedEmployee,
-    Wrapped<EmployeeModel?>? assignedBy,
+    Wrapped<EmployeeResponseModel?>? assignedEmployee,
+    Wrapped<EmployeeResponseModel?>? assignedBy,
     Wrapped<int?>? assignedDateTime,
 
     Wrapped<int?>? duplicateNo,
+
+
+    Wrapped<bool?>? viewPreviousLog,
+
   }) {
     return CustomerModel(
         customerId: customerId != null ? customerId.value : this.customerId,
@@ -135,7 +149,10 @@ class CustomerModel extends Customer {
         assignedDateTime: assignedDateTime != null
             ? assignedDateTime.value
             : this.assignedDateTime,
-        duplicateNo:
-            duplicateNo != null ? duplicateNo.value : this.duplicateNo);
+        duplicateNo: duplicateNo != null ? duplicateNo.value : this.duplicateNo,
+
+      viewPreviousLog: viewPreviousLog != null ? viewPreviousLog.value : this.viewPreviousLog,
+
+    );
   }
 }

@@ -20,7 +20,6 @@ abstract class LoginUseCases {
 
   Future<Either<Failure, CustomerTableConfigModel>> loadLastCustomerTableConfig();
 
-
   Future<Either<Failure, RoleModel>> findRoleByEmployeeId(int employeeId);
 }
 
