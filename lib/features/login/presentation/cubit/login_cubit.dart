@@ -76,6 +76,8 @@ class LoginCubit extends Cubit<LoginState> {
 
         // start fetch permissions by employeeId
         Either<Failure, RoleModel> response = await loginUseCases.findRoleByEmployeeId(newEmployee.employeeId);
+
+
         response.fold((failure) => emit(GettingEmployeeError(msg: Constants.mapFailureToMsg(failure))),
                 (role) {
               List<String> permissions = [];
@@ -104,6 +106,7 @@ class LoginCubit extends Cubit<LoginState> {
     await loginUseCases.loadLastCustomerTableConfig();
 
     response.fold((failure) {
+      Constants.customerTableConfigModel = CustomerTableConfigModel.initial();
       return null;
     }, (savedCustomerTableConfig) {
       Constants.customerTableConfigModel = savedCustomerTableConfig;

@@ -22,7 +22,7 @@ class CurrentEmployeeModel extends CurrentEmployee {
 
   factory CurrentEmployeeModel.fromJson(Map<String, dynamic> json) =>
       CurrentEmployeeModel(
-        permissions: List<String>.from(json["permissions"].map((x) => x)),
+        permissions:List<String>.from(json["permissions"].map((x) => x)),
         fullName: json["fullName"],
         employeeId: json["employeeId"],
         enabled: json["enabled"],

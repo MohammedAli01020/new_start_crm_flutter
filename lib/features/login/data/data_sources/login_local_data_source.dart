@@ -63,6 +63,8 @@ class LoginLocalDataSourceImpl implements LoginLocalDataSource {
         Future.value(CustomerTableConfigModel.fromJson(json.decode(response)));
         return cacheCustomerTableConfig;
       } catch (e) {
+
+
         throw CacheException();
       }
     } else {

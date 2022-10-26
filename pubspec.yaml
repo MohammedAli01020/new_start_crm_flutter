@@ -21,7 +21,6 @@ dependencies:
   csv: ^5.0.1
   excel: ^1.1.5
   path_provider: ^2.0.11
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
