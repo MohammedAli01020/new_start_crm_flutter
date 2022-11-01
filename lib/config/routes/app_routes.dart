@@ -34,6 +34,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/utils/app_strings.dart';
 import '../../features/customer_logs/presentation/cubit/customer_logs_cubit.dart';
+import '../../features/customers/data/models/customer_filters_model.dart';
 import '../../features/customers/presentation/cubit/customer_cubit.dart';
 import '../../features/developers_and_projects/presentation/cubit/developer/developer_cubit.dart';
 import '../../features/developers_and_projects/presentation/cubit/project/project_cubit.dart';
@@ -45,7 +46,6 @@ import '../../features/login/presentation/screens/login_screen.dart';
 import '../../features/own_reports/presentation/cubit/own_reports_cubit.dart';
 import '../../features/permissions/presentation/cubit/permission_cubit.dart';
 import '../../features/pre_defined_roles/presentation/cubit/pre_defined_roles_cubit.dart';
-import '../../features/reports/domain/use_cases/report_use_cases.dart';
 import '../../features/reports/presentation/cubit/report_cubit.dart';
 import '../../features/reports/presentation/screens/report_screen.dart';
 import '../../features/sources/presentation/cubit/source_cubit.dart';
@@ -55,6 +55,7 @@ import '../../features/unit_types/presentation/cubit/unit_type_cubit.dart';
 
 class Routes {
   static const String initialRoute = '/';
+
 
   // employees
   static const String modifyEmployeeRoute = '/modifyEmployeeRoute';
@@ -128,6 +129,9 @@ class AppRoutes {
         return MaterialPageRoute(
             settings: routeSettings,
             builder: ((context) {
+
+              final customersArgs = routeSettings.arguments as CustomersArgs;
+
               return MultiBlocProvider(
                 providers: [
                   BlocProvider(
@@ -147,7 +151,7 @@ class AppRoutes {
                     },
                   ),
                 ],
-                child: CustomersScreen(),
+                child: CustomersScreen(customersArgs: customersArgs,),
               );
             }));
 
@@ -195,10 +199,9 @@ class AppRoutes {
                         ..updateFilter(CustomerLogFiltersModel.initial().copyWith(
                           startDateTime: Constants.currentEmployee!.permissions.contains(AppStrings.viewLeadLog) ?
                           const Wrapped.value(null) : (
-                              (Constants.currentEmployee!.employeeId == customerDetailsArgs.customerModel.assignedEmployee?.employeeId)
-                                  && customerDetailsArgs.customerModel.viewPreviousLog == true ?
-                              Wrapped.value(customerDetailsArgs.customerModel.assignedDateTime) : null
-                          ) ,
+                              (Constants.currentEmployee?.employeeId == customerDetailsArgs.customerModel.assignedEmployee?.employeeId)
+                                  && customerDetailsArgs.customerModel.viewPreviousLog == false ?
+                              Wrapped.value(customerDetailsArgs.customerModel.assignedDateTime) :  const Wrapped.value(null)),
                           customerId: Wrapped.value(customerDetailsArgs.customerModel.customerId)))
 
                         ..fetchCustomerLogs( refresh: true);
@@ -357,7 +360,7 @@ class AppRoutes {
                 create: (context) {
                   return di.sl<EventCubit>()
                     ..updateCurrentSelectedEvent(eventsArgs.eventModel)
-                    ..getAllEventsByNameLike();
+                    ..getAllEventsByNameLike(eventType: eventsArgs.eventType);
                 },
                 child: EventsScreen(eventsArgs: eventsArgs),
               );
@@ -528,12 +531,24 @@ class AppRoutes {
             settings: routeSettings,
             builder: ((context) {
 
-              return BlocProvider(
-                create: (context) {
-                  return di.sl<OwnReportsCubit>()..fetchEmployeeReports();
-                },
-                child: const OwnReportsScreen(),
+
+              return MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) {
+                      return di.sl<OwnReportsCubit>()..fetchEmployeeReports();
+                    },
+                  ),
+
+                  BlocProvider(
+                    create: (context) {
+                      return di.sl<TeamMembersCubit>();
+                    },
+                  ),
+                ],
+                child: OwnReportsScreen(),
               );
+
 
             }));
 

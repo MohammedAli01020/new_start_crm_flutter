@@ -89,6 +89,7 @@ class LoginCubit extends Cubit<LoginState> {
                 enabled: Wrapped.value(newEmployee.enabled),
                 username: Wrapped.value(newEmployee.username),
                 fullName: Wrapped.value(newEmployee.fullName),
+                imageUrl: Wrapped.value(newEmployee.imageUrl),
                 createDateTime: Wrapped.value(newEmployee.createDateTime),
                 permissions: Wrapped.value(permissions),
                 teamId: Wrapped.value(newEmployee.team),

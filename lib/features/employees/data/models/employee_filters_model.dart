@@ -1,5 +1,6 @@
 import 'package:crm_flutter_project/features/employees/domain/entities/employee_filters.dart';
 
+import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/wrapper.dart';
 
 class EmployeeFiltersModel extends EmployeeFilters {
@@ -10,6 +11,8 @@ class EmployeeFiltersModel extends EmployeeFilters {
       required String sortBy,
       required String? fullNameOrPhoneNumber,
       required String? employeeTypes,
+        required int? teamId,
+
       required int? startDateTime,
       required int? endDateTime,
         required int? excludeTeamLeader,
@@ -25,6 +28,7 @@ class EmployeeFiltersModel extends EmployeeFilters {
             sortBy: sortBy,
             fullNameOrPhoneNumber: fullNameOrPhoneNumber,
             employeeTypes: employeeTypes,
+            teamId: teamId,
             startDateTime: startDateTime,
             endDateTime: endDateTime,
       excludeTeamLeader: excludeTeamLeader,
@@ -40,6 +44,8 @@ class EmployeeFiltersModel extends EmployeeFilters {
         sortBy: json["sortBy"],
         fullNameOrPhoneNumber: json["fullNameOrPhoneNumber"],
         employeeTypes: json["employeeTypes"],
+        teamId: json["teamId"],
+
         startDateTime: json["startDateTime"],
         endDateTime: json["endDateTime"],
           excludeTeamLeader: json["excludeTeamLeader"],
@@ -56,7 +62,10 @@ class EmployeeFiltersModel extends EmployeeFilters {
         "sortBy": sortBy,
         "fullNameOrPhoneNumber": fullNameOrPhoneNumber,
         "employeeTypes": employeeTypes,
-        "startDateTime": startDateTime,
+
+    "teamId": teamId,
+
+    "startDateTime": startDateTime,
         "endDateTime": endDateTime,
     "excludeTeamLeader": excludeTeamLeader,
     "notInThisTeamId": notInThisTeamId,
@@ -71,6 +80,9 @@ class EmployeeFiltersModel extends EmployeeFilters {
     Wrapped<String>? sortBy,
     Wrapped<String?>? fullNameOrPhoneNumber,
     Wrapped<String?>? employeeTypes,
+
+    Wrapped<int?>? teamId,
+
     Wrapped<int?>? startDateTime,
     Wrapped<int?>? endDateTime,
     Wrapped<int?>? excludeTeamLeader,
@@ -90,8 +102,10 @@ class EmployeeFiltersModel extends EmployeeFilters {
       fullNameOrPhoneNumber: fullNameOrPhoneNumber != null
           ? fullNameOrPhoneNumber.value
           : this.fullNameOrPhoneNumber,
-      employeeTypes:
-          employeeTypes != null ? employeeTypes.value : this.employeeTypes,
+      employeeTypes: employeeTypes != null ? employeeTypes.value : this.employeeTypes,
+
+      teamId: teamId != null ? teamId.value : this.teamId,
+
       startDateTime:
           startDateTime != null ? startDateTime.value : this.startDateTime,
       endDateTime: endDateTime != null ? endDateTime.value : this.endDateTime,
@@ -105,7 +119,7 @@ class EmployeeFiltersModel extends EmployeeFilters {
   }
 
   factory EmployeeFiltersModel.initial() {
-    return const EmployeeFiltersModel(
+    return EmployeeFiltersModel(
         pageNumber: 0,
         pageSize: 50,
         sortDirection: "DESC",
@@ -114,7 +128,8 @@ class EmployeeFiltersModel extends EmployeeFilters {
         startDateTime: null,
         endDateTime: null,
         employeeTypes: null,
-       excludeTeamLeader: null,
+        teamId: Constants.currentEmployee?.teamId,
+        excludeTeamLeader: null,
        notInThisTeamId: null,
        createdById: null,
        availableToAssign: null

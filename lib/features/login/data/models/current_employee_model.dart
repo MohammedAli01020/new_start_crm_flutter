@@ -5,6 +5,7 @@ class CurrentEmployeeModel extends CurrentEmployee {
       {required List<String> permissions,
       required String fullName,
       required int employeeId,
+      required String? imageUrl,
       required bool enabled,
       required String token,
       required String username,
@@ -14,6 +15,7 @@ class CurrentEmployeeModel extends CurrentEmployee {
             permissions: permissions,
             fullName: fullName,
             employeeId: employeeId,
+            imageUrl: imageUrl,
             enabled: enabled,
             token: token,
             username: username,
@@ -22,9 +24,10 @@ class CurrentEmployeeModel extends CurrentEmployee {
 
   factory CurrentEmployeeModel.fromJson(Map<String, dynamic> json) =>
       CurrentEmployeeModel(
-        permissions:List<String>.from(json["permissions"].map((x) => x)),
+        permissions: List<String>.from(json["permissions"].map((x) => x)),
         fullName: json["fullName"],
         employeeId: json["employeeId"],
+        imageUrl: json["imageUrl"],
         enabled: json["enabled"],
         token: json["token"],
         username: json["username"],
@@ -36,6 +39,7 @@ class CurrentEmployeeModel extends CurrentEmployee {
         "permissions": List<dynamic>.from(permissions.map((x) => x)),
         "fullName": fullName,
         "employeeId": employeeId,
+        "imageUrl": imageUrl,
         "enabled": enabled,
         "token": token,
         "username": username,

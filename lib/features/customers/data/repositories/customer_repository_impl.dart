@@ -38,7 +38,20 @@ class CustomerRepositoryImpl implements CustomerRepository {
   }
 
   @override
-  Future<Either<Failure, CustomersData>> getAllCustomersWithFilters(CustomerFiltersModel customerFiltersModel) async {
+  Future<Either<Failure, CustomersData>> getPageCustomersWithFilters(CustomerFiltersModel customerFiltersModel) async {
+    try {
+      final response = await customerRemoteDataSource.getPageCustomersWithFilters(customerFiltersModel);
+      return Right(response);
+    } on ServerException catch (e) {
+      // if (e is InternalServerErrorException) {
+      //   loginLocalDataSource.removeCacheCurrentEmployee();
+      // }
+      return Left(ServerFailure(msg: e.msg));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<CustomerModel>>> getAllCustomersWithFilters(CustomerFiltersModel customerFiltersModel) async {
     try {
       final response = await customerRemoteDataSource.getAllCustomersWithFilters(customerFiltersModel);
       return Right(response);

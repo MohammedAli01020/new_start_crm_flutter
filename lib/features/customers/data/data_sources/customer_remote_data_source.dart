@@ -7,7 +7,10 @@ import '../models/customer_filters_model.dart';
 import '../models/customer_model.dart';
 
 abstract class CustomerRemoteDataSource {
-  Future<CustomersDataModel> getAllCustomersWithFilters(
+  Future<CustomersDataModel> getPageCustomersWithFilters(
+      CustomerFiltersModel customerFiltersModel);
+
+  Future<List<CustomerModel>> getAllCustomersWithFilters(
       CustomerFiltersModel customerFiltersModel);
 
   Future<CustomerModel> modifyCustomer(
@@ -67,11 +70,20 @@ class CustomerRemoteDataSourceImpl implements CustomerRemoteDataSource {
   }
 
   @override
-  Future<CustomersDataModel> getAllCustomersWithFilters(CustomerFiltersModel customerFiltersModel) async {
-    final response = await apiConsumer.get(EndPoints.pageCustomer,
+  Future<CustomersDataModel> getPageCustomersWithFilters(CustomerFiltersModel customerFiltersModel) async {
+    final response = await apiConsumer.get(EndPoints.pageCustomers,
         queryParameters: customerFiltersModel.toJson());
 
     return CustomersDataModel.fromJson(response);
+  }
+
+  @override
+  Future<List<CustomerModel>> getAllCustomersWithFilters(CustomerFiltersModel customerFiltersModel) async {
+    final response = await apiConsumer.get(EndPoints.allCustomers,
+        queryParameters: customerFiltersModel.toJsonForAllCustomers());
+
+    return List<CustomerModel>.from(
+        response.map((x) => CustomerModel.fromJson(x)));
   }
 
   @override

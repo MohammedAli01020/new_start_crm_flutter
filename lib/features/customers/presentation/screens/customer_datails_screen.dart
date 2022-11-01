@@ -43,7 +43,6 @@ class CustomerDetailsScreen extends StatefulWidget {
 
   final _scrollController = ScrollController();
   final _secondScrollController = ScrollController();
-  static const _extraScrollSpeed = 80;
 
   CustomerDetailsScreen({Key? key, required this.customerDetailsArgs})
       : super(key: key) {
@@ -54,8 +53,8 @@ class CustomerDetailsScreen extends StatefulWidget {
         if (scrollDirection != ScrollDirection.idle) {
           double scrollEnd = _scrollController.offset +
               (scrollDirection == ScrollDirection.reverse
-                  ? _extraScrollSpeed
-                  : -_extraScrollSpeed);
+                  ? Constants.extraScrollSpeed
+                  : -Constants.extraScrollSpeed);
           scrollEnd = min(_scrollController.position.maxScrollExtent,
               max(_scrollController.position.minScrollExtent, scrollEnd));
           _scrollController.jumpTo(scrollEnd);
@@ -69,8 +68,8 @@ class CustomerDetailsScreen extends StatefulWidget {
         if (scrollDirection != ScrollDirection.idle) {
           double scrollEnd = _secondScrollController.offset +
               (scrollDirection == ScrollDirection.reverse
-                  ? _extraScrollSpeed
-                  : -_extraScrollSpeed);
+                  ? Constants.extraScrollSpeed
+                  : -Constants.extraScrollSpeed);
           scrollEnd = min(_secondScrollController.position.maxScrollExtent,
               max(_secondScrollController.position.minScrollExtent, scrollEnd));
           _secondScrollController.jumpTo(scrollEnd);
@@ -344,10 +343,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                                 border: Border.all(
                                     width: 2.0, color: Colors.grey)
                             ),
-                            child: LinkWell("ملاحظات عن العميل: " +
+                            child: LinkWell(
+                                "ملاحظات عن العميل: " +
                                 (cubit.currentCustomer.description != null
                                     ? cubit.currentCustomer.description!
-                                    : "لا يوجد")),
+                                    : "لا يوجد"),
+                            style: Theme.of(context).textTheme.bodyText1,),
                           ),
                         ),
 
@@ -635,8 +636,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                           cubit.currentCustomer.createDateTime)),
                   const DefaultHeightSizedBox(),
 
+
+                if (Constants.currentEmployee!.permissions.contains(AppStrings.viewLeadLog) ||
+                    (Constants.currentEmployee!.employeeId == cubit.currentCustomer.assignedEmployee?.employeeId))
                   Card(
-                    color: Colors.blueGrey[100],
+                    color: Theme.of(context).highlightColor,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -694,8 +698,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                   ),
 
                   if (Constants.currentEmployee!.permissions.contains(AppStrings.viewLeadLog) ||
-                      ( (Constants.currentEmployee!.employeeId == cubit.currentCustomer.assignedEmployee?.employeeId) &&
-                          cubit.currentCustomer.viewPreviousLog == true) )
+                    (Constants.currentEmployee!.employeeId == cubit.currentCustomer.assignedEmployee?.employeeId))
 
 
                     BlocBuilder<CustomerLogsCubit, CustomerLogsState>(
@@ -768,15 +771,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
     );
   }
 
-  
 
   Widget _buildList(CustomerLogsCubit customerLogsCubit,
       CustomerLogsState state, BuildContext context) {
 
-    // if (state is StartRefreshCustomerLogs ||
-    //     state is StartLoadingCustomerLogs) {
-    //   return const Center(child: CircularProgressIndicator());
-    // }
+    if (state is StartRefreshCustomerLogs) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     if (state is RefreshCustomerLogsError) {
       return ErrorItemWidget(
@@ -811,104 +812,76 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
 
                 if (index < customerLogsCubit.customerLogs.length) {
                   final currentLog = customerLogsCubit.customerLogs[index];
-                  return Card(
-                    color: Colors.blueGrey[100],
-                    child: ListTile(
-                      leading:  SizedBox(
-                        width: 50.0,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            DefaultUserAvatarWidget(
-                                onTap: () {
-                                  if (currentLog.employee != null) {
-                                    Navigator.pushNamed(context, Routes.employeesDetailsRoute,
-                                        arguments: EmployeeDetailsArgs(
-                                            employeeId: currentLog.employee!.employeeId,
-                                            employeeCubit: BlocProvider.of<EmployeeCubit>(context),
-                                            fromRoute: Routes.customerLogsRoute));
-                                  }
-                                },
-                                imageUrl: null,
-                                height: 50.0,
-                                fullName: currentLog.employee?.fullName),
-
-                            Text(currentLog.employee != null ?
-                            currentLog.employee!.fullName : "غير معرف", style: const TextStyle(
-                                fontSize: 9.0
-                            ),)
-                          ],
-                        ),
-                      ),
-                      title: LinkWell(
-                        currentLog.description != null
-                            ? (currentLog.description!)
-                            : "لا يوجد",
-                        // maxLines: 3,
-                        // overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.w600),
-                      ),
-                      subtitle: Column(
+                  return ListTile(
+                    leading:  SizedBox(
+                      width: 50.0,
+                      child: Column(
                         mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Flexible(
-                                child: InkWell(
-                                  onTap: () {
-                                    if (currentLog.customer != null) {
-                                      Navigator.pushNamed(context, Routes.customersDetailsRoute,
-                                          arguments: CustomerDetailsArgs(
-                                              customerModel: currentLog.customer!,
-                                              customerCubit: BlocProvider.of<CustomerCubit>(context),
-                                              teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context),
-                                              fromRoute: Routes.customerLogsRoute));
-                                    }
+                          DefaultUserAvatarWidget(
+                              onTap: () {
+                                if (currentLog.employee != null) {
+                                  Navigator.pushNamed(context, Routes.employeesDetailsRoute,
+                                      arguments: EmployeeDetailsArgs(
+                                          employeeId: currentLog.employee!.employeeId,
+                                          employeeCubit: BlocProvider.of<EmployeeCubit>(context),
+                                          fromRoute: Routes.customerLogsRoute));
+                                }
+                              },
+                              imageUrl: currentLog.employee?.imageUrl,
+                              height: 50.0,
+                              fullName: currentLog.employee?.fullName),
 
-                                  },
-                                  child: Text(getCustomerName(
-                                      currentLog.customer), style: const TextStyle(
-                                      fontSize: 14.0
-                                  )),
-                                ),
-                              ),
-
-                              const SizedBox(width: 5.0,),
-                              Flexible(
-                                child: InkWell(
-                                    onTap: () {
-                                      if (currentLog.employee != null) {
-                                        Navigator.pushNamed(context, Routes.employeesDetailsRoute,
-                                            arguments: EmployeeDetailsArgs(
-                                                employeeId: currentLog.employee!.employeeId,
-                                                employeeCubit: BlocProvider.of<EmployeeCubit>(context),
-                                                fromRoute: Routes.customerLogsRoute));
-                                      }
-                                    },
-
-                                    child: Text(getEmployeeName(currentLog.employee), style: const TextStyle(
-                                        fontSize: 14.0
-                                    ),)),
-                              ),
-                            ],
-                          ),
                           const SizedBox(height: 5.0,),
-                          Text(Constants.timeAgoSinceDate(currentLog.dateTime), style: const TextStyle(fontSize: 14.0))
-
+                          Text(currentLog.employee != null ?
+                          currentLog.employee!.fullName : "غير معرف", style: const TextStyle(
+                              fontSize: 9.0
+                          ),)
                         ],
                       ),
-
-
                     ),
+                    title: LinkWell(
+                      currentLog.description != null
+                          ? (currentLog.description!)
+                          : "لا يوجد",
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                    subtitle: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Flexible(
+                          child: InkWell(
+                            onTap: () {
+                              if (currentLog.customer != null) {
+                                Navigator.pushNamed(context, Routes.customersDetailsRoute,
+                                    arguments: CustomerDetailsArgs(
+                                        customerModel: currentLog.customer!,
+                                        customerCubit: BlocProvider.of<CustomerCubit>(context),
+                                        teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context),
+                                        fromRoute: Routes.customerLogsRoute));
+                              }
+
+                            },
+                            child: Text(getCustomerName(
+                                currentLog.customer), style: const TextStyle(
+                                fontSize: 14.0
+                            )),
+                          ),
+                        ),
+                        const SizedBox(height: 5.0,),
+                        Text(Constants.timeAgoSinceDate(currentLog.dateTime), style: const TextStyle(fontSize: 14.0))
+
+                      ],
+                    ),
+
+
                   );
                 } else {
                   if (customerLogsCubit.isNoMoreData) {
-                    return Text("وصلت للنهاية", style: TextStyle(fontSize: 15.0,color: AppColors.hint),);
+                    return const Text("وصلت للنهاية", style: TextStyle(fontSize: 15.0),);
                   }  else {
                     if( state is StartLoadingCustomerLogs) {
                       return const Padding(
@@ -933,9 +906,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
 
               itemCount: customerLogsCubit.customerLogs.length + 1,
               separatorBuilder: (BuildContext context, int index) {
-                return const SizedBox(
-                  height: 16.0,
-                );
+                return const Divider();
               },
             ),
           ),

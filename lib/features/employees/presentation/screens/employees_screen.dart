@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../config/routes/app_routes.dart';
+import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../../core/utils/wrapper.dart';
 import '../../../../core/widgets/error_item_widget.dart';
@@ -18,7 +19,7 @@ import '../widgets/employees_data_table.dart';
 class EmployeesScreen extends StatelessWidget {
 
   final _scrollController = ScrollController();
-  static const _extraScrollSpeed = 80;
+
 
   EmployeesScreen({Key? key}) : super(key: key) {
     if (Responsive.isWindows || Responsive.isLinux || Responsive.isMacOS) {
@@ -28,12 +29,14 @@ class EmployeesScreen extends StatelessWidget {
         if (scrollDirection != ScrollDirection.idle) {
           double scrollEnd = _scrollController.offset +
               (scrollDirection == ScrollDirection.reverse
-                  ? _extraScrollSpeed
-                  : -_extraScrollSpeed);
+                  ? Constants.extraScrollSpeed
+                  : -Constants.extraScrollSpeed);
           scrollEnd = min(_scrollController.position.maxScrollExtent,
               max(_scrollController.position.minScrollExtent, scrollEnd));
           _scrollController.jumpTo(scrollEnd);
         }
+
+
       });
     }
   }

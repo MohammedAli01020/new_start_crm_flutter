@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:crm_flutter_project/core/utils/app_strings.dart';
-import 'package:crm_flutter_project/core/utils/enums.dart';
 import 'package:crm_flutter_project/features/employees/data/models/employee_filters_model.dart';
 import 'package:crm_flutter_project/features/employees/data/models/role_model.dart';
 import 'package:crm_flutter_project/features/employees/domain/entities/employees_data.dart';
@@ -80,12 +78,12 @@ class EmployeeCubit extends Cubit<EmployeeState> {
       emit(response.fold(
           (failure) =>
               RefreshEmployeesError(msg: Constants.mapFailureToMsg(failure)),
-          (realestatesData) => EndRefreshEmployees()));
+          (employeesData) => EndRefreshEmployees()));
     } else {
       emit(response.fold(
           (failure) =>
               LoadingEmployeesError(msg: Constants.mapFailureToMsg(failure)),
-          (realestatesData) => EndLoadingEmployees()));
+          (employeesData) => EndLoadingEmployees()));
     }
   }
 
@@ -97,46 +95,13 @@ class EmployeeCubit extends Cubit<EmployeeState> {
     employeeTotalElements = result.totalElements;
     employeePagesCount = result.totalPages;
     if (refresh) {
-
       employees = newEmployees;
-      //
-      // if (employeePickerTypes != null && employeePickerTypes == EmployeePickerTypes.ASSIGN_MEMBER.name) {
-      //   newEmployees = newEmployees.where((element) {
-      //     return element.role != null;
-      //   }).toList();
-      //
-      //   newEmployees = newEmployees.where((element) {
-      //     final plist =  element.role!.permissions.map((e) {
-      //       return e.name;
-      //     }).toList();
-      //
-      //     return plist.contains(AppStrings.availableToAssign);
-      //   }).toList();
-      //
-      //   employees = newEmployees;
-      // } else {
-      //   employees = newEmployees;
-      // }
     } else {
       employees.addAll(newEmployees);
-      // if (employeePickerTypes != null && employeePickerTypes == EmployeePickerTypes.ASSIGN_MEMBER.name) {
-      //
-      //   newEmployees = newEmployees.where((element) {
-      //     return element.role != null;
-      //   }).toList();
-      //
-      //   newEmployees = newEmployees.where((element) {
-      //     final plist =  element.role!.permissions.map((e) {
-      //       return e.name;
-      //     }).toList();
-      //
-      //     return plist.contains(AppStrings.availableToAssign);
-      //   }).toList();
-      //
-      //   employees.addAll(newEmployees);
-      // } else {
-      //   employees.addAll(newEmployees);
-      // }
+    }
+
+    if (employeeCurrentPage >= employeePagesCount) {
+      isNoMoreData = true;
     }
   }
 
@@ -276,6 +241,11 @@ class EmployeeCubit extends Cubit<EmployeeState> {
               currentRole = role;
               return emit(EndFindRoleByEmployeeId(roleModel: role));
             });
+
+  }
+
+
+  getTeamEmployees(int teamId) {
 
   }
 

@@ -62,25 +62,21 @@ class CustomerCubit extends Cubit<CustomerState> {
     }
 
     if (refresh) {
-      print("refresh");
-
       customerCurrentPage = 0;
       isNoMoreData = false;
       emit(StartRefreshCustomers());
     } else {
       if (customerCurrentPage >= customerPagesCount) {
         isNoMoreData = true;
-        print("isNoMoreData");
         emit(LoadNoMoreCustomers());
         return;
       } else {
-        print("StartLoadingCustomers");
         emit(StartLoadingCustomers());
       }
     }
 
     Either<Failure, CustomersData> response =
-        await customerUseCases.getAllCustomersWithFilters(customerFiltersModel
+        await customerUseCases.getPageCustomersWithFilters(customerFiltersModel
             .copyWith(pageNumber: Wrapped.value(customerCurrentPage)));
 
     if (response.isRight()) {
@@ -114,6 +110,29 @@ class CustomerCubit extends Cubit<CustomerState> {
     } else {
       customers.addAll(newCustomers);
     }
+
+    if (customerCurrentPage >= customerPagesCount) {
+      isNoMoreData = true;
+    }
+  }
+
+
+
+  Future<void> fetchAllCustomers() async {
+
+    emit(StartUpdateSelectedCustomers());
+
+    Either<Failure, List<CustomerModel>> response =
+    await customerUseCases.getAllCustomersWithFilters(customerFiltersModel);
+
+    response.fold(
+            (failure) => emit(UpdateSelectedCustomersError(msg: Constants.mapFailureToMsg(failure))),
+            (newSelectedCustomers) {
+
+              selectedCustomers = newSelectedCustomers;
+              return emit(EndUpdateSelectedCustomers(newSelectedCustomers: newSelectedCustomers));
+            });
+
   }
 
   Future<void> deleteCustomer(int customerId) async {
@@ -178,13 +197,13 @@ class CustomerCubit extends Cubit<CustomerState> {
       selectedCustomers.remove(customer);
     }
 
-    emit(EndUpdateSelectedCustomers());
+    emit(EndUpdateSelectedCustomers(newSelectedCustomers: selectedCustomers));
   }
 
   void setSelectedCustomers(List<CustomerModel> newCustomers) {
-    emit(StartSetSelectedCustomers());
+    emit(StartUpdateSelectedCustomers());
     selectedCustomers = newCustomers;
-    emit(EndSetSelectedCustomers());
+    emit(EndUpdateSelectedCustomers(newSelectedCustomers: selectedCustomers));
   }
 
   List<EventModel>? selectedEvents = [];

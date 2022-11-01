@@ -21,7 +21,7 @@ class ModifyRoleScreen extends StatefulWidget {
   final RoleModel? roleModel;
 
   final _scrollController = ScrollController();
-  static const _extraScrollSpeed = 80;
+
 
 
   ModifyRoleScreen({Key? key, this.roleModel}) : super(key: key) {
@@ -32,8 +32,8 @@ class ModifyRoleScreen extends StatefulWidget {
         if (scrollDirection != ScrollDirection.idle) {
           double scrollEnd = _scrollController.offset +
               (scrollDirection == ScrollDirection.reverse
-                  ? _extraScrollSpeed
-                  : -_extraScrollSpeed);
+                  ? Constants.extraScrollSpeed
+                  : -Constants.extraScrollSpeed);
           scrollEnd = min(_scrollController.position.maxScrollExtent,
               max(_scrollController.position.minScrollExtent, scrollEnd));
           _scrollController.jumpTo(scrollEnd);
@@ -156,7 +156,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
 
                               }
                             },
-                            title: Text("اختر من الادوار المحفوظة", style: TextStyle(color: Theme.of(context).primaryColor),),
+                            title: const Text("اختر من الادوار المحفوظة",),
                           ),
                         ),
                         const Divider(),
@@ -197,7 +197,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                     child: Container(
                         width: context.width,
                         padding: const EdgeInsets.all(16.0),
-                        color: Colors.blueGrey[100],
+                        color: Theme.of(context).highlightColor,
                         child: const Text("الموظفين")),
                   ),
                   SliverList(
@@ -220,7 +220,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                     child: Container(
                         width: context.width,
                         padding: const EdgeInsets.all(16.0),
-                        color: Colors.blueGrey[100],
+                        color: Theme.of(context).highlightColor,
                         child: const Text("مشاهدة العملاء")),
                   ),
                   SliverList(
@@ -242,7 +242,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                     child: Container(
                         width: context.width,
                         padding: const EdgeInsets.all(16.0),
-                        color: Colors.blueGrey[100],
+                        color: Theme.of(context).highlightColor,
                         child: const Text("تعديل واضافة العملاء")),
                   ),
                   SliverList(
@@ -265,7 +265,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                     child: Container(
                         width: context.width,
                         padding: const EdgeInsets.all(16.0),
-                        color: Colors.blueGrey[100],
+                        color: Theme.of(context).highlightColor,
                         child: const Text("حذف العملاء")),
                   ),
                   SliverList(
@@ -288,7 +288,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                     child: Container(
                         width: context.width,
                         padding: const EdgeInsets.all(16.0),
-                        color: Colors.blueGrey[100],
+                        color: Theme.of(context).highlightColor,
                         child: const Text("اذونات بداخل العملاء")),
                   ),
                   SliverList(
@@ -311,7 +311,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                     child: Container(
                         width: context.width,
                         padding: const EdgeInsets.all(16.0),
-                        color: Colors.blueGrey[100],
+                        color: Theme.of(context).highlightColor,
                         child: const Text("اذونات اتخاذ اكشن والعملايات المجمعة")),
                   ),
                   SliverList(
@@ -334,7 +334,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                     child: Container(
                         width: context.width,
                         padding: const EdgeInsets.all(16.0),
-                        color: Colors.blueGrey[100],
+                        color: Theme.of(context).highlightColor,
                         child: const Text("اذونات الاحداث")),
                   ),
                   SliverList(
@@ -357,7 +357,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                     child: Container(
                         width: context.width,
                         padding: const EdgeInsets.all(16.0),
-                        color: Colors.blueGrey[100],
+                        color: Theme.of(context).highlightColor,
                         child: const Text("اذونات المطورين")),
                   ),
                   SliverList(
@@ -380,7 +380,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                     child: Container(
                         width: context.width,
                         padding: const EdgeInsets.all(16.0),
-                        color: Colors.blueGrey[100],
+                        color: Theme.of(context).highlightColor,
                         child: const Text("اذونات المشاريع")),
                   ),
                   SliverList(
@@ -403,7 +403,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                     child: Container(
                         width: context.width,
                         padding: const EdgeInsets.all(16.0),
-                        color: Colors.blueGrey[100],
+                        color: Theme.of(context).highlightColor,
                         child: const Text("اذونات المصادر")),
                   ),
                   SliverList(
@@ -426,7 +426,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                     child: Container(
                         width: context.width,
                         padding: const EdgeInsets.all(16.0),
-                        color: Colors.blueGrey[100],
+                        color: Theme.of(context).highlightColor,
                         child: const Text("اذونات انواع الوحدات")),
                   ),
                   SliverList(
@@ -448,7 +448,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                     child: Container(
                         width: context.width,
                         padding: const EdgeInsets.all(16.0),
-                        color: Colors.blueGrey[100],
+                        color: Theme.of(context).highlightColor,
                         child: const Text("اذونات المجموعات")),
                   ),
                   SliverList(
@@ -471,7 +471,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                     child: Container(
                         width: context.width,
                         padding: const EdgeInsets.all(16.0),
-                        color: Colors.blueGrey[100],
+                        color: Theme.of(context).highlightColor,
                         child: const Text("اذونات التقارير")),
                   ),
                   SliverList(
@@ -494,7 +494,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                     child: Container(
                         width: context.width,
                         padding: const EdgeInsets.all(16.0),
-                        color: Colors.blueGrey[100],
+                        color: Theme.of(context).highlightColor,
                         child: const Text("اذونات السجلات")),
                   ),
                   SliverList(
@@ -517,7 +517,7 @@ class _ModifyRoleScreenState extends State<ModifyRoleScreen> {
                     child: Container(
                         width: context.width,
                         padding: const EdgeInsets.all(16.0),
-                        color: Colors.blueGrey[100],
+                        color: Theme.of(context).highlightColor,
                         child: const Text("اذونات الادوار والاذونات")),
                   ),
                   SliverList(

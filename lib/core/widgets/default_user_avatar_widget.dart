@@ -19,6 +19,33 @@ class DefaultUserAvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    return InkWell(
+      onTap: onTap,
+      child: imageUrl != null
+          ? kIsWeb ? Image.network(imageUrl!,
+        height: height,
+        width: height,
+        fit: BoxFit.cover,
+
+      ): Center(
+        child: CircleAvatar(
+            backgroundImage: CachedNetworkImageProvider(
+                imageUrl!),
+            backgroundColor:  Colors.transparent,
+            radius: height / 2,),
+      )   : CircleAvatar(
+          backgroundColor: Colors.grey,
+          radius: height / 2,
+          child: Text(
+            fullName != null ? fullName!.characters.first : "NO",
+            style: const TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w500,
+                color: Colors.white),
+          )),
+    );
+
     return InkWell(
       onTap: onTap,
       child: Container(

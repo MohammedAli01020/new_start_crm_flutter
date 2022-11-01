@@ -14,6 +14,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../features/customers/data/models/customer_filters_model.dart';
 import '../../features/customers/presentation/cubit/customer_cubit.dart';
 import '../../features/login/domain/entities/current_employee.dart';
 import '../error/failures.dart';
@@ -22,6 +23,9 @@ import 'app_strings.dart';
 import 'enums.dart';
 
 class Constants {
+
+  static const extraScrollSpeed = 100;
+
   static void showErrorDialog(
       {required BuildContext context, required String msg}) {
     showDialog(
@@ -29,13 +33,12 @@ class Constants {
         builder: (context) => CupertinoAlertDialog(
               title: Text(
                 msg,
-                style: const TextStyle(color: Colors.black, fontSize: 16),
+                style: const TextStyle(fontSize: 16),
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   style: TextButton.styleFrom(
-                      primary: Colors.black,
                       textStyle: const TextStyle(
                           fontSize: 14, fontWeight: FontWeight.bold)),
                   child: const Text('Ok'),
@@ -51,13 +54,12 @@ class Constants {
         builder: (context) => CupertinoAlertDialog(
               title: Text(
                 msg,
-                style: const TextStyle(color: Colors.black, fontSize: 16),
+                style: const TextStyle( fontSize: 16),
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(true),
                   style: TextButton.styleFrom(
-                      primary: Colors.black,
                       textStyle: const TextStyle(
                           fontSize: 14, fontWeight: FontWeight.bold)),
                   child: const Text('تأكيد'),
@@ -65,7 +67,6 @@ class Constants {
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(false),
                   style: TextButton.styleFrom(
-                      primary: Colors.black,
                       textStyle: const TextStyle(
                           fontSize: 14, fontWeight: FontWeight.bold)),
                   child: const Text('إلغاء'),
@@ -86,7 +87,7 @@ class Constants {
               return AlertDialog(
                 title: Text(
                   title,
-                  style: const TextStyle(color: Colors.black, fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
                 content: content,
               );
@@ -256,29 +257,6 @@ class Constants {
     await Clipboard.setData(ClipboardData(text: text));
   }
 
-  static String getDateType(int? startDateTime, int? endDateTime) {
-    if (startDateTime == null && endDateTime == null) {
-      return "كل الاوقات";
-    } else if (startDateTime == DateTime.now().firstTimOfCurrentDayMillis &&
-        endDateTime == DateTime.now().lastTimOfCurrentDayMillis) {
-      return "هذا اليوم";
-    } else if (startDateTime == DateTime.now().firstTimeOfCurrentMonthMillis &&
-        endDateTime == DateTime.now().lastTimOfCurrentMonthMillis) {
-      return "هذا الشهر";
-    } else if (startDateTime == DateTime.now().firstTimePreviousMonthMillis &&
-        endDateTime == DateTime.now().lastTimOfPreviousMonthMillis) {
-      return "الشهر السابق";
-    } else {
-      String from = startDateTime != null
-          ? (" من " + Constants.dateFromMilliSeconds(startDateTime))
-          : "";
-      String to = endDateTime != null
-          ? (" ألي " + Constants.dateFromMilliSeconds(endDateTime))
-          : "";
-
-      return from + to;
-    }
-  }
 
   static String dateTimeFromMilliSeconds(int? dateMillis) {
     if (dateMillis == null) return "غير محدد التاريج";
@@ -329,17 +307,40 @@ class Constants {
     }
   }
 
+
+  static String getDateType(int? startDateTime, int? endDateTime) {
+    if (startDateTime == null && endDateTime == null) {
+      return "كل الاوقات";
+    } else if (startDateTime == DateTime.now().firstTimOfCurrentDayMillis &&
+        endDateTime == DateTime.now().lastTimOfCurrentDayMillis) {
+      return "هذا اليوم";
+    } else if (startDateTime == DateTime.now().firstTimeOfCurrentMonthMillis &&
+        endDateTime == DateTime.now().lastTimOfCurrentMonthMillis) {
+      return "هذا الشهر";
+    } else if (startDateTime == DateTime.now().firstTimePreviousMonthMillis &&
+        endDateTime == DateTime.now().lastTimOfPreviousMonthMillis) {
+      return "الشهر السابق";
+    } else {
+
+      String from = startDateTime != null ? (" من " + Constants.dateFromMilliSeconds(startDateTime)) : "";
+      String to = endDateTime != null ? (" ألي " + Constants.dateFromMilliSeconds(endDateTime)) : "";
+
+      return from + to;
+    }
+  }
+
   static void refreshCustomers(CustomerCubit cubit) {
     if (Constants.currentEmployee!.permissions
         .contains(AppStrings.viewAllLeads)) {
-      cubit.updateFilter(cubit.customerFiltersModel
+      cubit.updateFilter(CustomerFiltersModel.initial()
           .copyWith(customerTypes: Wrapped.value(CustomerTypes.ALL.name)));
 
       cubit.fetchCustomers(refresh: true);
     } else if (Constants.currentEmployee!.permissions
             .contains(AppStrings.viewTeamLeads) &&
         Constants.currentEmployee!.teamId != null) {
-      cubit.updateFilter(cubit.customerFiltersModel.copyWith(
+          cubit.updateFilter(CustomerFiltersModel.initial().copyWith(
+
           teamId: Wrapped.value(Constants.currentEmployee?.teamId),
           employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
           customerTypes: Wrapped.value(CustomerTypes.ME_AND_TEAM.name)));
@@ -347,21 +348,21 @@ class Constants {
       cubit.fetchCustomers(refresh: true);
     } else if (Constants.currentEmployee!.permissions
         .contains(AppStrings.viewMyAssignedLeads)) {
-      cubit.updateFilter(cubit.customerFiltersModel.copyWith(
+      cubit.updateFilter(CustomerFiltersModel.initial().copyWith(
           teamId: const Wrapped.value(null),
           employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
           customerTypes: Wrapped.value(CustomerTypes.ME.name)));
       cubit.fetchCustomers(refresh: true);
     } else if (Constants.currentEmployee!.permissions
         .contains(AppStrings.viewOwnLeads)) {
-      cubit.updateFilter(cubit.customerFiltersModel.copyWith(
+      cubit.updateFilter(CustomerFiltersModel.initial().copyWith(
           teamId: const Wrapped.value(null),
           employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
           customerTypes: Wrapped.value(CustomerTypes.OWN.name)));
       cubit.fetchCustomers(refresh: true);
     } else if (Constants.currentEmployee!.permissions
         .contains(AppStrings.viewNotAssignedLeads)) {
-      cubit.updateFilter(cubit.customerFiltersModel.copyWith(
+      cubit.updateFilter(CustomerFiltersModel.initial().copyWith(
           teamId: const Wrapped.value(null),
           employeeId: const Wrapped.value(null),
           customerTypes: Wrapped.value(CustomerTypes.NOT_ASSIGNED.name)));
@@ -384,6 +385,7 @@ class Constants {
   // (27, 'حذف الموظفين'),
   // (28, 'مشاهدة الموظفين'),
   // (29, 'تعيين الموظفين'),
+  // (79, 'تعيين فريقي')
   // (34, 'متاح للتعيين'),
   // (63, 'مشاهدة موظفين اضفتهم'),
   // (72, 'تعديل اذونات الموظف'),
@@ -394,6 +396,7 @@ class Constants {
     const PermissionModel(permissionId: 27, name: AppStrings.deleteEmployees),
     const PermissionModel(permissionId: 28, name: AppStrings.viewEmployees),
     const PermissionModel(permissionId: 29, name: AppStrings.assignEmployees),
+    const PermissionModel(permissionId: 79, name: AppStrings.assignMyTeamMembers),
     const PermissionModel(permissionId: 34, name: AppStrings.availableToAssign),
     const PermissionModel(permissionId: 63, name: AppStrings.viewCreatedEmployees),
 

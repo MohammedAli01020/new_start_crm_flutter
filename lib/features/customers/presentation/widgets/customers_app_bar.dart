@@ -1,7 +1,6 @@
 import 'package:crm_flutter_project/core/utils/app_colors.dart';
 import 'package:crm_flutter_project/core/utils/app_strings.dart';
 import 'package:crm_flutter_project/core/utils/constants.dart';
-import 'package:crm_flutter_project/core/utils/date_values.dart';
 import 'package:crm_flutter_project/features/customers/presentation/cubit/customer_cubit.dart';
 import 'package:crm_flutter_project/features/customers/presentation/widgets/filter_field.dart';
 import 'package:crm_flutter_project/features/customers/presentation/widgets/sources_picker.dart';
@@ -61,14 +60,12 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
 
-      foregroundColor: Colors.white,
+
       centerTitle: false,
-      backgroundColor: widget.customerCubit.selectedCustomers.isNotEmpty ?
-          Theme.of(context).primaryColor: null,
       leading: widget.customerCubit.selectedCustomers.isNotEmpty ?
       IconButton(onPressed: () {
         widget.customerCubit.setSelectedCustomers([]);
-      }, icon: const Icon(Icons.arrow_back, color: Colors.white)) :
+      }, icon: const Icon(Icons.arrow_back)) :
       IconButton(onPressed: () {
         widget.onTapDrawer();
       }, icon: const Icon(Icons.menu)),
@@ -84,7 +81,6 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
       )
           : Text(widget.customerCubit.selectedCustomers.isNotEmpty ?
          widget.customerCubit.selectedCustomers.length.toString() :"العملاء", style: const TextStyle(
-          color: Colors.white
       ),),
       actions: [
 
@@ -110,10 +106,15 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                         Constants.currentEmployee!.employeeId);
                   }
                 },
-                icon: const Icon(Icons.delete, color: Colors.white,)),
-        if (Constants.currentEmployee!.permissions
-            .contains(AppStrings.bulkActions))
-          if (widget.customerCubit.selectedCustomers.isNotEmpty)
+                icon: const Icon(Icons.delete,)),
+
+
+        if (widget.customerCubit.selectedCustomers.isNotEmpty &&
+            (Constants.currentEmployee!.permissions.contains(AppStrings.assignEmployees) ||
+    (Constants.currentEmployee!.permissions.contains(AppStrings.assignMyTeamMembers)  &&
+        Constants.currentEmployee?.teamId != null)||
+                Constants.currentEmployee!.permissions.contains(AppStrings.bulkActions)))
+
             widget.customerState is StartUpdateBulkCustomers
                 ? const Center(
                 child: SizedBox(
@@ -138,15 +139,12 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                         teamMembersCubit: widget.teamMembersCubit
                       ));
                 },
-                icon: const Icon(Icons.assignment_turned_in, color: Colors.white)),
+                icon: const Icon(Icons.assignment_turned_in)),
 
 
         if (Constants.currentEmployee!.permissions.contains(AppStrings.exportLeads))
           if (widget.customerCubit.selectedCustomers.isNotEmpty)
             ExportButtonWidget(selectedCustomers: widget.customerCubit.selectedCustomers,),
-
-
-
 
 
         if (widget.customerCubit.selectedCustomers.isEmpty)
@@ -211,7 +209,11 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
 
                     widget.customerCubit.setSelectedCustomers([]);
 
+                    widget.customerCubit.updateSelectedAssignEmployeeIds([]);
+                    widget.customerCubit.updateSelectedCreatedByEmployeeIds([]);
+
                     widget.onFilterChangeCallback();
+
                     Constants.refreshCustomers(widget.customerCubit);
 
                   },
@@ -411,7 +413,7 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                   child: FilterField(
                     text: Row(
                       children: [
-                        Text(_getDateType(widget
+                        Text(Constants.getDateType(widget
                             .customerCubit.customerFiltersModel.startDateTime,
                           widget
                               .customerCubit.customerFiltersModel
@@ -672,7 +674,8 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
 
 
 
-
+              if (Constants.currentEmployee?.teamId != null  ||
+              Constants.currentEmployee!.permissions.contains(AppStrings.viewAllLeads))
               GestureDetector(
                   onTap: () async {
 
@@ -862,25 +865,5 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
     }
   }
 
-  String _getDateType(int? startDateTime, int? endDateTime) {
-    if (startDateTime == null && endDateTime == null) {
-      return "كل الاوقات";
-    } else if (startDateTime == DateTime.now().firstTimOfCurrentDayMillis &&
-        endDateTime == DateTime.now().lastTimOfCurrentDayMillis) {
-      return "هذا اليوم";
-    } else if (startDateTime == DateTime.now().firstTimeOfCurrentMonthMillis &&
-        endDateTime == DateTime.now().lastTimOfCurrentMonthMillis) {
-      return "هذا الشهر";
-    } else if (startDateTime == DateTime.now().firstTimePreviousMonthMillis &&
-        endDateTime == DateTime.now().lastTimOfPreviousMonthMillis) {
-      return "الشهر السابق";
-    } else {
-
-      String from = startDateTime != null ? (" من " + Constants.dateFromMilliSeconds(startDateTime)) : "";
-      String to = endDateTime != null ? (" ألي " + Constants.dateFromMilliSeconds(endDateTime)) : "";
-
-      return from + to;
-    }
-  }
 
   }

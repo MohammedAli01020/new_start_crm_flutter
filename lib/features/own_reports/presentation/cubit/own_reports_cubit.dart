@@ -6,6 +6,7 @@ import 'package:meta/meta.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import '../../../../core/error/failures.dart';
+import '../../../employees/data/models/employee_model.dart';
 import '../../data/models/count_customer_type_filters_model.dart';
 
 part 'own_reports_state.dart';
@@ -17,6 +18,19 @@ class OwnReportsCubit extends Cubit<OwnReportsState> {
 
   static OwnReportsCubit get(context) => BlocProvider.of(context);
 
+
+  void updateFilter(CountCustomerTypeFiltersModel newFilter) {
+    emit(StartUpdateFilter());
+    countCustomerTypeFiltersModel = newFilter;
+    emit(EndUpdateFilter());
+  }
+
+  void resetFilter() {
+    emit(StartUpdateFilter());
+    countCustomerTypeFiltersModel = CountCustomerTypeFiltersModel.initial();
+    emit(EndUpdateFilter());
+  }
+
   CountCustomerTypeFiltersModel countCustomerTypeFiltersModel = CountCustomerTypeFiltersModel.initial();
 
   Future<void> fetchEmployeeReports() async {
@@ -27,6 +41,16 @@ class OwnReportsCubit extends Cubit<OwnReportsState> {
 
     emit(response.fold((failure) => FetchEmployeeReportsError(msg: Constants.mapFailureToMsg(failure)),
             (r) => EndFetchEmployeeReports(employeeStatisticsResult: r)));
+
+  }
+
+
+  EmployeeModel? selectedEmployee;
+
+  void setSelectedEmployee(EmployeeModel? newEmployee) {
+    emit(StartSetSelectedEmployee());
+    selectedEmployee = newEmployee;
+    emit(EndSetSelectedEmployee());
 
   }
 }

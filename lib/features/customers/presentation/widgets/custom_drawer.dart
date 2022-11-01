@@ -13,18 +13,22 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../config/routes/app_routes.dart';
+import '../../../../core/utils/assets_manager.dart';
 import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../../core/widgets/custom_list_tile.dart';
+import '../../../../core/widgets/default_user_avatar_widget.dart';
 import '../../../login/presentation/cubit/login_cubit.dart';
 import '../../../sources/presentation/screens/sources_screen.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class CustomDrawer extends StatelessWidget {
   final CustomerCubit customerCubit;
 
   final _scrollController = ScrollController();
   static const _extraScrollSpeed = 80;
-   CustomDrawer({Key? key, required this.customerCubit}) : super(key: key) {
+
+  CustomDrawer({Key? key, required this.customerCubit}) : super(key: key) {
     if (Responsive.isWindows || Responsive.isLinux || Responsive.isMacOS) {
       _scrollController.addListener(() {
         ScrollDirection scrollDirection =
@@ -42,8 +46,8 @@ class CustomDrawer extends StatelessWidget {
     }
   }
 
-
-  void _getPageCustomers({bool refresh = false, required BuildContext context}) {
+  void _getPageCustomers(
+      {bool refresh = false, required BuildContext context}) {
     BlocProvider.of<CustomerCubit>(context).fetchCustomers(refresh: refresh);
   }
 
@@ -55,107 +59,122 @@ class CustomDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
-              currentAccountPicture: BlocConsumer<LoginCubit, LoginState>(
-                listener: (context, state) {
-                  if (state is EndGettingEmployee) {
-                    if (Constants.currentEmployee!.permissions
-                        .contains(AppStrings.viewAllLeads)) {
-                      customerCubit.updateFilter(
-                          customerCubit.customerFiltersModel.copyWith(
-                              teamId: const Wrapped.value(null),
-                              employeeId: const Wrapped.value(null),
-                              lastEventIds: const Wrapped.value(null),
-                              customerTypes:
-                                  Wrapped.value(CustomerTypes.ALL.name)));
+              decoration: const BoxDecoration(color: Colors.transparent),
+              currentAccountPicture: DefaultUserAvatarWidget(
+                imageUrl: Constants.currentEmployee?.imageUrl,
+                height: 50.0,
+                fullName: Constants.currentEmployee?.fullName,
 
-                      _getPageCustomers(refresh: true, context: context);
-                    } else if (Constants.currentEmployee!.permissions
-                            .contains(AppStrings.viewTeamLeads) &&
-                        Constants.currentEmployee!.teamId != null) {
-                      customerCubit.updateFilter(
-                          customerCubit.customerFiltersModel.copyWith(
-                              teamId: Wrapped.value(
-                                  Constants.currentEmployee?.teamId),
-                              employeeId: Wrapped.value(
-                                  Constants.currentEmployee?.employeeId),
-                              lastEventIds: const Wrapped.value(null),
-                              customerTypes: Wrapped.value(
-                                  CustomerTypes.ME_AND_TEAM.name)));
-                      _getPageCustomers(refresh: true, context: context);
-                    } else if (Constants.currentEmployee!.permissions
-                        .contains(AppStrings.viewMyAssignedLeads)) {
-                      customerCubit.updateFilter(
-                          customerCubit.customerFiltersModel.copyWith(
-                              teamId: const Wrapped.value(null),
-                              employeeId: Wrapped.value(
-                                  Constants.currentEmployee?.employeeId),
-                              lastEventIds: const Wrapped.value(null),
-                              customerTypes:
-                                  Wrapped.value(CustomerTypes.ME.name)));
 
-                      _getPageCustomers(refresh: true, context: context);
-                    } else if (Constants.currentEmployee!.permissions
-                        .contains(AppStrings.viewNotAssignedLeads)) {
-                      customerCubit.updateFilter(
-                          customerCubit.customerFiltersModel.copyWith(
-                              teamId: const Wrapped.value(null),
-                              employeeId: const Wrapped.value(null),
-                              lastEventIds: const Wrapped.value(null),
-                              customerTypes: Wrapped.value(
-                                  CustomerTypes.NOT_ASSIGNED.name)));
-                      _getPageCustomers(refresh: true, context: context);
-                    } else {
-                      customerCubit.updateCustomers([]);
-                    }
-
-                    Navigator.pop(context);
-                    Constants.showToast(
-                        msg: "تم تحدث بينات المستخدم والاذونات",
-                        color: Colors.green,
-                        context: context);
-                  }
-
-                  if (state is GettingEmployeeError) {
-                    Constants.showToast(
-                        msg: "حدث خطأ اثناء تحديث بيانات المستخدم " + state.msg,
-                        context: context);
-                  }
-                },
-                builder: (context, state) {
-                  final cubit = LoginCubit.get(context);
-                  return IconButton(
-                    onPressed: () {
-                      cubit.updateCurrentUser();
-                    },
-                    icon: state is StartGettingEmployee
-                        ? const SizedBox(
-                            width: 15.0,
-                            height: 15.0,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
-                            ))
-                        : const Icon(
-                            Icons.refresh,
-                            color: Colors.white,
-                            size: 50.0,
-                          ),
-                  );
-                },
               ),
-              accountName: Text(Constants.currentEmployee!.fullName),
-              accountEmail: Text(Constants.currentEmployee!.username)),
+              accountName: Text(
+                Constants.currentEmployee!.fullName,
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+              accountEmail: Text(Constants.currentEmployee!.username,
+                  style: Theme.of(context).textTheme.bodyText1)),
 
+          BlocConsumer<LoginCubit, LoginState>(
+            listener: (context, state) {
+              if (state is EndGettingEmployee) {
+                if (Constants.currentEmployee!.permissions
+                    .contains(AppStrings.viewAllLeads)) {
+                  customerCubit.updateFilter(customerCubit.customerFiltersModel
+                      .copyWith(
+                          teamId: const Wrapped.value(null),
+                          employeeId: const Wrapped.value(null),
+                          lastEventIds: const Wrapped.value(null),
+                          customerTypes:
+                              Wrapped.value(CustomerTypes.ALL.name)));
+
+                  _getPageCustomers(refresh: true, context: context);
+                } else if (Constants.currentEmployee!.permissions
+                        .contains(AppStrings.viewTeamLeads) &&
+                    Constants.currentEmployee!.teamId != null) {
+                  customerCubit.updateFilter(customerCubit.customerFiltersModel
+                      .copyWith(
+                          teamId:
+                              Wrapped.value(Constants.currentEmployee?.teamId),
+                          employeeId: Wrapped.value(
+                              Constants.currentEmployee?.employeeId),
+                          lastEventIds: const Wrapped.value(null),
+                          customerTypes:
+                              Wrapped.value(CustomerTypes.ME_AND_TEAM.name)));
+                  _getPageCustomers(refresh: true, context: context);
+                } else if (Constants.currentEmployee!.permissions
+                    .contains(AppStrings.viewMyAssignedLeads)) {
+                  customerCubit.updateFilter(customerCubit.customerFiltersModel
+                      .copyWith(
+                          teamId: const Wrapped.value(null),
+                          employeeId: Wrapped.value(
+                              Constants.currentEmployee?.employeeId),
+                          lastEventIds: const Wrapped.value(null),
+                          customerTypes: Wrapped.value(CustomerTypes.ME.name)));
+
+                  _getPageCustomers(refresh: true, context: context);
+                } else if (Constants.currentEmployee!.permissions
+                    .contains(AppStrings.viewNotAssignedLeads)) {
+                  customerCubit.updateFilter(customerCubit.customerFiltersModel
+                      .copyWith(
+                          teamId: const Wrapped.value(null),
+                          employeeId: const Wrapped.value(null),
+                          lastEventIds: const Wrapped.value(null),
+                          customerTypes:
+                              Wrapped.value(CustomerTypes.NOT_ASSIGNED.name)));
+                  _getPageCustomers(refresh: true, context: context);
+                } else {
+                  customerCubit.updateCustomers([]);
+                }
+
+                Navigator.pop(context);
+                Constants.showToast(
+                    msg: "تم تحدث بينات المستخدم والاذونات",
+                    color: Colors.green,
+                    context: context);
+              }
+
+              if (state is GettingEmployeeError) {
+                Constants.showToast(
+                    msg: "حدث خطأ اثناء تحديث بيانات المستخدم " + state.msg,
+                    context: context);
+              }
+            },
+            builder: (context, state) {
+              final cubit = LoginCubit.get(context);
+              return CustomListTile(
+                title: 'تحديث البيانات',
+                trailing: IconButton(
+                  onPressed: () {
+                    cubit.updateCurrentUser();
+                  },
+                  icon: state is StartGettingEmployee
+                      ? const SizedBox(
+                          width: 15.0,
+                          height: 15.0,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ))
+                      : const Icon(
+                          Icons.refresh,
+                        ),
+                ),
+                onTapCallback: () {},
+              );
+            },
+          ),
 
           BlocConsumer<ThemeCubit, ThemeState>(
             listener: (context, state) {
               if (state is ChangeThemeToLightError) {
-                Constants.showToast(msg: "ChangeThemeToLightError: " + state.msg, context: context);
+                Constants.showToast(
+                    msg: "ChangeThemeToLightError: " + state.msg,
+                    context: context);
               }
 
               if (state is ChangeThemeToDarkError) {
-                Constants.showToast(msg: "ChangeThemeToDarkError: " + state.msg, context: context);
+                Constants.showToast(
+                    msg: "ChangeThemeToDarkError: " + state.msg,
+                    context: context);
               }
             },
             builder: (context, state) {
@@ -163,7 +182,9 @@ class CustomDrawer extends StatelessWidget {
               return CustomListTile(
                 title: 'الوضع',
                 subTitle: Constants.isDark ? "الليلي" : "الصباحي",
-                trailing: Constants.isDark ? const Icon(Icons.brightness_4) : const Icon(Icons.brightness_2),
+                trailing: Constants.isDark
+                    ? const Icon(Icons.brightness_4)
+                    : const Icon(Icons.brightness_2),
                 onTapCallback: () {
                   if (Constants.isDark) {
                     themeCubit.changeThemeToLight();
@@ -275,26 +296,50 @@ class CustomDrawer extends StatelessWidget {
           //   },
           // ),
 
-
           if (Constants.currentEmployee!.permissions
               .contains(AppStrings.viewAllStatistics))
-          CustomListTile(
-            title: 'التقارير',
-            trailing: const Icon(Icons.add_chart_outlined),
-            onTapCallback: () {
-              Navigator.popAndPushNamed(context, Routes.reportRoute);
-            },
-          ),
-
+            CustomListTile(
+              title: 'التقارير',
+              trailing: const Icon(Icons.add_chart_outlined),
+              onTapCallback: () {
+                Navigator.popAndPushNamed(context, Routes.reportRoute);
+              },
+            ),
 
           if (Constants.currentEmployee!.permissions
               .contains(AppStrings.viewPreDefinedRoles))
+            CustomListTile(
+              title: 'الادورا والاذونات',
+              trailing: const Icon(Icons.accessibility_sharp),
+              onTapCallback: () {
+                Navigator.popAndPushNamed(context, Routes.preDefinedRolesRoute,
+                    arguments: PreDefinedRoleType.VIEW_PRE_DEFINED_ROLES.name);
+              },
+            ),
+
           CustomListTile(
-            title: 'الادورا والاذونات',
-            trailing: const Icon(Icons.accessibility_sharp),
-            onTapCallback: () {
-              Navigator.popAndPushNamed(context, Routes.preDefinedRolesRoute,
-              arguments: PreDefinedRoleType.VIEW_PRE_DEFINED_ROLES.name);
+            title: 'عن التطبيق',
+            trailing: const Icon(Icons.info),
+            onTapCallback: () async {
+              PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+              String appName = packageInfo.appName;
+              String packageName = packageInfo.packageName;
+              String version = packageInfo.version;
+              String buildNumber = packageInfo.buildNumber;
+
+              showAboutDialog(
+                  context: context,
+                  applicationIcon: Image.asset(
+                    ImgAssets.iconLauncher,
+                    height: 50.0,
+                    width: 50.0,
+                    fit: BoxFit.cover,
+                  ),
+                  applicationVersion: version,
+                  applicationName: appName,
+                  applicationLegalese: "Developed by Eng. Mohamed Ali",
+                  children: [const Text("mohanader2244@gmail.com")]);
             },
           ),
 

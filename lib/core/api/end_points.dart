@@ -1,11 +1,12 @@
 class EndPoints {
   // static const String baseUrl = 'http://192.168.1.22:5000/';
 
-  // static const String baseUrl = 'http://newstart-env.eba-xhzfkni9.us-east-1.elasticbeanstalk.com/';
-
-
   // new start url
-  static const String baseUrl = 'http://newstartcrm-env.eba-mtaqwgeq.us-east-1.elasticbeanstalk.com/';
+  // static const String baseUrl = 'http://newstartcrm-env.eba-mtaqwgeq.us-east-1.elasticbeanstalk.com/';
+
+  // test new start url
+
+  static const String baseUrl = 'http://testnewstart-env.eba-ujdigsqp.us-east-1.elasticbeanstalk.com/';
 
 
 
@@ -23,7 +24,8 @@ class EndPoints {
 
   // customers
   static const String modifyCustomer = '${baseUrl}api/customers/modify';
-  static const String pageCustomer = '${baseUrl}api/customers/all';
+  static const String pageCustomers = '${baseUrl}api/customers/page';
+  static const String allCustomers = '${baseUrl}api/customers/all';
   static const String deleteCustomer= '${baseUrl}api/customers/delete/id/';
 
   static const String deleteAllCustomersByIds = '${baseUrl}api/customers/delete_all_by_ids';
@@ -52,6 +54,8 @@ class EndPoints {
   // user_teams
   static const String insertAllTeamMember = '${baseUrl}api/user_teams/insert_all';
   static const String pageTeamMember= '${baseUrl}api/user_teams/all';
+  static const String allTeamMembers = '${baseUrl}api/user_teams/employees/';
+
   static const String deleteAllTeamMembersByIds = '${baseUrl}api/user_teams/delete_all';
   static const String fetchAllTeamMembersIds = '${baseUrl}api/user_teams/';
 

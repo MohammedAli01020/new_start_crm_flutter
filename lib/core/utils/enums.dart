@@ -5,7 +5,8 @@ enum EmployeeTypes {
   TEAM_LEADERS,
   NOT_TEAM_LEADERS,
   NOT_TEAM_LEADERS_NOT_IN_TEAM,
-  I_CREATED
+  I_CREATED,
+  TEAM_MEMBERS
 }
 
 enum CustomerTypes { ALL, ME, ME_AND_TEAM, TEAM, NOT_ASSIGNED, OWN}
@@ -14,6 +15,9 @@ enum EmployeePickerTypes {
   SELECT_TEAM_LEADER,
   SELECT_TEAM_MEMBER,
   ASSIGN_MEMBER,
+
+  ASSIGN_FROM_TEAM_MEMBERS,
+
   SELECT_EMPLOYEE,
   SELECT_MULTIPLE_EMPLOYEE,
 }
@@ -42,6 +46,18 @@ enum TeamTypes {
   ALL,
   ME
 }
+
+
+enum EmployeeReportType {
+  ME,
+  SPECIFIC,
+  TEAM,
+  ME_AND_TEAM,
+  ALL
+}
+
+
+
 
 enum PermissionsType {
   view_all_leads,

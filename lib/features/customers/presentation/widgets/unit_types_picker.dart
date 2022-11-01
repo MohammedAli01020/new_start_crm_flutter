@@ -43,64 +43,66 @@ class UnitTypesPicker extends StatelessWidget {
             );
           }
 
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                height: 500.0,
-                width: 500.0,
-                child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    final currentUnitType = unitTypeCubit.unitTypes[index];
-                    return ListTile(
-                      onTap: () {
-                        unitTypeCubit.updateSelectedUnitTypes(currentUnitType.name);
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        onConfirmCallback(unitTypeCubit.selectedUnitTypes);
                       },
-                      // selectedTileColor: Colors.blueGrey[100],
-                      selected:
-                          unitTypeCubit.selectedUnitTypes.contains(currentUnitType.name),
-                      title: Text(currentUnitType.name),
-                    );
-                  },
-                  itemCount: unitTypeCubit.unitTypes.length,
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const Divider();
-                  },
+                      style: TextButton.styleFrom(
+
+                          textStyle: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold)),
+                      child: const Text('تأكيد'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      style: TextButton.styleFrom(
+                          textStyle: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold)),
+                      child: const Text('إلغاء'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        unitTypeCubit.resetSelectedUnitTypes();
+                      },
+                      style: TextButton.styleFrom(
+                          primary: Colors.red,
+                          textStyle: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold)),
+                      child: const Text('مسح الكل'),
+                    ),
+                  ],
                 ),
-              ),
-              Row(
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      onConfirmCallback(unitTypeCubit.selectedUnitTypes);
+                SizedBox(
+                  height: 500.0,
+                  width: 500.0,
+                  child: ListView.separated(
+                    itemBuilder: (context, index) {
+                      final currentUnitType = unitTypeCubit.unitTypes[index];
+                      return ListTile(
+                        onTap: () {
+                          unitTypeCubit.updateSelectedUnitTypes(currentUnitType.name);
+                        },
+                        // selectedTileColor: Colors.blueGrey[100],
+                        selected:
+                            unitTypeCubit.selectedUnitTypes.contains(currentUnitType.name),
+                        title: Text(currentUnitType.name),
+                      );
                     },
-                    style: TextButton.styleFrom(
-                        primary: Colors.black,
-                        textStyle: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.bold)),
-                    child: const Text('تأكيد'),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(false),
-                    style: TextButton.styleFrom(
-                        primary: Colors.black,
-                        textStyle: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.bold)),
-                    child: const Text('إلغاء'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      unitTypeCubit.resetSelectedUnitTypes();
+                    itemCount: unitTypeCubit.unitTypes.length,
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const Divider();
                     },
-                    style: TextButton.styleFrom(
-                        primary: Colors.red,
-                        textStyle: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.bold)),
-                    child: const Text('مسح الكل'),
                   ),
-                ],
-              ),
-            ],
+                ),
+
+              ],
+            ),
           );
         },
       ),

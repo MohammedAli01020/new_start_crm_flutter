@@ -17,7 +17,6 @@ class SourcesScreen extends StatelessWidget {
   final SourcesArgs sourcesArgs;
 
   final _scrollController = ScrollController();
-  static const _extraScrollSpeed = 80;
 
   SourcesScreen({Key? key, required this.sourcesArgs}) : super(key: key) {
     if (Responsive.isWindows || Responsive.isLinux || Responsive.isMacOS) {
@@ -27,8 +26,8 @@ class SourcesScreen extends StatelessWidget {
         if (scrollDirection != ScrollDirection.idle) {
           double scrollEnd = _scrollController.offset +
               (scrollDirection == ScrollDirection.reverse
-                  ? _extraScrollSpeed
-                  : -_extraScrollSpeed);
+                  ? Constants.extraScrollSpeed
+                  : -Constants.extraScrollSpeed);
           scrollEnd = min(_scrollController.position.maxScrollExtent,
               max(_scrollController.position.minScrollExtent, scrollEnd));
           _scrollController.jumpTo(scrollEnd);

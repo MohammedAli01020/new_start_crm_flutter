@@ -1,14 +1,14 @@
-import 'package:flutter/material.dart';
+
+import 'package:crm_flutter_project/core/utils/responsive.dart';
 import 'package:flutter/services.dart';
 import '../../core/utils/app_colors.dart';
 import '../../core/utils/app_strings.dart';
 import '../../core/utils/constants.dart';
-
+import 'package:flutter/material.dart';
 
 ThemeData appTheme() {
 
-
-  return ThemeData(
+  return ThemeData (
       primaryColor: AppColors.primary,
       primarySwatch: Constants.buildMaterialColor(AppColors.primary),
       hintColor: AppColors.hint,
@@ -32,9 +32,9 @@ ThemeData appTheme() {
 
 
     scrollbarTheme: ScrollbarThemeData(
-        thickness: MaterialStateProperty.all(10),
+        thickness: Responsive.isDesktopDevice ? MaterialStateProperty.all(10) : null,
         // thumbColor: MaterialStateProperty.all(Colors.blue),
-        radius: const Radius.circular(10),
+        // radius: const Radius.circular(10),
         // minThumbLength: 100
 
     ),

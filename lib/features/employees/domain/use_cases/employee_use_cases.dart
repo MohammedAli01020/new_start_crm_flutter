@@ -57,6 +57,7 @@ class EmployeeUseCasesImpl implements EmployeeUseCases {
     return employeeRepository.getEmployeeById(employeeId);
 
   }
+
 }
 
 class ModifyEmployeeParam {

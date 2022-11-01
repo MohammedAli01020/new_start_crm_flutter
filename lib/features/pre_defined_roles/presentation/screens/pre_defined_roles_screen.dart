@@ -17,7 +17,7 @@ class PreDefinedRolesScreen extends StatelessWidget {
   final String preDefinedRoleType;
 
   final _scrollController = ScrollController();
-  static const _extraScrollSpeed = 80;
+
 
   PreDefinedRolesScreen({Key? key, required this.preDefinedRoleType})
       : super(key: key) {
@@ -28,8 +28,8 @@ class PreDefinedRolesScreen extends StatelessWidget {
         if (scrollDirection != ScrollDirection.idle) {
           double scrollEnd = _scrollController.offset +
               (scrollDirection == ScrollDirection.reverse
-                  ? _extraScrollSpeed
-                  : -_extraScrollSpeed);
+                  ? Constants.extraScrollSpeed
+                  : -Constants.extraScrollSpeed);
           scrollEnd = min(_scrollController.position.maxScrollExtent,
               max(_scrollController.position.minScrollExtent, scrollEnd));
           _scrollController.jumpTo(scrollEnd);

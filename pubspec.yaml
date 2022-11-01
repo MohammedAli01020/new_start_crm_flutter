@@ -21,6 +21,10 @@ dependencies:
   csv: ^5.0.1
   excel: ^1.1.5
   path_provider: ^2.0.11
+  window_manager: ^0.2.7
+  flutter_acrylic: ^1.0.0+2
+  package_info_plus: ^3.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -54,7 +58,6 @@ dev_dependencies:
   flutter_image_compress: ^1.1.0
   #  sizer: ^2.0.15
   url_launcher: ^6.1.5
-  package_info_plus: any
   universal_platform: any
 
   # The following section is specific to Flutter.

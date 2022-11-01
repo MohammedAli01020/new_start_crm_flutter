@@ -7,6 +7,9 @@ class CurrentEmployee extends Equatable {
     required this.permissions,
     required this.fullName,
     required this.employeeId,
+
+    required this.imageUrl,
+
     required this.enabled,
     required this.token,
     required this.username,
@@ -17,6 +20,9 @@ class CurrentEmployee extends Equatable {
   final List<String> permissions;
   final String fullName;
   final int employeeId;
+
+  final String? imageUrl;
+
   final bool enabled;
   final String token;
   final String username;
@@ -27,6 +33,9 @@ class CurrentEmployee extends Equatable {
     Wrapped<List<String>>? permissions,
     Wrapped<String>? fullName,
     Wrapped<int>? employeeId,
+
+    Wrapped<String?>? imageUrl,
+
     Wrapped<bool>? enabled,
     Wrapped<String>? token,
     Wrapped<String>? username,
@@ -38,6 +47,9 @@ class CurrentEmployee extends Equatable {
         permissions: permissions != null ? permissions.value : this.permissions,
         fullName: fullName != null ? fullName.value : this.fullName,
         employeeId: employeeId != null ? employeeId.value : this.employeeId,
+
+        imageUrl: imageUrl != null ? imageUrl.value : this.imageUrl,
+
         enabled: enabled != null ? enabled.value : this.enabled,
         token: token != null ? token.value : this.token,
         username: username != null ? username.value : this.username,
@@ -53,6 +65,7 @@ class CurrentEmployee extends Equatable {
         permissions,
         fullName,
         employeeId,
+        imageUrl,
         enabled,
         token,
         username,

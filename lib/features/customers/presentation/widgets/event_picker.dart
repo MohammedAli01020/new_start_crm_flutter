@@ -69,46 +69,6 @@ class EventsPicker extends StatelessWidget {
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(
-                height: 500.0,
-                width: 500.0,
-                child: ListView.separated(
-                  controller: _scrollController,
-                  itemBuilder: (context, index) {
-                    final currentEvent = eventCubit.events[index];
-                    return ListTile(
-                      onTap: () {
-
-                        eventCubit.updateSelectedEvents(currentEvent);
-
-                        // if (currentEvent.name == AppStrings.noEvent) {
-                        //   if (eventCubit.selectedEvents.contains(currentEvent)) {
-                        //     eventCubit.setSelectedEvents([]);
-                        //   } else {
-                        //     List<EventModel> noEventList = [
-                        //       currentEvent
-                        //     ];
-                        //     eventCubit.setSelectedEvents(noEventList);
-                        //   }
-                        //
-                        // } else {
-                        //   eventCubit.removeNoEvent();
-                        //   eventCubit.updateSelectedEvents(currentEvent);
-                        // }
-
-                      },
-                      // selectedTileColor: Colors.blueGrey[100],
-                      selected:
-                          eventCubit.selectedEvents.contains(currentEvent),
-                      title: Text(currentEvent.name),
-                    );
-                  },
-                  itemCount: eventCubit.events.length,
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const Divider();
-                  },
-                ),
-              ),
               Row(
                 children: [
                   TextButton(
@@ -116,7 +76,6 @@ class EventsPicker extends StatelessWidget {
                       onConfirmCallback(eventCubit.selectedEvents);
                     },
                     style: TextButton.styleFrom(
-                        primary: Colors.black,
                         textStyle: const TextStyle(
                             fontSize: 14, fontWeight: FontWeight.bold)),
                     child: const Text('تأكيد'),
@@ -124,7 +83,6 @@ class EventsPicker extends StatelessWidget {
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(false),
                     style: TextButton.styleFrom(
-                        primary: Colors.black,
                         textStyle: const TextStyle(
                             fontSize: 14, fontWeight: FontWeight.bold)),
                     child: const Text('إلغاء'),
@@ -141,6 +99,28 @@ class EventsPicker extends StatelessWidget {
                     child: const Text('مسح الكل'),
                   ),
                 ],
+              ),
+              SizedBox(
+                height: 500.0,
+                width: 500.0,
+                child: ListView.separated(
+                  controller: _scrollController,
+                  itemBuilder: (context, index) {
+                    final currentEvent = eventCubit.events[index];
+                    return ListTile(
+                      onTap: () {
+                        eventCubit.updateSelectedEvents(currentEvent);
+                      },
+                      selected:
+                          eventCubit.selectedEvents.contains(currentEvent),
+                      title: Text(currentEvent.name),
+                    );
+                  },
+                  itemCount: eventCubit.events.length,
+                  separatorBuilder: (BuildContext context, int index) {
+                    return const Divider();
+                  },
+                ),
               ),
             ],
           );

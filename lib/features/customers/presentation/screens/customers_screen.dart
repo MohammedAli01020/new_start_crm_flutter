@@ -2,11 +2,14 @@ import 'dart:math';
 
 import 'package:crm_flutter_project/core/utils/app_strings.dart';
 import 'package:crm_flutter_project/core/utils/media_query_values.dart';
-import 'package:crm_flutter_project/core/utils/my_behavior.dart';
+
 import 'package:crm_flutter_project/core/utils/wrapper.dart';
 import 'package:crm_flutter_project/features/customers/domain/use_cases/customer_use_cases.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_members/team_members_cubit.dart';
+
 import 'package:flutter/material.dart';
+
+
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,17 +20,18 @@ import '../../../../core/utils/responsive.dart';
 import '../../../../core/widgets/default_hieght_sized_box.dart';
 import '../../../../core/widgets/default_user_avatar_widget.dart';
 import '../../../../core/widgets/error_item_widget.dart';
+import '../../../employees/data/models/employee_model.dart';
 import '../../../employees/presentation/cubit/employee_cubit.dart';
 import '../../../employees/presentation/screens/employee_details_screen.dart';
+import '../../data/models/customer_filters_model.dart';
 import '../../data/models/customer_model.dart';
+import '../../data/models/event_model.dart';
 import '../cubit/customer_cubit.dart';
-import '../widgets/bulk_actions_widget.dart';
 import '../widgets/create_new_action_dailog.dart';
 import '../widgets/custom_drawer.dart';
 import '../widgets/customers_app_bar.dart';
 import '../widgets/customers_data_table.dart';
 import '../widgets/duplicate_customers_widget.dart';
-import '../widgets/export_button_widget.dart';
 import 'customer_datails_screen.dart';
 
 class CustomersScreen extends StatefulWidget {
@@ -35,9 +39,10 @@ class CustomersScreen extends StatefulWidget {
 
   final _gridScrollController = ScrollController();
 
-  static const _extraScrollSpeed = 80;
 
-  CustomersScreen({Key? key}) : super(key: key) {
+  final CustomersArgs customersArgs;
+
+  CustomersScreen({Key? key, required this.customersArgs}) : super(key: key) {
     if (Responsive.isWindows || Responsive.isLinux || Responsive.isMacOS) {
       _scrollController.addListener(() {
         ScrollDirection scrollDirection =
@@ -45,8 +50,8 @@ class CustomersScreen extends StatefulWidget {
         if (scrollDirection != ScrollDirection.idle) {
           double scrollEnd = _scrollController.offset +
               (scrollDirection == ScrollDirection.reverse
-                  ? _extraScrollSpeed
-                  : -_extraScrollSpeed);
+                  ? Constants.extraScrollSpeed
+                  : -Constants.extraScrollSpeed);
           scrollEnd = min(_scrollController.position.maxScrollExtent,
               max(_scrollController.position.minScrollExtent, scrollEnd));
           _scrollController.jumpTo(scrollEnd);
@@ -59,8 +64,8 @@ class CustomersScreen extends StatefulWidget {
         if (scrollDirection != ScrollDirection.idle) {
           double scrollEnd = _gridScrollController.offset +
               (scrollDirection == ScrollDirection.reverse
-                  ? _extraScrollSpeed
-                  : -_extraScrollSpeed);
+                  ? Constants.extraScrollSpeed
+                  : -Constants.extraScrollSpeed);
           scrollEnd = min(_gridScrollController.position.maxScrollExtent,
               max(_gridScrollController.position.minScrollExtent, scrollEnd));
           _gridScrollController.jumpTo(scrollEnd);
@@ -81,19 +86,35 @@ class _CustomersScreenState extends State<CustomersScreen> {
   final _tableKey = GlobalKey<PaginatedDataTableState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
+
+
+
+
   @override
   void initState() {
     super.initState();
-
     final customerCubit = BlocProvider.of<CustomerCubit>(context);
-    Constants.refreshCustomers(customerCubit);
+    if (widget.customersArgs.customerFiltersModel != null) {
+
+      customerCubit.updateFilter(widget.customersArgs.customerFiltersModel!);
+      customerCubit.updateSelectedAssignEmployeeIds(widget.customersArgs.assignedEmployee);
+
+      customerCubit.fetchCustomers(refresh: true);
+    } else {
+      Constants.refreshCustomers(customerCubit);
+    }
+
   }
 
   Widget _buildBodyTable(
       {required CustomerCubit cubit, required CustomerState state}) {
-    // if (state is StartRefreshCustomers) {
-    //   return const Center(child: CircularProgressIndicator());
-    // }
+
+    if (Constants.customerTableConfigModel.isVertical ?? false) {
+      if (state is StartRefreshCustomers) {
+        return const Center(child: CircularProgressIndicator());
+      }
+    }
+
 
     if (state is RefreshCustomersError) {
       return ErrorItemWidget(
@@ -140,7 +161,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
           ),
 
           Expanded(
-            child: Scrollbar(child: LayoutBuilder(
+            child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
                 int colCount = max(1, (constraints.maxWidth / 200).floor());
 
@@ -158,9 +179,11 @@ class _CustomersScreenState extends State<CustomersScreen> {
                       if (index < cubit.customers.length) {
                         final currentCustomer = cubit.customers[index];
 
-                        return InkWell(
+                        return GestureDetector(
                           onLongPress: () {
-                            cubit.updateSelectedCustomers(currentCustomer, true);
+
+                            cubit.updateSelectedCustomers(currentCustomer,
+                                !cubit.selectedCustomers.contains(currentCustomer));
                           },
                           onTap: () {
                             if (cubit.selectedCustomers.isEmpty) {
@@ -180,8 +203,8 @@ class _CustomersScreenState extends State<CustomersScreen> {
                             padding: const EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
                               color: cubit.selectedCustomers.contains(currentCustomer)
-                                  ? Theme.of(context).highlightColor
-                                  : Colors.blueGrey[100],
+                                  ? Colors.blueGrey[100]
+                                  : Theme.of(context).highlightColor,
                               borderRadius: BorderRadius.circular(5),
                             ),
                             child: Column(
@@ -307,9 +330,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                                           },
                                           child: Text(
                                             currentCustomer.phoneNumbers[0],
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .primaryColor),
+                                            style: Theme.of(context).textTheme.button,
                                           )),
                                       const SizedBox(
                                         height: 8.0,
@@ -406,15 +427,11 @@ class _CustomersScreenState extends State<CustomersScreen> {
                                           },
                                           child: Text(
                                               currentCustomer.phoneNumbers[1],
-                                              style: TextStyle(
-                                                  color: Theme.of(context)
-                                                      .primaryColor)))
+                                              style:Theme.of(context).textTheme.button,))
                                           : InkWell(
                                           onTap: () {},
                                           child: Text("no",
-                                              style: TextStyle(
-                                                  color: Theme.of(context)
-                                                      .primaryColor))),
+                                              style: Theme.of(context).textTheme.button,)),
                                     ],
                                   )
                                       : const Text("مخفي"),
@@ -500,9 +517,9 @@ class _CustomersScreenState extends State<CustomersScreen> {
                                     child: Container(
                                       padding: const EdgeInsets.all(8.0),
                                       decoration: BoxDecoration(
+                                        color: _getColor(currentCustomer.lastAction?.event),
                                           shape: BoxShape.rectangle,
-                                          border:
-                                          Border.all(color: Colors.blueGrey)),
+                                          border: Border.all(color: Colors.blueGrey)),
                                       child: Text(
                                         currentCustomer.lastAction != null &&
                                             currentCustomer
@@ -594,8 +611,10 @@ class _CustomersScreenState extends State<CustomersScreen> {
                                       ? Constants.dateTimeFromMilliSeconds(
                                       currentCustomer.lastAction!.postponeDateTime)
                                       : "لا يوجد")),
-                                if (Constants
-                                    .customerTableConfigModel.showDuplicateNumber)
+
+                                const Spacer(),
+
+                                if (Constants.customerTableConfigModel.showDuplicateNumber)
                                   (Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -603,7 +622,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                                       const SizedBox(
                                         width: 10.0,
                                       ),
-                                      if (!Constants.currentEmployee!.permissions
+                                      if (Constants.currentEmployee!.permissions
                                           .contains(AppStrings.viewDuplicatesLeads))
                                         IconButton(
                                           onPressed: () {
@@ -684,7 +703,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                       }
                     });
               },
-            )),
+            ),
           ),
         ],
       );
@@ -694,6 +713,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
         child: SizedBox(
           width: context.width,
           child: PaginatedDataTable(
+
             key: _tableKey,
               columns: [
                 if (Constants.customerTableConfigModel.showName)
@@ -704,10 +724,8 @@ class _CustomersScreenState extends State<CustomersScreen> {
                   const DataColumn(label: Text('معين إلي')),
                 if (Constants.customerTableConfigModel.showLastAction)
                   const DataColumn(label: Text('أخر حالة')),
-
                 if (Constants.customerTableConfigModel.showLastComment)
                   const DataColumn(label: Text('اخر تعليق')),
-
                 if (Constants.customerTableConfigModel.showSources)
                   const DataColumn(label: Text('المصادر')),
                 if (Constants.customerTableConfigModel.showUnitTypes)
@@ -729,23 +747,8 @@ class _CustomersScreenState extends State<CustomersScreen> {
                 if (Constants.customerTableConfigModel.showDuplicateNumber)
                   const DataColumn(label: Text('عدد التكرارات')),
               ],
-              header:
-              // cubit.selectedCustomers.isNotEmpty ? Container(
-              //   color: Theme.of(context).highlightColor,
-              //   child: Row(
-              //     mainAxisSize: MainAxisSize.min,
-              //     children: [
-              //       IconButton(onPressed: () {
-              //         cubit.setSelectedCustomers([]);
-              //       }, icon: Icon(Icons.clear, color: Theme.of(context).primaryColor,)),
-              //       Text("المحدد: " + cubit.selectedCustomers.length.toString(), style: const TextStyle(fontSize: 14.0))
-              //     ],
-              //   ),
-              // ) :
-              Text("العملاء: " + cubit.customerTotalElements.toString(), style: const TextStyle(fontSize: 14.0),),
-
-              actions:
-              [
+              header: Text("العملاء: " + cubit.customerTotalElements.toString(), style: const TextStyle(fontSize: 14.0),),
+              actions: [
               state is StartRefreshCustomers || state is StartLoadingCustomers
                   ? const Center(
                 child: SizedBox(
@@ -759,7 +762,10 @@ class _CustomersScreenState extends State<CustomersScreen> {
                     _tableKey.currentState?.pageTo(0);
                     cubit.updateTableIndex(1);
                     cubit.setSelectedCustomers([]);
-                    Constants.refreshCustomers(cubit);
+
+                    cubit.fetchCustomers(refresh: true);
+
+                    // Constants.refreshCustomers(cubit);
                   },
                   icon: const Icon(Icons.refresh))
               ],
@@ -771,45 +777,38 @@ class _CustomersScreenState extends State<CustomersScreen> {
 
                 await cubit.fetchCustomers();
               },
-              onSelectAll: (val) {
 
+              onSelectAll: (val) async {
 
-                cubit.setSelectedCustomers([]);
-                //
-                // if (val != null && val == false) {
-                //   cubit.setSelectedCustomers([]);
-                // }
-
-                // else {
-                //   int customerCount = cubit.customers.length;
-                //   if (customerCount >= (cubit.currentTablePageIndex) * cubit.customerFiltersModel.pageSize ~/ 2) {
-                //
-                //     print("greater");
-                //     cubit.setSelectedCustomers(cubit.customers.sublist(
-                //         cubit.currentTablePageIndex * cubit.customerFiltersModel.pageSize ~/ 2,
-                //         cubit.currentTablePageIndex + 1 * cubit.customerFiltersModel.pageSize ~/ 2));
-                //   } else {
-                //     print("less");
-                //     cubit.setSelectedCustomers(cubit.customers.sublist(
-                //         cubit.currentTablePageIndex + 1 * cubit.customerFiltersModel.pageSize ~/ 2,
-                //         customerCount));
-                //   }
-                // }
+                if (val != null && val == false) {
+                  cubit.setSelectedCustomers([]);
+                } else {
+                  if (state is StartUpdateSelectedCustomers) {
+                    Constants.showToast(msg: "انتظر جاري التحميل ...", context: context);
+                    return;
+                  }
+                  await cubit.fetchAllCustomers();
+                }
               },
               source: CustomersDataTable(
                 customerCubit: cubit,
                 onSelect: (val, CustomerModel currentCustomer) {
 
-                  if (cubit.selectedCustomers.isEmpty) {
-                    Navigator.pushNamed(context, Routes.customersDetailsRoute,
-                        arguments: CustomerDetailsArgs(
-                            customerModel: currentCustomer,
-                            customerCubit: cubit,
-                            fromRoute: Routes.customersRoute,
-                            teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context)));
-                  } else {
+                  if (Responsive.isDesktopDevice) {
                     cubit.updateSelectedCustomers(currentCustomer, val);
+                  } else {
+                    if (cubit.selectedCustomers.isEmpty) {
+                      Navigator.pushNamed(context, Routes.customersDetailsRoute,
+                          arguments: CustomerDetailsArgs(
+                              customerModel: currentCustomer,
+                              customerCubit: cubit,
+                              fromRoute: Routes.customersRoute,
+                              teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context)));
+                    } else {
+                      cubit.updateSelectedCustomers(currentCustomer, val);
+                    }
                   }
+
 
                 },
                 onLongPressCallback: (CustomerModel currentCustomer) {
@@ -823,13 +822,11 @@ class _CustomersScreenState extends State<CustomersScreen> {
         ),
       );
     }
-
-
-
   }
 
   @override
   Widget build(BuildContext context) {
+
     return BlocConsumer<CustomerCubit, CustomerState>(
       listener: (context, state) {
         final cubit = CustomerCubit.get(context);
@@ -909,11 +906,38 @@ class _CustomersScreenState extends State<CustomersScreen> {
     );
   }
 
+
+  Color? _getColor(EventModel? event) {
+
+    if (event == null || event.name == "No Action") return null;
+
+    if (event.name == "Cancellation") {
+      return Colors.red;
+    } else if (event.name == "Contract") {
+      return Colors.green;
+    }
+
+    return Colors.yellow;
+
+
+  }
+
+
   @override
   void dispose() {
     widget._scrollController.dispose();
     widget._gridScrollController.dispose();
-
     super.dispose();
   }
+}
+
+
+
+class CustomersArgs {
+
+  final CustomerFiltersModel? customerFiltersModel;
+  final List<EmployeeModel>? assignedEmployee;
+
+  CustomersArgs({this.customerFiltersModel, this.assignedEmployee});
+
 }

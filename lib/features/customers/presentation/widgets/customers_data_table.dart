@@ -2,6 +2,7 @@ import 'package:crm_flutter_project/config/routes/app_routes.dart';
 import 'package:crm_flutter_project/core/utils/app_colors.dart';
 import 'package:crm_flutter_project/core/utils/app_strings.dart';
 import 'package:crm_flutter_project/core/widgets/default_hieght_sized_box.dart';
+import 'package:crm_flutter_project/features/customers/data/models/event_model.dart';
 import 'package:crm_flutter_project/features/customers/presentation/cubit/customer_cubit.dart';
 import 'package:crm_flutter_project/features/customers/presentation/screens/customer_datails_screen.dart';
 import 'package:crm_flutter_project/features/employees/presentation/cubit/employee_cubit.dart';
@@ -41,10 +42,12 @@ class CustomersDataTable extends DataTableSource {
 
       return DataRow.byIndex(
           index: index,
+
           selected: customerCubit.selectedCustomers.contains(currentCustomer),
           onSelectChanged: (val) {
             onSelect(val, currentCustomer);
           },
+
           onLongPress: () {
             onLongPressCallback(currentCustomer);
           },
@@ -59,27 +62,24 @@ class CustomersDataTable extends DataTableSource {
                             fromRoute: Routes.customersRoute,
                             teamMembersCubit: teamMembersCubit));
                   },
-                  child: Constants.currentEmployee!.permissions
-                          .contains(AppStrings.viewLeadName)
-                      ? Container(
-                          color: Theme.of(context).highlightColor,
+                  child: Container(
+                          color: currentCustomer.duplicateNo != null && currentCustomer.duplicateNo! > 0 ?
+                          Theme.of(context).hintColor : Theme.of(context).highlightColor,
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(currentCustomer.fullName.length < 15
+                          child: Constants.currentEmployee!.permissions
+                              .contains(AppStrings.viewLeadName) ? Text(currentCustomer.fullName.length < 15
                               ? currentCustomer.fullName
-                              : "${currentCustomer.fullName.substring(0, 15)}..."),
+                              : "${currentCustomer.fullName.substring(0, 15)}...") : const Text("عرض التفاصيل"),
                         )
-                      : const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text("عرض التفاصيل"),
-                        ))),
+                     )),
             if (Constants.customerTableConfigModel.showPhone)
               DataCell(Constants.currentEmployee!.permissions
                       .contains(AppStrings.viewLeadPhone)
                   ? Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        TextButton(
-                            onPressed: () {
+                        InkWell(
+                            onTap: () {
                               Constants.showDialogBox(
                                   context: context,
                                   title: "رقم الهاتف",
@@ -147,12 +147,12 @@ class CustomersDataTable extends DataTableSource {
                                     ],
                                   ));
                             },
-                            child: Text(currentCustomer.phoneNumbers[0])),
+                            child: Text(currentCustomer.phoneNumbers[0], style: Theme.of(context).textTheme.button,)),
                         if (currentCustomer.phoneNumbers.length > 1)
                           const Text(" - "),
                         if (currentCustomer.phoneNumbers.length > 1)
-                          TextButton(
-                              onPressed: () {
+                          InkWell(
+                              onTap: () {
                                 Constants.showDialogBox(
                                     context: context,
                                     title: "رقم الهاتف",
@@ -221,7 +221,7 @@ class CustomersDataTable extends DataTableSource {
                                       ],
                                     ));
                               },
-                              child: Text(currentCustomer.phoneNumbers[1])),
+                              child: Text(currentCustomer.phoneNumbers[1], style: Theme.of(context).textTheme.button)),
                       ],
                     )
                   : const Text("مخفي")),
@@ -241,18 +241,18 @@ class CustomersDataTable extends DataTableSource {
                                 fromRoute: Routes.customersRoute));
                       }
                     },
-                    imageUrl: null,
+                    imageUrl: currentCustomer.assignedEmployee?.imageUrl,
                     fullName: currentCustomer.assignedEmployee?.fullName,
                     height: 40.0,
                   ),
-                  const SizedBox(
-                    width: 5.0,
-                  ),
-                  Text(currentCustomer.assignedEmployee != null
-                      ? (currentCustomer.assignedEmployee!.fullName.length < 15
-                          ? currentCustomer.assignedEmployee!.fullName
-                          : "${currentCustomer.assignedEmployee!.fullName.substring(0, 15)}...")
-                      : "لا يوجد")
+                  // const SizedBox(
+                  //   width: 5.0,
+                  // ),
+                  // Text(currentCustomer.assignedEmployee != null
+                  //     ? (currentCustomer.assignedEmployee!.fullName.length < 15
+                  //         ? currentCustomer.assignedEmployee!.fullName
+                  //         : "${currentCustomer.assignedEmployee!.fullName.substring(0, 15)}...")
+                  //     : "لا يوجد")
                 ],
               )),
             if (Constants.customerTableConfigModel.showLastAction)
@@ -289,8 +289,9 @@ class CustomersDataTable extends DataTableSource {
                         }
                       },
                       child: Container(
-                        padding: const EdgeInsets.all(2.0),
+                        padding: const EdgeInsets.all(5.0),
                         decoration: BoxDecoration(
+                          color: _getColor(currentCustomer.lastAction?.event),
                             shape: BoxShape.rectangle,
                             border: Border.all(color: Colors.blueGrey)),
                         child: Text(currentCustomer.lastAction != null &&
@@ -392,16 +393,16 @@ class CustomersDataTable extends DataTableSource {
                                       fromRoute: Routes.customersRoute));
                             }
                           },
-                          imageUrl: null,
+                          imageUrl: currentCustomer.createdBy?.imageUrl,
                           fullName: currentCustomer.createdBy?.fullName,
                           height: 40.0,
                         ),
-                        const SizedBox(
-                          width: 5.0,
-                        ),
-                        Text(currentCustomer.createdBy != null
-                            ? currentCustomer.createdBy!.fullName
-                            : "لا يوجد")
+                        // const SizedBox(
+                        //   width: 5.0,
+                        // ),
+                        // Text(currentCustomer.createdBy != null
+                        //     ? currentCustomer.createdBy!.fullName
+                        //     : "لا يوجد")
                       ],
                     )
                   : const Text("مخفي")),
@@ -421,16 +422,16 @@ class CustomersDataTable extends DataTableSource {
                                 fromRoute: Routes.customersRoute));
                       }
                     },
-                    imageUrl: null,
+                    imageUrl: currentCustomer.assignedBy?.imageUrl,
                     fullName: currentCustomer.assignedBy?.fullName,
                     height: 40.0,
                   ),
-                  const SizedBox(
-                    width: 5.0,
-                  ),
-                  Text(currentCustomer.assignedBy != null
-                      ? currentCustomer.assignedBy!.fullName
-                      : "لا يوجد")
+                  // const SizedBox(
+                  //   width: 5.0,
+                  // ),
+                  // Text(currentCustomer.assignedBy != null
+                  //     ? currentCustomer.assignedBy!.fullName
+                  //     : "لا يوجد")
                 ],
               )),
             if (Constants.customerTableConfigModel.showReminderTime)
@@ -447,8 +448,9 @@ class CustomersDataTable extends DataTableSource {
                   const SizedBox(
                     width: 10.0,
                   ),
-                  if (!Constants.currentEmployee!.permissions
+                  if (Constants.currentEmployee!.permissions
                       .contains(AppStrings.viewDuplicatesLeads))
+
                     IconButton(
                       onPressed: () {
                         if (currentCustomer.duplicateNo == 0) {
@@ -495,4 +497,19 @@ class CustomersDataTable extends DataTableSource {
 
   @override
   int get selectedRowCount => 0;
+
+  Color? _getColor(EventModel? event) {
+
+    if (event == null || event.name == "No Action") return null;
+
+    if (event.name == "Cancellation") {
+      return Colors.red;
+    } else if (event.name == "Contract") {
+      return Colors.green;
+    }
+
+    return Colors.yellow;
+
+
+  }
 }

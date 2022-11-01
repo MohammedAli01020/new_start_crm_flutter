@@ -66,65 +66,66 @@ class SourcesPicker extends StatelessWidget {
             );
           }
 
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                height: 500.0,
-                width: 500.0,
-                child: ListView.separated(
-                  controller: _scrollController,
-                  itemBuilder: (context, index) {
-                    final currentSource = sourceCubit.sources[index];
-                    return ListTile(
-                      onTap: () {
-                        sourceCubit.updateSelectedSources(currentSource.name);
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        onConfirmCallback(sourceCubit.selectedSources);
                       },
-                      // selectedTileColor: Colors.blueGrey[100],
-                      selected:
-                          sourceCubit.selectedSources.contains(currentSource.name),
-                      title: Text(currentSource.name),
-                    );
-                  },
-                  itemCount: sourceCubit.sources.length,
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const Divider();
-                  },
+                      style: TextButton.styleFrom(
+                          textStyle: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold)),
+                      child: const Text('تأكيد'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      style: TextButton.styleFrom(
+                          textStyle: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold)),
+                      child: const Text('إلغاء'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        sourceCubit.resetSelectedSources();
+                      },
+                      style: TextButton.styleFrom(
+                          primary: Colors.red,
+                          textStyle: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold)),
+                      child: const Text('مسح الكل'),
+                    ),
+                  ],
                 ),
-              ),
-              Row(
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      onConfirmCallback(sourceCubit.selectedSources);
+                SizedBox(
+                  height: 500.0,
+                  width: 500.0,
+                  child: ListView.separated(
+                    controller: _scrollController,
+                    itemBuilder: (context, index) {
+                      final currentSource = sourceCubit.sources[index];
+                      return ListTile(
+                        onTap: () {
+                          sourceCubit.updateSelectedSources(currentSource.name);
+                        },
+                        // selectedTileColor: Colors.blueGrey[100],
+                        selected:
+                            sourceCubit.selectedSources.contains(currentSource.name),
+                        title: Text(currentSource.name),
+                      );
                     },
-                    style: TextButton.styleFrom(
-                        primary: Colors.black,
-                        textStyle: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.bold)),
-                    child: const Text('تأكيد'),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(false),
-                    style: TextButton.styleFrom(
-                        primary: Colors.black,
-                        textStyle: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.bold)),
-                    child: const Text('إلغاء'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      sourceCubit.resetSelectedSources();
+                    itemCount: sourceCubit.sources.length,
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const Divider();
                     },
-                    style: TextButton.styleFrom(
-                        primary: Colors.red,
-                        textStyle: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.bold)),
-                    child: const Text('مسح الكل'),
                   ),
-                ],
-              ),
-            ],
+                ),
+
+              ],
+            ),
           );
         },
       ),

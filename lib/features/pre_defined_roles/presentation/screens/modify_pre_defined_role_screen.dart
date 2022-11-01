@@ -22,7 +22,6 @@ class ModifyPreDefinedRoleScreen extends StatefulWidget {
   final ModifyPreDefinedRoleArgs modifyPreDefinedRoleArgs;
 
   final _scrollController = ScrollController();
-  static const _extraScrollSpeed = 80;
 
   ModifyPreDefinedRoleScreen({Key? key, required this.modifyPreDefinedRoleArgs})
       : super(key: key) {
@@ -33,8 +32,8 @@ class ModifyPreDefinedRoleScreen extends StatefulWidget {
         if (scrollDirection != ScrollDirection.idle) {
           double scrollEnd = _scrollController.offset +
               (scrollDirection == ScrollDirection.reverse
-                  ? _extraScrollSpeed
-                  : -_extraScrollSpeed);
+                  ? Constants.extraScrollSpeed
+                  : -Constants.extraScrollSpeed);
           scrollEnd = min(_scrollController.position.maxScrollExtent,
               max(_scrollController.position.minScrollExtent, scrollEnd));
           _scrollController.jumpTo(scrollEnd);

@@ -7,6 +7,9 @@ class EmployeeFilters extends Equatable {
   final String sortBy;
   final String? fullNameOrPhoneNumber;
   final String? employeeTypes;
+
+  final int? teamId;
+
   final int? startDateTime;
   final int? endDateTime;
 
@@ -27,7 +30,10 @@ class EmployeeFilters extends Equatable {
       required this.sortBy,
       required this.fullNameOrPhoneNumber,
       required this.employeeTypes,
-      required this.startDateTime,
+        required this.teamId,
+
+
+        required this.startDateTime,
       required this.endDateTime,
         required this.excludeTeamLeader,
         required this.notInThisTeamId,
@@ -43,6 +49,7 @@ class EmployeeFilters extends Equatable {
         sortBy,
         fullNameOrPhoneNumber,
         employeeTypes,
+    teamId,
         startDateTime,
         endDateTime,
     excludeTeamLeader,

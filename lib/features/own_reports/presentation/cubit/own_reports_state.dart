@@ -25,3 +25,13 @@ class FetchEmployeeReportsError extends OwnReportsState {
   @override
   List<Object> get props => [msg];
 }
+
+
+
+class StartUpdateFilter extends OwnReportsState {}
+
+class EndUpdateFilter extends OwnReportsState {}
+
+
+class StartSetSelectedEmployee extends OwnReportsState {}
+class EndSetSelectedEmployee extends OwnReportsState {}

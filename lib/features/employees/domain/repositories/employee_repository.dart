@@ -19,4 +19,6 @@ abstract class EmployeeRepository {
   Future<Either<Failure, RoleModel>> findRoleByEmployeeId(int employeeId);
 
   Future<Either<Failure, EmployeeModel>> getEmployeeById(int employeeId);
+
+
 }

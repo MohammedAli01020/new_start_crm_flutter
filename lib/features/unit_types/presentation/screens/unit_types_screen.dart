@@ -17,7 +17,6 @@ class UnitTypesScreen extends StatelessWidget {
   final UnitTypesArgs unitTypesArgs;
 
   final _scrollController = ScrollController();
-  static const _extraScrollSpeed = 80;
 
    UnitTypesScreen({Key? key, required this.unitTypesArgs})
       : super(key: key) {
@@ -28,8 +27,8 @@ class UnitTypesScreen extends StatelessWidget {
          if (scrollDirection != ScrollDirection.idle) {
            double scrollEnd = _scrollController.offset +
                (scrollDirection == ScrollDirection.reverse
-                   ? _extraScrollSpeed
-                   : -_extraScrollSpeed);
+                   ? Constants.extraScrollSpeed
+                   : -Constants.extraScrollSpeed);
            scrollEnd = min(_scrollController.position.maxScrollExtent,
                max(_scrollController.position.minScrollExtent, scrollEnd));
            _scrollController.jumpTo(scrollEnd);

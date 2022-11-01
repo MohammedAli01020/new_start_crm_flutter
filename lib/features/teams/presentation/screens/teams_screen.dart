@@ -8,7 +8,6 @@ import 'package:crm_flutter_project/features/teams/presentation/screens/team_det
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../config/routes/app_routes.dart';
-import '../../../../core/utils/app_colors.dart';
 import '../../../../core/widgets/error_item_widget.dart';
 import '../widgets/teams_app_bar.dart';
 
@@ -71,7 +70,7 @@ class TeamsScreen extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
-                          color: Colors.blueGrey[100],
+                          color: Theme.of(context).highlightColor,
                           borderRadius: BorderRadius.circular(5),
                         ),
                         child: Column(
@@ -104,7 +103,7 @@ class TeamsScreen extends StatelessWidget {
                     );
                   } else {
                     if (cubit.isNoMoreData) {
-                      return Text("وصلت للنهاية", style: TextStyle(fontSize: 15.0,color: AppColors.hint),);
+                      return const Text("وصلت للنهاية", style: TextStyle(fontSize: 15.0),);
                     }  else {
 
 

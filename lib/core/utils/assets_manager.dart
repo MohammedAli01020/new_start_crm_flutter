@@ -10,4 +10,9 @@ class ImgAssets {
   static const String carouselSvg2 = '$imgPath/2.svg';
   static const String carouselSvg3 = '$imgPath/3.svg';
 
+
+  static const String iconLauncher = '$imgPath/ic_launcher.png';
+
+
+
 }

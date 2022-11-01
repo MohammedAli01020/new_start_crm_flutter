@@ -92,12 +92,24 @@ class DeleteCustomerError extends CustomerState {
 
 class StartUpdateSelectedCustomers extends CustomerState {}
 
-class EndUpdateSelectedCustomers extends CustomerState {}
+class EndUpdateSelectedCustomers extends CustomerState {
+  final List<CustomerModel> newSelectedCustomers;
 
+  EndUpdateSelectedCustomers({required this.newSelectedCustomers});
 
-class StartSetSelectedCustomers extends CustomerState {}
+  @override
+  List<Object> get props => [newSelectedCustomers];
+}
 
-class EndSetSelectedCustomers extends CustomerState {}
+class UpdateSelectedCustomersError extends CustomerState {
+  final String msg;
+
+  UpdateSelectedCustomersError({required this.msg});
+
+  @override
+  List<Object> get props => [msg];
+}
+
 
 // events
 class StartUpdateEvents extends CustomerState {}

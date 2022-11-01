@@ -39,8 +39,8 @@ class CustomerLogsScreen extends StatelessWidget {
          if (scrollDirection != ScrollDirection.idle) {
            double scrollEnd = _scrollController.offset +
                (scrollDirection == ScrollDirection.reverse
-                   ? _extraScrollSpeed
-                   : -_extraScrollSpeed);
+                   ? Constants.extraScrollSpeed
+                   : -Constants.extraScrollSpeed);
            scrollEnd = min(_scrollController.position.maxScrollExtent,
                max(_scrollController.position.minScrollExtent, scrollEnd));
            _scrollController.jumpTo(scrollEnd);
@@ -58,9 +58,7 @@ class CustomerLogsScreen extends StatelessWidget {
   Widget _buildList(CustomerLogsCubit customerLogsCubit,
       CustomerLogsState state, BuildContext context) {
 
-    if (state is StartRefreshCustomerLogs
-        // || state is StartLoadingCustomerLogs
-    ) {
+    if (state is StartRefreshCustomerLogs) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -89,140 +87,107 @@ class CustomerLogsScreen extends StatelessWidget {
         ),
 
         Expanded(
-          child: Scrollbar(
-            child: ListView.separated(
-              controller: _scrollController,
-              itemBuilder: (context, index) {
+          child: ListView.separated(
+            controller: _scrollController,
+            itemBuilder: (context, index) {
 
-                if (index < customerLogsCubit.customerLogs.length) {
-                  final currentLog = customerLogsCubit.customerLogs[index];
-                  return Card(
-                    color: Colors.blueGrey[100],
-                    child: ListTile(
-                      leading:  SizedBox(
-                        width: 50.0,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            DefaultUserAvatarWidget(
-                              onTap: () {
-                                if (currentLog.employee != null) {
-                                  Navigator.pushNamed(context, Routes.employeesDetailsRoute,
-                                      arguments: EmployeeDetailsArgs(
-                                          employeeId: currentLog.employee!.employeeId,
-                                          employeeCubit: BlocProvider.of<EmployeeCubit>(context),
-                                          fromRoute: Routes.customerLogsRoute));
-                                }
-                              },
-                              imageUrl: null,
-                              height: 50.0,
-                              fullName: currentLog.employee?.fullName),
+              if (index < customerLogsCubit.customerLogs.length) {
+                final currentLog = customerLogsCubit.customerLogs[index];
+                return ListTile(
+                  leading:  SizedBox(
+                    width: 50.0,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        DefaultUserAvatarWidget(
+                          onTap: () {
+                            if (currentLog.employee != null) {
+                              Navigator.pushNamed(context, Routes.employeesDetailsRoute,
+                                  arguments: EmployeeDetailsArgs(
+                                      employeeId: currentLog.employee!.employeeId,
+                                      employeeCubit: BlocProvider.of<EmployeeCubit>(context),
+                                      fromRoute: Routes.customerLogsRoute));
+                            }
+                          },
+                          imageUrl: currentLog.employee?.imageUrl,
+                          height: 50.0,
+                          fullName: currentLog.employee?.fullName),
 
-                            Text(currentLog.employee != null ?
-                            currentLog.employee!.fullName : "غير معرف", style: const TextStyle(
-                              fontSize: 9.0
-                            ),)
-                          ],
-                        ),
-                      ),
-                      title: LinkWell(
-                        currentLog.description != null
-                            ? (currentLog.description!)
-                            : "لا يوجد",
-                        // maxLines: 3,
-                        // overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.w600),
-                      ),
-                      subtitle: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Flexible(
-                                child: InkWell(
-                                  onTap: () {
-                                    if (currentLog.customer != null) {
-                                      Navigator.pushNamed(context, Routes.customersDetailsRoute,
-                                          arguments: CustomerDetailsArgs(
-                                              customerModel: currentLog.customer!,
-                                              customerCubit: BlocProvider.of<CustomerCubit>(context),
-                                              teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context),
-                                              fromRoute: Routes.customerLogsRoute));
-                                    }
-
-                                  },
-                                  child: Text(getCustomerName(
-                                      currentLog.customer), style: const TextStyle(
-                                      fontSize: 14.0
-                                  )),
-                                ),
-                              ),
-
-                              const SizedBox(width: 5.0,),
-                              Flexible(
-                                child: InkWell(
-                                    onTap: () {
-                                      if (currentLog.employee != null) {
-                                        Navigator.pushNamed(context, Routes.employeesDetailsRoute,
-                                            arguments: EmployeeDetailsArgs(
-                                                employeeId: currentLog.employee!.employeeId,
-                                                employeeCubit: BlocProvider.of<EmployeeCubit>(context),
-                                                fromRoute: Routes.customerLogsRoute));
-                                      }
-                                    },
-
-                                    child: Text(getEmployeeName(currentLog.employee), style: const TextStyle(
-                                        fontSize: 14.0
-                                    ),)),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 5.0,),
-                          Text(Constants.timeAgoSinceDate(currentLog.dateTime), style: const TextStyle(fontSize: 14.0))
-
-                        ],
-                      ),
-
-
+                        Text(currentLog.employee != null ?
+                        currentLog.employee!.fullName : "غير معرف", style: const TextStyle(
+                          fontSize: 9.0
+                        ),)
+                      ],
                     ),
-                  );
-                } else {
-                  if (customerLogsCubit.isNoMoreData) {
-                    return Text("وصلت للنهاية", style: TextStyle(fontSize: 15.0,color: AppColors.hint),);
-                  }  else {
-                    if( state is StartLoadingCustomerLogs) {
-                      return const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Center(
-                          child: CircularProgressIndicator(),
+                  ),
+                  title: LinkWell(
+                    currentLog.description != null
+                        ? (currentLog.description!)
+                        : "لا يوجد",
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  subtitle: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        child: InkWell(
+                          onTap: () {
+                            if (currentLog.customer != null) {
+                              Navigator.pushNamed(context, Routes.customersDetailsRoute,
+                                  arguments: CustomerDetailsArgs(
+                                      customerModel: currentLog.customer!,
+                                      customerCubit: BlocProvider.of<CustomerCubit>(context),
+                                      teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context),
+                                      fromRoute: Routes.customerLogsRoute));
+                            }
+
+                          },
+                          child: Text(getCustomerName(
+                              currentLog.customer), style: const TextStyle(
+                              fontSize: 14.0
+                          )),
                         ),
-                      );
-                    } else {
-                      return ElevatedButton(
-                        onPressed: () {
-                          _getPageCustomerLogs(context: context);
-                        },
-                        child: const Text("حمل المزيد"),
-                      );
-                    }
+                      ),
+                      const SizedBox(height: 5.0,),
+                      Text(Constants.timeAgoSinceDate(currentLog.dateTime), style: const TextStyle(fontSize: 14.0))
+
+                    ],
+                  ),
+
+
+                );
+              } else {
+                if (customerLogsCubit.isNoMoreData) {
+                  return const Text("وصلت للنهاية", style: TextStyle(fontSize: 15.0),);
+                }  else {
+                  if( state is StartLoadingCustomerLogs) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  } else {
+                    return ElevatedButton(
+                      onPressed: () {
+                        _getPageCustomerLogs(context: context);
+                      },
+                      child: const Text("حمل المزيد"),
+                    );
                   }
                 }
+              }
 
-              },
+            },
 
 
-              itemCount: customerLogsCubit.customerLogs.length + 1,
-              separatorBuilder: (BuildContext context, int index) {
-                return const SizedBox(
-                  height: 16.0,
-                );
-              },
-            ),
+            itemCount: customerLogsCubit.customerLogs.length + 1,
+            separatorBuilder: (BuildContext context, int index) {
+              return const Divider();
+            },
           ),
         ),
 

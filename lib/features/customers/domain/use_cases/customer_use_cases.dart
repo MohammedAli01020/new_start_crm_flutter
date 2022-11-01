@@ -9,8 +9,13 @@ import '../../data/models/customer_model.dart';
 import '../entities/customers_data.dart';
 
 abstract class CustomerUseCases {
-  Future<Either<Failure, CustomersData>> getAllCustomersWithFilters(
+  Future<Either<Failure, CustomersData>> getPageCustomersWithFilters(
       CustomerFiltersModel customerFiltersModel);
+
+  Future<Either<Failure, List<CustomerModel>>> getAllCustomersWithFilters(
+      CustomerFiltersModel customerFiltersModel);
+
+
 
   Future<Either<Failure, CustomerModel>> modifyCustomer(
       ModifyCustomerParam modifyCustomerParam);
@@ -81,10 +86,18 @@ class CustomerUseCasesImpl implements CustomerUseCases {
     return customerRepository.modifyCustomer(modifyCustomerParam);
   }
 
+
   @override
-  Future<Either<Failure, CustomersData>> getAllCustomersWithFilters(
+  Future<Either<Failure, List<CustomerModel>>> getAllCustomersWithFilters(
       CustomerFiltersModel customerFiltersModel) {
     return customerRepository.getAllCustomersWithFilters(customerFiltersModel);
+  }
+
+
+  @override
+  Future<Either<Failure, CustomersData>> getPageCustomersWithFilters(
+      CustomerFiltersModel customerFiltersModel) {
+    return customerRepository.getPageCustomersWithFilters(customerFiltersModel);
   }
 
   @override

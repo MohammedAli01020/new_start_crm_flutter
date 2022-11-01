@@ -8,7 +8,11 @@ import '../../data/models/customer_model.dart';
 import '../entities/customers_data.dart';
 import '../use_cases/customer_use_cases.dart';
 abstract class CustomerRepository {
-  Future<Either<Failure, CustomersData>> getAllCustomersWithFilters(
+  Future<Either<Failure, CustomersData>> getPageCustomersWithFilters(
+      CustomerFiltersModel customerFiltersModel);
+
+
+  Future<Either<Failure, List<CustomerModel>>> getAllCustomersWithFilters(
       CustomerFiltersModel customerFiltersModel);
 
   Future<Either<Failure, CustomerModel>> modifyCustomer(

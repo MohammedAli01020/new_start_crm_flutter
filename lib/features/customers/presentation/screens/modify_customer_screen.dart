@@ -62,7 +62,7 @@ class _ModifyCustomerScreenState extends State<ModifyCustomerScreen> {
   int? assignedByEmployeeId;
   int? assignedDateTime;
 
-  bool? viewPreviousLog;
+  bool? viewPreviousLog = true;
 
   @override
   void dispose() {

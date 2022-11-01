@@ -18,7 +18,7 @@ import '../../../../core/widgets/error_item_widget.dart';
 class DevelopersScreen extends StatelessWidget {
   final DevelopersArgs developersArgs;
   final _scrollController = ScrollController();
-  static const _extraScrollSpeed = 80;
+
 
   DevelopersScreen({Key? key, required this.developersArgs}) : super(key: key) {
     if (Responsive.isWindows || Responsive.isLinux || Responsive.isMacOS) {
@@ -28,8 +28,8 @@ class DevelopersScreen extends StatelessWidget {
         if (scrollDirection != ScrollDirection.idle) {
           double scrollEnd = _scrollController.offset +
               (scrollDirection == ScrollDirection.reverse
-                  ? _extraScrollSpeed
-                  : -_extraScrollSpeed);
+                  ? Constants.extraScrollSpeed
+                  : -Constants.extraScrollSpeed);
           scrollEnd = min(_scrollController.position.maxScrollExtent,
               max(_scrollController.position.minScrollExtent, scrollEnd));
           _scrollController.jumpTo(scrollEnd);

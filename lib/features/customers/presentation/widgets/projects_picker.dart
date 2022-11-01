@@ -100,6 +100,37 @@ class _ProjectsPickerState extends State<ProjectsPicker> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        widget.onConfirmCallback(projectCubit.selectedProjectsNames);
+                      },
+                      style: TextButton.styleFrom(
+
+                          textStyle: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold)),
+                      child: const Text('تأكيد'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      style: TextButton.styleFrom(
+                          textStyle: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold)),
+                      child: const Text('إلغاء'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        projectCubit.setSelectedProjects([]);
+                      },
+                      style: TextButton.styleFrom(
+                          primary: Colors.red,
+                          textStyle: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold)),
+                      child: const Text('مسح الكل'),
+                    ),
+                  ],
+                ),
                 CustomEditText(
                   onChangedCallback: (String val) {
                     projectCubit.filterProjects(val);
@@ -140,38 +171,6 @@ class _ProjectsPickerState extends State<ProjectsPicker> {
                   ),
                 ),
 
-                Row(
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        widget.onConfirmCallback(projectCubit.selectedProjectsNames);
-                      },
-                      style: TextButton.styleFrom(
-                          primary: Colors.black,
-                          textStyle: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.bold)),
-                      child: const Text('تأكيد'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      style: TextButton.styleFrom(
-                          primary: Colors.black,
-                          textStyle: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.bold)),
-                      child: const Text('إلغاء'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        projectCubit.setSelectedProjects([]);
-                      },
-                      style: TextButton.styleFrom(
-                          primary: Colors.red,
-                          textStyle: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.bold)),
-                      child: const Text('مسح الكل'),
-                    ),
-                  ],
-                ),
               ],
             ),
           );

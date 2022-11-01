@@ -1,12 +1,10 @@
 import 'package:crm_flutter_project/core/utils/constants.dart';
 import 'package:crm_flutter_project/core/utils/enums.dart';
-import 'package:crm_flutter_project/core/utils/media_query_values.dart';
 import 'package:crm_flutter_project/features/employees/data/models/employee_model.dart';
 import 'package:crm_flutter_project/features/employees/presentation/cubit/employee_cubit.dart';
 import 'package:crm_flutter_project/features/teams/presentation/cubit/team_members/team_members_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:number_paginator/number_paginator.dart';
 
 import '../../../../core/utils/wrapper.dart';
 import '../../../../core/widgets/error_item_widget.dart';
@@ -75,6 +73,16 @@ class _EmployeePickerScreenState extends State<EmployeePickerScreen> {
         ));
 
       _getPageEmployees(refresh: true);
+    } else if (widget.employeePickerArgs.employeePickerTypes ==
+        EmployeePickerTypes.ASSIGN_FROM_TEAM_MEMBERS.name ) {
+
+      employeeCubit.updateFilter(employeeCubit.employeeFiltersModel.copyWith(
+
+        teamId: Wrapped.value(Constants.currentEmployee?.teamId),
+        employeeTypes: Wrapped.value(EmployeeTypes.TEAM_MEMBERS.name),
+      ));
+
+      _getPageEmployees(refresh: true);
     }
   }
 
@@ -104,7 +112,10 @@ class _EmployeePickerScreenState extends State<EmployeePickerScreen> {
             EmployeePickerTypes.SELECT_TEAM_LEADER.name ||
             widget.employeePickerArgs.employeePickerTypes ==
                 EmployeePickerTypes.ASSIGN_MEMBER.name ||
+
             widget.employeePickerArgs.employeePickerTypes ==
+                EmployeePickerTypes.ASSIGN_FROM_TEAM_MEMBERS.name ||
+        widget.employeePickerArgs.employeePickerTypes ==
                 EmployeePickerTypes.SELECT_EMPLOYEE.name
         ) {
           if (selectedEmployees.contains(currentEmployee)) {
@@ -187,15 +198,15 @@ class _EmployeePickerScreenState extends State<EmployeePickerScreen> {
                                   employeeIds: selectedEmployees
                                       .map((e) => e.employeeId)
                                       .toList()));
-                        } else if (widget
-                                .employeePickerArgs.employeePickerTypes ==
+                        } else if (widget.employeePickerArgs.employeePickerTypes ==
                             EmployeePickerTypes.SELECT_TEAM_LEADER.name ||
-                            widget
-                                .employeePickerArgs.employeePickerTypes ==
+                            widget.employeePickerArgs.employeePickerTypes ==
                                 EmployeePickerTypes.ASSIGN_MEMBER.name ||
-                            widget
-                                .employeePickerArgs.employeePickerTypes ==
-                                EmployeePickerTypes.SELECT_EMPLOYEE.name ) {
+                            widget.employeePickerArgs.employeePickerTypes ==
+                                EmployeePickerTypes.SELECT_EMPLOYEE.name ||
+                            widget.employeePickerArgs.employeePickerTypes ==
+                                EmployeePickerTypes.ASSIGN_FROM_TEAM_MEMBERS.name
+                        ) {
 
                           EmployeeModel? em;
                           if (selectedEmployees.isNotEmpty) {
@@ -292,7 +303,6 @@ class EmployeePickerArgs {
   EmployeePickerArgs({
     required this.employeePickerTypes,
     this.excludeTeamLeader,
-
     this.notInThisTeamId,
     required this.teamMembersCubit,
   });

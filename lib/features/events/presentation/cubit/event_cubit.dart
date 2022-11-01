@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/utils/constants.dart';
+import '../../../../core/utils/enums.dart';
 
 part 'event_state.dart';
 
@@ -20,7 +21,7 @@ class EventCubit extends Cubit<EventState> {
 
   List<EventModel> events = [];
 
-  Future<void> getAllEventsByNameLike({String? name}) async {
+  Future<void> getAllEventsByNameLike({String? name, String? eventType}) async {
     emit(StartGetAllEventsByNameLike());
 
     Either<Failure, List<EventModel>> response =
@@ -29,7 +30,13 @@ class EventCubit extends Cubit<EventState> {
     response.fold(
         (failure) => emit(GetAllEventsByNameLikeError(
             msg: Constants.mapFailureToMsg(failure))), (fetchedEvents) {
-      events = fetchedEvents;
+          if (eventType == EventType.SELECT_EVENT.name) {
+            fetchedEvents.removeWhere((element) => element.name == 'No Action');
+            events = fetchedEvents;
+          } else {
+            events = fetchedEvents;
+          }
+
       return emit(EndGetAllEventsByNameLike(fetchedEvents: fetchedEvents));
     });
   }

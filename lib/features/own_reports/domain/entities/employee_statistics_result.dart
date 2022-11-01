@@ -37,6 +37,10 @@ class EmployeeCustomerTypesCount extends Equatable {
     required this.now,
     required this.skip,
     required this.noEvent,
+    required this.own,
+    required this.notAssigned,
+
+
   });
 
   final int all;
@@ -45,13 +49,19 @@ class EmployeeCustomerTypesCount extends Equatable {
   final int skip;
   final int noEvent;
 
+  final int own;
+  final int notAssigned;
+
   factory EmployeeCustomerTypesCount.fromJson(Map<String, dynamic> json) =>
       EmployeeCustomerTypesCount(
-        all: json["all"],
-        delayed: json["delayed"],
-        now: json["now"],
-        skip: json["skip"],
-        noEvent: json["noEvent"],
+        all: json["all"] ?? 0,
+        delayed: json["delayed"]  ?? 0,
+        now: json["now"] ?? 0,
+        skip: json["skip"] ?? 0,
+        noEvent: json["noEvent"] ?? 0,
+        own: json["own"] ?? 0,
+        notAssigned: json["notAssigned"] ?? 0,
+
       );
 
   Map<String, dynamic> toJson() =>
@@ -61,10 +71,14 @@ class EmployeeCustomerTypesCount extends Equatable {
         "now": now,
         "skip": skip,
         "noEvent": noEvent,
+
+        "own": own,
+        "notAssigned": notAssigned,
+
       };
 
   @override
-  List<Object> get props => [all, delayed, now, skip, noEvent];
+  List<Object> get props => [all, delayed, now, skip, noEvent, own, notAssigned];
 }
 
 class EmployeeLastEventsReportList extends Equatable {
@@ -79,7 +93,7 @@ class EmployeeLastEventsReportList extends Equatable {
   factory EmployeeLastEventsReportList.fromJson(Map<String, dynamic> json) =>
       EmployeeLastEventsReportList(
         eventName: json["eventName"],
-        count: json["count"],
+        count: json["count"] ?? 0,
       );
 
   Map<String, dynamic> toJson() =>

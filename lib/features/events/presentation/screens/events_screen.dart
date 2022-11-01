@@ -17,8 +17,6 @@ class EventsScreen extends StatelessWidget {
   final EventsArgs eventsArgs;
 
   final _scrollController = ScrollController();
-  static const _extraScrollSpeed = 80;
-
 
   EventsScreen({Key? key, required this.eventsArgs}) : super(key: key) {
     if (Responsive.isWindows || Responsive.isLinux || Responsive.isMacOS) {
@@ -28,8 +26,8 @@ class EventsScreen extends StatelessWidget {
         if (scrollDirection != ScrollDirection.idle) {
           double scrollEnd = _scrollController.offset +
               (scrollDirection == ScrollDirection.reverse
-                  ? _extraScrollSpeed
-                  : -_extraScrollSpeed);
+                  ? Constants.extraScrollSpeed
+                  : -Constants.extraScrollSpeed);
           scrollEnd = min(_scrollController.position.maxScrollExtent,
               max(_scrollController.position.minScrollExtent, scrollEnd));
           _scrollController.jumpTo(scrollEnd);
@@ -48,7 +46,7 @@ class EventsScreen extends StatelessWidget {
       return ErrorItemWidget(
         msg: state.msg,
         onPress: () {
-          eventCubit.getAllEventsByNameLike();
+          eventCubit.getAllEventsByNameLike(eventType: eventsArgs.eventType);
         },
       );
     }
@@ -65,10 +63,10 @@ class EventsScreen extends StatelessWidget {
               } else if (eventsArgs.eventType == EventType.VIEW_EVENTS.name) {
 
                 if (Constants.currentEmployee!.permissions.contains(AppStrings.editEvents)) {
-
-
-                  if (currentEvent.name == "No Action") {
-                    Constants.showToast(msg: "غير قابله للتعديل", context: context);
+                  if (currentEvent.name == "No Action" ||
+                      currentEvent.name == "Cancellation" ||
+                      currentEvent.name == "Contract") {
+                    Constants.showToast(msg: "غير قابله للتعديل او الحذف", context: context);
                     return;
                   }
 
@@ -114,11 +112,11 @@ class EventsScreen extends StatelessWidget {
         return Scaffold(
           appBar: EventsAppBar(eventType: eventsArgs.eventType,
               onSearchChangeCallback: (search) {
-                eventCubit.getAllEventsByNameLike(name: search);
+                eventCubit.getAllEventsByNameLike(name: search, eventType: eventsArgs.eventType);
               },
               onCancelTapCallback: (isSearch) {
                 if (!isSearch) {
-                  eventCubit.getAllEventsByNameLike();
+                  eventCubit.getAllEventsByNameLike(eventType: eventsArgs.eventType);
                 }
               },
               onDoneTapCallback: () {

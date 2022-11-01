@@ -109,6 +109,9 @@ class AppStrings {
   static const String deleteEmployees  = 'حذف الموظفين';
   static const String viewEmployees  = 'مشاهدة الموظفين';
   static const String assignEmployees  = 'تعيين الموظفين';
+
+  static const String assignMyTeamMembers  = 'تعيين فريقي';
+
   static const String availableToAssign  = 'متاح للتعيين';
   static const String viewCreatedEmployees  = 'مشاهدة موظفين اضفتهم';
 

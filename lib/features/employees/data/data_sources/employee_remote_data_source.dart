@@ -18,6 +18,7 @@ abstract class EmployeeRemoteDataSource {
   Future<RoleModel> findRoleByEmployeeId(int employeeId);
 
   Future<EmployeeModel> getEmployeeById(int employeeId);
+
 }
 
 class EmployeeRemoteDataSourceImpl implements EmployeeRemoteDataSource {
@@ -64,4 +65,5 @@ class EmployeeRemoteDataSourceImpl implements EmployeeRemoteDataSource {
 
     return EmployeeModel.fromJson(response);
   }
+
 }

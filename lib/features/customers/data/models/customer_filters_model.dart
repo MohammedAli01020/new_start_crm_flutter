@@ -93,6 +93,28 @@ class CustomerFiltersModel extends CustomerFilters {
 
   };
 
+
+  Map<String, dynamic> toJsonForAllCustomers() => {
+    "fullNameOrPhoneNumber": fullNameOrPhoneNumber,
+    "customerTypes": customerTypes,
+    "lastEventIds": lastEventIds,
+    "startDateTime": startDateTime,
+    "endDateTime": endDateTime,
+    "employeeId": employeeId,
+    "teamId": teamId,
+    "reminderTypes": reminderTypes,
+    "unitTypes": unitTypes,
+    "sources": sources,
+    "projects": projects,
+    "developers": developers,
+
+    "assignedEmployeeIds": assignedEmployeeIds,
+    "createdByIds": createdByIds,
+
+  };
+
+
+
   CustomerFiltersModel copyWith({
     Wrapped<int>? pageNumber,
     Wrapped<int>? pageSize,
@@ -165,7 +187,7 @@ class CustomerFiltersModel extends CustomerFilters {
         sources: null,
         projects: null,
         developers: null,
-    assignedEmployeeIds: null,
-    createdByIds: null);
+        assignedEmployeeIds: null,
+        createdByIds: null);
   }
 }

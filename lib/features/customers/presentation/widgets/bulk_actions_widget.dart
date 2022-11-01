@@ -2,6 +2,7 @@ import 'package:crm_flutter_project/features/unit_types/presentation/screens/uni
 import 'package:flutter/material.dart';
 
 import '../../../../config/routes/app_routes.dart';
+import '../../../../core/utils/app_strings.dart';
 import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../../core/widgets/default_hieght_sized_box.dart';
@@ -33,7 +34,7 @@ class _BulkActionsWidgetState extends State<BulkActionsWidget> {
   List<String>? unitTypesNames;
   EmployeeModel? assignedToEmployee;
 
-  bool? viewPreviousLog;
+  bool? viewPreviousLog = true;
 
 
   void _resetData() {
@@ -48,16 +49,22 @@ class _BulkActionsWidgetState extends State<BulkActionsWidget> {
       mainAxisSize: MainAxisSize.min,
       children: [
 
+        if (Constants.currentEmployee!.permissions.contains(AppStrings.assignEmployees) ||
+        ( Constants.currentEmployee!.permissions.contains(AppStrings.assignMyTeamMembers) &&
+            Constants.currentEmployee?.teamId != null))
         Row(
           children: [
             Expanded(
               child: Card(
                 child:ListTile(
                   onTap: () {
+
                     Navigator.pushNamed(context, Routes.employeePickerRoute,
                         arguments: EmployeePickerArgs(
                           teamMembersCubit: widget.teamMembersCubit,
-                          employeePickerTypes: EmployeePickerTypes.ASSIGN_MEMBER.name,
+                          employeePickerTypes: Constants.currentEmployee!.permissions.contains(AppStrings.assignEmployees) ?
+
+                          EmployeePickerTypes.ASSIGN_MEMBER.name : EmployeePickerTypes.ASSIGN_FROM_TEAM_MEMBERS.name,
                         )).then((value) {
 
                       if (value != null && value is Map<String, dynamic>) {
@@ -102,6 +109,7 @@ class _BulkActionsWidgetState extends State<BulkActionsWidget> {
 
 
         const DefaultHeightSizedBox(),
+        if (Constants.currentEmployee!.permissions.contains(AppStrings.bulkActions))
         Card(
           child: ListTile(
             onTap: () async {
@@ -127,6 +135,8 @@ class _BulkActionsWidgetState extends State<BulkActionsWidget> {
           ),
         ),
         const DefaultHeightSizedBox(),
+        if (Constants.currentEmployee!.permissions.contains(AppStrings.bulkActions))
+
         Card(
           child: ListTile(
             onTap: () async {
