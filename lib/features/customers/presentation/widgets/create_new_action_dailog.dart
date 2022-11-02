@@ -164,10 +164,12 @@ class _CreateNewActionState extends State<CreateNewAction> {
                         return;
                       }
 
-                      if (event != null && event!.isDescRequired) {
-                        Constants.showToast(
-                            msg: "يجب تحديد التاريخ", context: context);
-                        return;
+                      if (event != null && event!.isDateRequired) {
+                        if (postponeDateTime == null) {
+                          Constants.showToast(
+                              msg: "يجب تحديد التاريخ", context: context);
+                          return;
+                        }
                       }
 
                       widget.onConfirmAction(UpdateCustomerLastActionParam(

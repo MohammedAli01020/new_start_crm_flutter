@@ -89,6 +89,8 @@ class EventCubit extends Cubit<EventState> {
         (failure) =>
             emit(ModifyEventError(msg: Constants.mapFailureToMsg(failure))),
         (modifiedEvent) {
+
+          print("modifiedEvent" + modifiedEvent.toString());
       if (modifyEventParam.eventId != null) {
         try {
           int index = events.indexWhere((element) {

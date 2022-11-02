@@ -15,8 +15,7 @@ class ModifyEventWidget extends StatefulWidget {
   final EventState state;
 
   const ModifyEventWidget({
-    Key? key,
-    this.eventModel,
+    Key? key, this.eventModel,
     required this.eventCubit,
     required this.state,
   }) : super(key: key);
@@ -29,8 +28,6 @@ class _ModifyEventWidgetState extends State<ModifyEventWidget> {
   final formKey = GlobalKey<FormState>();
   int? eventId;
   final _nameController = TextEditingController();
-
-
 
   bool isDescRequired = false;
   bool isDateRequired = false;

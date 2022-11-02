@@ -20,7 +20,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linkwell/linkwell.dart';
 
 import '../../../../config/routes/app_routes.dart';
-import '../../../../core/utils/app_colors.dart';
 import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../../core/utils/responsive.dart';
@@ -828,7 +827,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                               imageUrl: currentLog.employee?.imageUrl,
                               height: 50.0,
                               fullName: currentLog.employee?.fullName),
-
                           const SizedBox(height: 5.0,),
                           Text(currentLog.employee != null ?
                           currentLog.employee!.fullName : "غير معرف", style: const TextStyle(
@@ -843,34 +841,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                           : "لا يوجد",
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
-                    subtitle: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Flexible(
-                          child: InkWell(
-                            onTap: () {
-                              if (currentLog.customer != null) {
-                                Navigator.pushNamed(context, Routes.customersDetailsRoute,
-                                    arguments: CustomerDetailsArgs(
-                                        customerModel: currentLog.customer!,
-                                        customerCubit: BlocProvider.of<CustomerCubit>(context),
-                                        teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context),
-                                        fromRoute: Routes.customerLogsRoute));
-                              }
-
-                            },
-                            child: Text(getCustomerName(
-                                currentLog.customer), style: const TextStyle(
-                                fontSize: 14.0
-                            )),
-                          ),
-                        ),
-                        const SizedBox(height: 5.0,),
-                        Text(Constants.timeAgoSinceDate(currentLog.dateTime), style: const TextStyle(fontSize: 14.0))
-
-                      ],
-                    ),
+                    subtitle: Text(Constants.timeAgoSinceDate(currentLog.dateTime), style: const TextStyle(fontSize: 14.0)),
 
 
                   );

@@ -168,6 +168,8 @@ class CustomerCubit extends Cubit<CustomerState> {
         (failure) =>
             emit(ModifyCustomerError(msg: Constants.mapFailureToMsg(failure))),
         (newCustomerModel) {
+
+
       if (modifyCustomerParam.customerId != null) {
         try {
           int index = customers.indexWhere((element) {
@@ -370,6 +372,8 @@ class CustomerCubit extends Cubit<CustomerState> {
     response.fold(
         (failure) => emit(UpdateCustomerDescriptionError(
             msg: Constants.mapFailureToMsg(failure))), (newCustomerModel) {
+
+      print("viewPreviousLog" + newCustomerModel.viewPreviousLog.toString());
       try {
         int index = customers.indexWhere((element) {
           return element.customerId == updateCustomerFullNameParam.customerId;

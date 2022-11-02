@@ -8,7 +8,9 @@ class EventModel extends Event {
     required bool isDateRequired,
 
 
-  }) : super(eventId: eventId, name: name, isDateRequired: isDescRequired, isDescRequired: isDescRequired );
+  }) : super(eventId: eventId, name: name,
+      isDescRequired: isDescRequired,
+      isDateRequired: isDateRequired );
   factory EventModel.fromJson(Map<String, dynamic> json) =>
       EventModel(
         eventId: json["eventId"],
