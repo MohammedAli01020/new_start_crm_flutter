@@ -1,3 +1,4 @@
+import '../../../../core/utils/constants.dart';
 import '../../../../core/utils/wrapper.dart';
 import '../../domain/entities/customer_filters.dart';
 
@@ -170,7 +171,7 @@ class CustomerFiltersModel extends CustomerFilters {
   }
 
   factory CustomerFiltersModel.initial() {
-    return const CustomerFiltersModel(
+    return CustomerFiltersModel(
         pageNumber: 0,
         pageSize: 100,
         sortDirection: "DESC",
@@ -178,9 +179,12 @@ class CustomerFiltersModel extends CustomerFilters {
         fullNameOrPhoneNumber: null,
         startDateTime: null,
         endDateTime: null,
-        teamId: null,
+
         lastEventIds: null,
-        employeeId: null,
+
+        teamId: Constants.currentEmployee?.teamId,
+        employeeId: Constants.currentEmployee?.employeeId,
+
         customerTypes: null,
         reminderTypes: null,
         unitTypes: null,

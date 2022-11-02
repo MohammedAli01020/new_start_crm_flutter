@@ -12,6 +12,7 @@ import '../../../../core/utils/enums.dart';
 import '../../../../core/utils/wrapper.dart';
 import '../../../employees/data/models/employee_model.dart';
 import '../../../employees/presentation/screens/employee_picker_screen.dart';
+import '../../data/models/customer_filters_model.dart';
 import '../../data/models/event_model.dart';
 import '../../domain/use_cases/customer_use_cases.dart';
 import '../screens/modify_customer_screen.dart';
@@ -190,16 +191,9 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
               GestureDetector(
                   onTap: () {
 
-                    widget.customerCubit.updateFilter(widget.customerCubit.customerFiltersModel.copyWith(
-                      sources: const Wrapped.value(null),
-                      projects: const Wrapped.value(null),
-                      developers: const Wrapped.value(null),
-                      unitTypes: const Wrapped.value(null),
-                      lastEventIds: const Wrapped.value(null),
-                      reminderTypes: const Wrapped.value(null),
-                      startDateTime: const Wrapped.value(null),
-                      endDateTime: const Wrapped.value(null),
-                    ));
+                    widget.customerCubit.updateFilter(CustomerFiltersModel.initial());
+
+
                     widget.customerCubit.updateSelectedEvents([]);
                     widget.customerCubit.updateSelectedSources([]);
                     widget.customerCubit.updateSelectedUnitTypes([]);

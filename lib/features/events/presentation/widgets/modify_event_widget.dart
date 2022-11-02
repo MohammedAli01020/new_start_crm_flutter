@@ -30,12 +30,20 @@ class _ModifyEventWidgetState extends State<ModifyEventWidget> {
   int? eventId;
   final _nameController = TextEditingController();
 
+
+
+  bool isDescRequired = false;
+  bool isDateRequired = false;
+
+
   @override
   void initState() {
     super.initState();
     if (widget.eventModel != null) {
       eventId = widget.eventModel!.eventId;
       _nameController.text = widget.eventModel!.name;
+      isDescRequired = widget.eventModel!.isDescRequired;
+      isDateRequired = widget.eventModel!.isDateRequired;
     }
   }
 
@@ -80,6 +88,29 @@ class _ModifyEventWidgetState extends State<ModifyEventWidget> {
                         },
                         inputType: TextInputType.text),
                     const DefaultHeightSizedBox(),
+
+                    CheckboxListTile(
+                        title: const Text("هل النص مطلوب"),
+                        value: isDescRequired, onChanged: (val) {
+                          if (val != null) {
+                            isDescRequired = val;
+                            setState(() {});
+                          }
+
+                    }),
+                    const DefaultHeightSizedBox(),
+
+                    CheckboxListTile(
+                        title: const Text("هل التاريخ مطلوب"),
+                        value: isDateRequired, onChanged: (val) {
+                      if (val != null) {
+                        isDateRequired = val;
+                        setState(() {});
+                      }
+
+                    }),
+                    const DefaultHeightSizedBox(),
+                    const DefaultHeightSizedBox(),
                     Row(
                       children: [
                         Expanded(
@@ -94,7 +125,9 @@ class _ModifyEventWidgetState extends State<ModifyEventWidget> {
                                     await widget.eventCubit.modifyEvent(
                                         ModifyEventParam(
                                             eventId: eventId,
-                                            name: _nameController.text));
+                                            name: _nameController.text,
+                                            isDescRequired: isDescRequired,
+                                            isDateRequired: isDateRequired));
 
                                     setState(() {
                                       isModify = false;
@@ -143,3 +176,4 @@ class _ModifyEventWidgetState extends State<ModifyEventWidget> {
     );
   }
 }
+

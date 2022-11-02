@@ -95,11 +95,11 @@ class _CreateNewActionState extends State<CreateNewAction> {
                 hint: "الوصف",
                 validator: (v) {
 
-                  if (v == null || v.isEmpty) {
+                  if (event != null && event!.isDescRequired &&  (v == null || v.isEmpty)) {
                     return AppStrings.required;
                   }
 
-                  if ( v.isNotEmpty) {
+                  if (v != null &&  v.isNotEmpty) {
                     if (v.length > 5000) {
                       return "اقصي عدد احرف 5000";
                     }
@@ -161,6 +161,12 @@ class _CreateNewActionState extends State<CreateNewAction> {
                       if (event == null) {
                         Constants.showToast(
                             msg: "يجب اختيار الحدث", context: context);
+                        return;
+                      }
+
+                      if (event != null && event!.isDescRequired) {
+                        Constants.showToast(
+                            msg: "يجب تحديد التاريخ", context: context);
                         return;
                       }
 

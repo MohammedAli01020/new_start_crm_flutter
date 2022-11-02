@@ -332,14 +332,14 @@ class Constants {
   static void refreshCustomers(CustomerCubit cubit) {
     if (Constants.currentEmployee!.permissions
         .contains(AppStrings.viewAllLeads)) {
-      cubit.updateFilter(CustomerFiltersModel.initial()
+      cubit.updateFilter(cubit.customerFiltersModel
           .copyWith(customerTypes: Wrapped.value(CustomerTypes.ALL.name)));
 
       cubit.fetchCustomers(refresh: true);
     } else if (Constants.currentEmployee!.permissions
             .contains(AppStrings.viewTeamLeads) &&
         Constants.currentEmployee!.teamId != null) {
-          cubit.updateFilter(CustomerFiltersModel.initial().copyWith(
+          cubit.updateFilter(cubit.customerFiltersModel.copyWith(
 
           teamId: Wrapped.value(Constants.currentEmployee?.teamId),
           employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
@@ -348,21 +348,21 @@ class Constants {
       cubit.fetchCustomers(refresh: true);
     } else if (Constants.currentEmployee!.permissions
         .contains(AppStrings.viewMyAssignedLeads)) {
-      cubit.updateFilter(CustomerFiltersModel.initial().copyWith(
+      cubit.updateFilter(cubit.customerFiltersModel.copyWith(
           teamId: const Wrapped.value(null),
           employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
           customerTypes: Wrapped.value(CustomerTypes.ME.name)));
       cubit.fetchCustomers(refresh: true);
     } else if (Constants.currentEmployee!.permissions
         .contains(AppStrings.viewOwnLeads)) {
-      cubit.updateFilter(CustomerFiltersModel.initial().copyWith(
+      cubit.updateFilter(cubit.customerFiltersModel.copyWith(
           teamId: const Wrapped.value(null),
           employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
           customerTypes: Wrapped.value(CustomerTypes.OWN.name)));
       cubit.fetchCustomers(refresh: true);
     } else if (Constants.currentEmployee!.permissions
         .contains(AppStrings.viewNotAssignedLeads)) {
-      cubit.updateFilter(CustomerFiltersModel.initial().copyWith(
+      cubit.updateFilter(cubit.customerFiltersModel.copyWith(
           teamId: const Wrapped.value(null),
           employeeId: const Wrapped.value(null),
           customerTypes: Wrapped.value(CustomerTypes.NOT_ASSIGNED.name)));

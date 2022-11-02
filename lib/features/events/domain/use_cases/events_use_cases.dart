@@ -20,10 +20,8 @@ class EventsUseCasesImpl implements EventsUseCases {
 
   EventsUseCasesImpl({required this.eventRepository});
 
-
   @override
   Future<Either<Failure, void>> deleteEvent(int eventId) {
-
     return eventRepository.deleteEvent(eventId);
   }
 
@@ -38,24 +36,30 @@ class EventsUseCasesImpl implements EventsUseCases {
       ModifyEventParam modifyEventParam) {
     return eventRepository.modifyEvent(modifyEventParam);
   }
-
 }
-
 
 class ModifyEventParam extends Equatable {
   final int? eventId;
 
   final String name;
 
+  final bool isDescRequired;
+  final bool isDateRequired;
 
   const ModifyEventParam({
     required this.eventId,
     required this.name,
+    required this.isDescRequired,
+    required this.isDateRequired,
   });
 
-  Map<String, dynamic> toJson() =>
-      {"eventId": eventId, "name": name};
+  Map<String, dynamic> toJson() => {
+        "eventId": eventId,
+        "name": name,
+        "isDescRequired": isDescRequired,
+        "isDateRequired": isDateRequired,
+      };
 
   @override
-  List<Object?> get props => [eventId, name];
+  List<Object?> get props => [eventId, name, isDescRequired, isDescRequired];
 }

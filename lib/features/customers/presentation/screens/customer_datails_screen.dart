@@ -699,15 +699,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
 
                   if (Constants.currentEmployee!.permissions.contains(AppStrings.viewLeadLog) ||
                     (Constants.currentEmployee!.employeeId == cubit.currentCustomer.assignedEmployee?.employeeId))
-
-
                     BlocBuilder<CustomerLogsCubit, CustomerLogsState>(
                       builder: (context, state) {
                         final cubit = CustomerLogsCubit.get(context);
                         return _buildList(cubit, state, context);
                       },
                     ),
-                    
+
                     // _buildCustomerLogs(),
                 ],
               ),
@@ -739,7 +737,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
 
 
             withEdit: false,
-
             // withEdit: Constants.currentEmployee!.permissions
             //         .contains(AppStrings.editAllLeads) ||
             //     (Constants.currentEmployee!.permissions
@@ -754,8 +751,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
             //             .contains(AppStrings.editOwnLeads) &&
             //         cubit.currentCustomer.assignedEmployee?.createdBy ==
             //             Constants.currentEmployee!.employeeId),
-
-
             onEditTapCallback: () {
               Navigator.pushNamed(context, Routes.modifyCustomerRoute,
                   arguments: ModifyCustomerArgs(
@@ -935,7 +930,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
 
     return  employeeName;
   }
-  
+
+
   Widget _buildCustomerLogs() {
     return BlocBuilder<CustomerLogsCubit, CustomerLogsState>(
       builder: (context, state) {

@@ -872,10 +872,13 @@ class _CustomersScreenState extends State<CustomersScreen> {
               customerCubit: customerCubit,
               customerState: state,
               onSearchChangeCallback: (search) {
+
                 customerCubit.updateFilter(customerCubit.customerFiltersModel
                     .copyWith(fullNameOrPhoneNumber: Wrapped.value(search)));
 
+
                 Constants.refreshCustomers(customerCubit);
+
               },
               onCancelTapCallback: (isSearch) {
                 if (!isSearch) {
@@ -883,7 +886,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                       .copyWith(
                           fullNameOrPhoneNumber: const Wrapped.value(null)));
 
-                  Constants.refreshCustomers(customerCubit);
+                   Constants.refreshCustomers(customerCubit);
                 }
               },
               teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context),
