@@ -337,9 +337,7 @@ class CustomDrawer extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                   applicationVersion: version,
-                  applicationName: appName,
-                  applicationLegalese: "Developed by Eng. Mohamed Ali",
-                  children: [const Text("mohanader2244@gmail.com")]);
+                  applicationName: appName);
             },
           ),
 

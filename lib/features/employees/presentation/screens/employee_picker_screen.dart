@@ -74,7 +74,9 @@ class _EmployeePickerScreenState extends State<EmployeePickerScreen> {
 
       _getPageEmployees(refresh: true);
     } else if (widget.employeePickerArgs.employeePickerTypes ==
-        EmployeePickerTypes.ASSIGN_FROM_TEAM_MEMBERS.name ) {
+        EmployeePickerTypes.ASSIGN_FROM_TEAM_MEMBERS.name ||
+        widget.employeePickerArgs.employeePickerTypes ==
+            EmployeePickerTypes.SELECT_MULTIPLE_FROM_TEAM_MEMBERS.name) {
 
       employeeCubit.updateFilter(employeeCubit.employeeFiltersModel.copyWith(
 
@@ -214,7 +216,9 @@ class _EmployeePickerScreenState extends State<EmployeePickerScreen> {
                           }
                           Navigator.pop(context, em?.toJson());
                         } else if (widget.employeePickerArgs.employeePickerTypes ==
-                            EmployeePickerTypes.SELECT_MULTIPLE_EMPLOYEE.name) {
+                            EmployeePickerTypes.SELECT_MULTIPLE_EMPLOYEE.name ||
+                            widget.employeePickerArgs.employeePickerTypes ==
+                                EmployeePickerTypes.SELECT_MULTIPLE_FROM_TEAM_MEMBERS.name) {
 
                           Navigator.pop(context, selectedEmployees);
                         } else {

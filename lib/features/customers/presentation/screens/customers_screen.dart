@@ -86,10 +86,6 @@ class _CustomersScreenState extends State<CustomersScreen> {
   final _tableKey = GlobalKey<PaginatedDataTableState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-
-
-
-
   @override
   void initState() {
     super.initState();
@@ -98,6 +94,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
 
       customerCubit.updateFilter(widget.customersArgs.customerFiltersModel!);
       customerCubit.updateSelectedAssignEmployeeIds(widget.customersArgs.assignedEmployee);
+      customerCubit.updateSelectedEvents(widget.customersArgs.selectedEvents);
 
       customerCubit.fetchCustomers(refresh: true);
     } else {
@@ -936,11 +933,14 @@ class _CustomersScreenState extends State<CustomersScreen> {
 
 
 
+
+
 class CustomersArgs {
 
   final CustomerFiltersModel? customerFiltersModel;
   final List<EmployeeModel>? assignedEmployee;
+  final List<EventModel>? selectedEvents;
 
-  CustomersArgs({this.customerFiltersModel, this.assignedEmployee});
+  CustomersArgs({this.customerFiltersModel, this.assignedEmployee, this.selectedEvents, });
 
 }

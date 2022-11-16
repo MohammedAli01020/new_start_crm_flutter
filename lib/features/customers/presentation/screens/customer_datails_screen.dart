@@ -35,6 +35,7 @@ import '../../../employees/presentation/screens/employee_picker_screen.dart';
 import '../widgets/customer_log_data_table.dart';
 import '../widgets/edit_customer_phone_widget.dart';
 import '../widgets/modify_customer_name_widget.dart';
+import '../widgets/update_assigned_action_dailog.dart';
 import 'modify_customer_screen.dart';
 
 class CustomerDetailsScreen extends StatefulWidget {
@@ -566,29 +567,47 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                             :
                         IconButton(
                             onPressed: () async {
-                              final pickedEmployee = await Navigator.pushNamed(
-                                  context, Routes.employeePickerRoute,
-                                  arguments: EmployeePickerArgs(
-                                    teamMembersCubit: BlocProvider.of<
-                                        TeamMembersCubit>(context),
-                                    employeePickerTypes: EmployeePickerTypes
-                                        .ASSIGN_MEMBER.name,
-                                  ));
 
-                              if (pickedEmployee != null &&
-                                  pickedEmployee is Map<String, dynamic>) {
-                                EmployeeModel employeeModel = EmployeeModel
-                                    .fromJson(pickedEmployee);
+                              Constants.showDialogBox(
+                                context: context,
+                                title: cubit.currentCustomer.assignedEmployee == null
+                                    ? "اختر الموظف"
+                                    : "غير الموظف",
+                                content: UpdateAssignedAction(
+                                  customerCubit: cubit,
+                                  teamMembersCubit: BlocProvider.of<TeamMembersCubit>(context),
+                                  assignedEmployee: cubit.currentCustomer.assignedEmployee ,
+                               viewPreviousLog: cubit.currentCustomer.viewPreviousLog,
+                                ),
+                              );
 
-                                cubit.updateCustomerAssignedEmployee(
-                                    UpdateCustomerAssignedEmployeeParam(
-                                        updatedByEmployeeId: Constants
-                                            .currentEmployee!.employeeId,
-                                        customerId: cubit.currentCustomer
-                                            .customerId,
-                                        assignedEmployee: employeeModel
-                                            .employeeId));
-                              }
+
+
+
+                              // final pickedEmployee = await Navigator.pushNamed(
+                              //     context, Routes.employeePickerRoute,
+                              //     arguments: EmployeePickerArgs(
+                              //       teamMembersCubit: BlocProvider.of<
+                              //           TeamMembersCubit>(context),
+                              //       employeePickerTypes: EmployeePickerTypes
+                              //           .ASSIGN_MEMBER.name,
+                              //     ));
+                              // if (pickedEmployee != null &&
+                              //     pickedEmployee is Map<String, dynamic>) {
+                              //   EmployeeModel employeeModel = EmployeeModel
+                              //       .fromJson(pickedEmployee);
+                              //
+                              //   cubit.updateCustomerAssignedEmployee(
+                              //       UpdateCustomerAssignedEmployeeParam(
+                              //           updatedByEmployeeId: Constants
+                              //               .currentEmployee!.employeeId,
+                              //           customerId: cubit.currentCustomer
+                              //               .customerId,
+                              //           assignedEmployee: employeeModel
+                              //               .employeeId));
+                              // }
+
+
                             },
                             icon: const Icon(Icons.edit)),
 

@@ -359,6 +359,8 @@ class UpdateCustomerSourcesOrUnitTypesParam {
 
   final List<String> updatedData;
 
+
+
   UpdateCustomerSourcesOrUnitTypesParam({
     required this.updatedByEmployeeId,
     required this.customerId,
@@ -380,17 +382,21 @@ class UpdateCustomerAssignedEmployeeParam {
 
   final int assignedEmployee;
 
-  UpdateCustomerAssignedEmployeeParam({
+  final bool viewPreviousLog;
+
+  UpdateCustomerAssignedEmployeeParam( {
     required this.updatedByEmployeeId,
     required this.customerId,
-    required this.assignedEmployee});
+    required this.assignedEmployee,
+    required this.viewPreviousLog});
 
 
   Map<String, dynamic> toJson() =>
       {
         "updatedByEmployeeId": updatedByEmployeeId,
         "customerId": customerId,
-        "assignedEmployee": assignedEmployee
+        "assignedEmployee": assignedEmployee,
+        "viewPreviousLog": viewPreviousLog,
       };
 }
 

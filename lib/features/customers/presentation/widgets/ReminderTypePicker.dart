@@ -38,7 +38,7 @@ class _ReminderTypePickerState extends State<ReminderTypePicker> {
                 widget.onSelectTypeCallback(ReminderTypes.ALL.name);
                 Navigator.pop(context);
               },
-              title: const Text("بدون فلتر"),
+              title: const Text("ALL"),
               selected: currentSelectedType == null ||
                   currentSelectedType == ReminderTypes.ALL.name,
             ),
@@ -51,7 +51,7 @@ class _ReminderTypePickerState extends State<ReminderTypePicker> {
                 widget.onSelectTypeCallback(ReminderTypes.NOW.name);
                 Navigator.pop(context);
               },
-              title: const Text("حان موعد الاتصال"),
+              title: const Text("NOW"),
               selected:
                   currentSelectedType == ReminderTypes.NOW.name,
             ),
@@ -64,7 +64,7 @@ class _ReminderTypePickerState extends State<ReminderTypePicker> {
                 widget.onSelectTypeCallback(ReminderTypes.SKIP.name);
                 Navigator.pop(context);
               },
-              title: const Text("فات موعد الاتصال"),
+              title: const Text("DELAYED"),
               selected:
                   currentSelectedType == ReminderTypes.SKIP.name,
             ),
@@ -77,7 +77,7 @@ class _ReminderTypePickerState extends State<ReminderTypePicker> {
                 widget.onSelectTypeCallback(ReminderTypes.DELAYED.name);
                 Navigator.pop(context);
               },
-              title: const Text("المؤجلين"),
+              title: const Text("UPCOMING"),
               selected:
                   currentSelectedType == ReminderTypes.DELAYED.name,
             ),

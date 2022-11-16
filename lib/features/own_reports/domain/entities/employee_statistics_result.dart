@@ -1,3 +1,4 @@
+import 'package:crm_flutter_project/features/customers/data/models/event_model.dart';
 import 'package:equatable/equatable.dart';
 
 class EmployeeStatisticsResult extends Equatable {
@@ -83,27 +84,27 @@ class EmployeeCustomerTypesCount extends Equatable {
 
 class EmployeeLastEventsReportList extends Equatable {
   const EmployeeLastEventsReportList({
-    required this.eventName,
+    required this.event,
     required this.count,
   });
 
-  final String eventName;
+  final EventModel event;
   final int count;
 
   factory EmployeeLastEventsReportList.fromJson(Map<String, dynamic> json) =>
       EmployeeLastEventsReportList(
-        eventName: json["eventName"],
+        event: EventModel.fromJson(json["event"]),
         count: json["count"] ?? 0,
       );
 
   Map<String, dynamic> toJson() =>
       {
-        "eventName": eventName,
+        "event": event.toJson(),
         "count": count,
       };
 
   @override
-  List<Object> get props => [eventName, count];
+  List<Object> get props => [event, count];
 }
 
 

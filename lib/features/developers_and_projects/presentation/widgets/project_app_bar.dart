@@ -37,6 +37,7 @@ class _ProjectsAppBarState extends State<ProjectsAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+
       title: isSearch
           ? TextField(
               textInputAction: TextInputAction.go,
@@ -47,10 +48,9 @@ class _ProjectsAppBarState extends State<ProjectsAppBar> {
                 widget.onSearchChangeCallback(search);
               },
             )
-          : Text("مشاريع" +
-              (widget.developerModel != null
+          : Text((widget.developerModel != null
                   ? widget.developerModel!.name
-                  : "")),
+                  : ""), style: const TextStyle(fontSize: 16.0),),
       actions: [
         IconButton(
             onPressed: () {

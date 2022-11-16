@@ -91,6 +91,8 @@ class _OwnReportsScreenState extends State<OwnReportsScreen>  with WindowListene
                             ownReportsCubit.fetchEmployeeReports();
                           });
                         }, child: const Text("الي صفحة العملاء")),
+
+
                         // Card(
                         //   child: ListTile(
                         //     onTap: () {
@@ -162,7 +164,7 @@ class _OwnReportsScreenState extends State<OwnReportsScreen>  with WindowListene
                           ownReportsCubit.fetchEmployeeReports();
                         });
                       },
-                      title: "كل المعين لي",
+                      title: "ALL",
                       value: customerTypesCount.all.toString(),
                     ),
 
@@ -185,6 +187,8 @@ class _OwnReportsScreenState extends State<OwnReportsScreen>  with WindowListene
                             customerTypes: Wrapped.value(
                                 getCustomerTypeName(ownReportsCubit.countCustomerTypeFiltersModel.employeeReportType))
                         );
+
+
                         Navigator.pushNamed(context, Routes.customersRoute,
                             arguments: CustomersArgs(
                                 assignedEmployee: ownReportsCubit.selectedEmployee != null ?
@@ -195,7 +199,7 @@ class _OwnReportsScreenState extends State<OwnReportsScreen>  with WindowListene
                         });
 
                       },
-                      title: "بدون اي اكشن",
+                      title: "No Action",
                       value: customerTypesCount.noEvent.toString(),
                     ),
 
@@ -229,7 +233,7 @@ class _OwnReportsScreenState extends State<OwnReportsScreen>  with WindowListene
                         });
 
                       },
-                      title: "حان الاتصال اليوم",
+                      title: "TODAY",
                       value: customerTypesCount.now.toString(),
                     ),
 
@@ -265,7 +269,7 @@ class _OwnReportsScreenState extends State<OwnReportsScreen>  with WindowListene
                         });
 
                       },
-                      title: "مؤجل",
+                      title: "UPCOMING",
                       value: customerTypesCount.delayed.toString(),
                     ),
 
@@ -301,7 +305,7 @@ class _OwnReportsScreenState extends State<OwnReportsScreen>  with WindowListene
 
                       },
 
-                      title: "فات موعد الاتصال",
+                      title: "DELAY",
                       value: customerTypesCount.skip.toString(),
                     ),
 
@@ -350,7 +354,7 @@ class _OwnReportsScreenState extends State<OwnReportsScreen>  with WindowListene
                         });
 
                       },
-                      title: "عملائي",
+                      title: "OWN",
                       value: customerTypesCount.own.toString(),
                     ),
 
@@ -400,7 +404,7 @@ class _OwnReportsScreenState extends State<OwnReportsScreen>  with WindowListene
                         });
 
                       },
-                      title: "الغير معينين",
+                      title: "FRESH",
                       value: customerTypesCount.notAssigned.toString(),
                     ),
 
@@ -424,9 +428,35 @@ class _OwnReportsScreenState extends State<OwnReportsScreen>  with WindowListene
 
                     return ListTile(
                       onTap: () {
+                        CustomerFiltersModel customerFiltersModel = CustomerFiltersModel.initial().copyWith(
+                            startDateTime: Wrapped.value(ownReportsCubit.countCustomerTypeFiltersModel.startDate),
+                            endDateTime: Wrapped.value(ownReportsCubit.countCustomerTypeFiltersModel.endDate),
+                            lastEventIds:  Wrapped.value([currentItem.event.eventId]),
+                            teamId: Wrapped.value(Constants.currentEmployee?.teamId),
+                            assignedEmployeeIds:
+                            ownReportsCubit.countCustomerTypeFiltersModel.employeeReportType
+                                == EmployeeReportType.SPECIFIC.name  &&
+                                ownReportsCubit.countCustomerTypeFiltersModel.employeeId != null? Wrapped.value(
+                                [ownReportsCubit.countCustomerTypeFiltersModel.employeeId!]
+                            ) : const Wrapped.value(null),
+                            employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
+                            customerTypes: Wrapped.value(
+                                getCustomerTypeName(ownReportsCubit.countCustomerTypeFiltersModel.employeeReportType))
+                        );
+
+
+                        Navigator.pushNamed(context, Routes.customersRoute,
+                            arguments: CustomersArgs(
+                              selectedEvents: [currentItem.event],
+                                assignedEmployee: ownReportsCubit.selectedEmployee != null ?
+                                [ownReportsCubit.selectedEmployee!]: null,
+                                customerFiltersModel: customerFiltersModel
+                            )).then((value) {
+                          ownReportsCubit.fetchEmployeeReports();
+                        });
 
                       },
-                      title: Text(currentItem.eventName),
+                      title: Text(currentItem.event.name),
                       subtitle: Text(currentItem.count.toString()),
                     );
                   },
@@ -467,6 +497,8 @@ class _OwnReportsScreenState extends State<OwnReportsScreen>  with WindowListene
       }
     }
   }
+
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<OwnReportsCubit, OwnReportsState>(

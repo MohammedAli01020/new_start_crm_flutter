@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:crm_flutter_project/features/developers_and_projects/presentation/cubit/developer/developer_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:crm_flutter_project/features/developers_and_projects/data/models/developer_model.dart';
 import 'package:crm_flutter_project/features/developers_and_projects/presentation/cubit/project/project_cubit.dart';

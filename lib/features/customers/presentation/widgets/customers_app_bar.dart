@@ -130,9 +130,11 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
                       content: BulkActionsWidget(
                         onConfirmAction: (UpdateCustomerParam
                         updateCustomerParam) {
+
                           widget.customerCubit.updateBulkCustomers(
                               updateCustomerParam);
                           Navigator.of(context).pop(true);
+
                         },
                         selectedCustomersIds: widget.customerCubit.selectedCustomers
                             .map((e) => e.customerId)
@@ -675,7 +677,10 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
 
                     final result = await Navigator.pushNamed(context, Routes.employeePickerRoute,
                     arguments: EmployeePickerArgs(
-                        employeePickerTypes: EmployeePickerTypes.SELECT_MULTIPLE_EMPLOYEE.name,
+                        employeePickerTypes:
+                        Constants.currentEmployee!.permissions.contains(AppStrings.viewAllLeads) ?
+                        EmployeePickerTypes.SELECT_MULTIPLE_EMPLOYEE.name :
+                        EmployeePickerTypes.SELECT_MULTIPLE_FROM_TEAM_MEMBERS.name,
                         teamMembersCubit: widget.teamMembersCubit
 
                     ));
@@ -849,11 +854,11 @@ class _CustomersAppBarState extends State<CustomersAppBar> {
 
   String _getReminderType(String? reminderTypes) {
     if (reminderTypes == ReminderTypes.NOW.name) {
-      return "حان موعد الاتصال";
+      return "NOW";
     } else if (reminderTypes == ReminderTypes.SKIP.name) {
-      return "فات موعد الاتصال";
+      return "DELAYED";
     } else if (reminderTypes == ReminderTypes.DELAYED.name) {
-      return "المؤجلين";
+      return "UPCOMING";
     } else {
       return "حسب التذكير";
     }

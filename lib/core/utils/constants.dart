@@ -148,6 +148,7 @@ class Constants {
 
 
   static void launchCallerV2(String phone) async {
+
     final url = Uri(
         scheme: "tel",
         path: phone);
@@ -161,6 +162,8 @@ class Constants {
 
   static void launchWhatsAppV2(
       String phone, String message) async {
+
+
     // final url = "https://wa.me/${number.phoneNumber}?text=$message";
     final url = _getUrl(
         phone,
@@ -171,6 +174,9 @@ class Constants {
     } else {
       throw 'Could not launch $url';
     }
+
+
+
   }
 
   static String _getUrl(String completePhone, String message) {

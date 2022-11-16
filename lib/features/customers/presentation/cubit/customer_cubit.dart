@@ -442,6 +442,8 @@ class CustomerCubit extends Cubit<CustomerState> {
   Future<void> updateCustomerAssignedEmployee(
       UpdateCustomerAssignedEmployeeParam
           updateCustomerAssignedEmployeeParam) async {
+
+
     emit(StartUpdateCustomerAssignedEmployee());
     Either<Failure, CustomerModel> response = await customerUseCases
         .updateCustomerAssignedEmployee(updateCustomerAssignedEmployeeParam);
