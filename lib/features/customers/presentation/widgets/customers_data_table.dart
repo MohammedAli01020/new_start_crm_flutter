@@ -96,12 +96,16 @@ class CustomersDataTable extends DataTableSource {
                                             Constants.launchCallerV2(
                                                 currentCustomer
                                                     .phoneNumbers[0]);
+
+
                                           } catch (e) {
                                             debugPrint(e.toString());
                                             Constants.showToast(
                                                 msg: "تعذر الاتصال",
                                                 context: context);
                                           }
+
+
                                         },
                                       ),
                                       const DefaultHeightSizedBox(),

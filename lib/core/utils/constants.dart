@@ -164,10 +164,10 @@ class Constants {
       String phone, String message) async {
 
 
-    // final url = "https://wa.me/${number.phoneNumber}?text=$message";
     final url = _getUrl(
         phone,
         message);
+
 
     if (await canLaunch(url)) {
       await launch(url);
@@ -180,12 +180,14 @@ class Constants {
   }
 
   static String _getUrl(String completePhone, String message) {
-    if (Platform.isAndroid || Platform.isWindows) {
+
+    if (Platform.isAndroid) {
       // add the [https]
-      return "https://wa.me/$completePhone/?text=$message"; // new line
+      return "whatsapp://send?phone=$completePhone&text=$message"; // new line
     } else {
       // add the [https]
-      return "https://api.whatsapp.com/send?phone=$completePhone=${Uri.parse(message)}"; // new line
+      return "https://wa.me/$completePhone/?text=$message";
+
     }
   }
 
