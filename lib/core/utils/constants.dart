@@ -337,13 +337,13 @@ class Constants {
     }
   }
 
-  static void refreshCustomers(CustomerCubit cubit) {
+  static Future<void> refreshCustomers(CustomerCubit cubit) {
     if (Constants.currentEmployee!.permissions
         .contains(AppStrings.viewAllLeads)) {
       cubit.updateFilter(cubit.customerFiltersModel
           .copyWith(customerTypes: Wrapped.value(CustomerTypes.ALL.name)));
 
-      cubit.fetchCustomers(refresh: true);
+      return cubit.fetchCustomers(refresh: true);
     } else if (Constants.currentEmployee!.permissions
             .contains(AppStrings.viewTeamLeads) &&
         Constants.currentEmployee!.teamId != null) {
@@ -353,21 +353,21 @@ class Constants {
           employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
           customerTypes: Wrapped.value(CustomerTypes.ME_AND_TEAM.name)));
 
-      cubit.fetchCustomers(refresh: true);
+        return cubit.fetchCustomers(refresh: true);
     } else if (Constants.currentEmployee!.permissions
         .contains(AppStrings.viewMyAssignedLeads)) {
       cubit.updateFilter(cubit.customerFiltersModel.copyWith(
           teamId: const Wrapped.value(null),
           employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
           customerTypes: Wrapped.value(CustomerTypes.ME.name)));
-      cubit.fetchCustomers(refresh: true);
+      return cubit.fetchCustomers(refresh: true);
     } else if (Constants.currentEmployee!.permissions
         .contains(AppStrings.viewOwnLeads)) {
       cubit.updateFilter(cubit.customerFiltersModel.copyWith(
           teamId: const Wrapped.value(null),
           employeeId: Wrapped.value(Constants.currentEmployee?.employeeId),
           customerTypes: Wrapped.value(CustomerTypes.OWN.name)));
-      cubit.fetchCustomers(refresh: true);
+      return cubit.fetchCustomers(refresh: true);
     } else if (Constants.currentEmployee!.permissions
         .contains(AppStrings.viewNotAssignedLeads)) {
       cubit.updateFilter(cubit.customerFiltersModel.copyWith(
@@ -375,9 +375,10 @@ class Constants {
           employeeId: const Wrapped.value(null),
           customerTypes: Wrapped.value(CustomerTypes.NOT_ASSIGNED.name)));
 
-      cubit.fetchCustomers(refresh: true);
+      return cubit.fetchCustomers(refresh: true);
     } else {
       cubit.updateCustomers([]);
+      return Future.value();
     }
   }
 

@@ -873,8 +873,9 @@ class _CustomersScreenState extends State<CustomersScreen> {
                 customerCubit.updateFilter(customerCubit.customerFiltersModel
                     .copyWith(fullNameOrPhoneNumber: Wrapped.value(search)));
 
-
-                Constants.refreshCustomers(customerCubit);
+                Constants.refreshCustomers(customerCubit).then((value) {
+                  _tableKey.currentState?.pageTo(0);
+                });
 
               },
               onCancelTapCallback: (isSearch) {
