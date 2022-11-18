@@ -1,8 +1,8 @@
 class EndPoints {
-  static const String baseUrl = 'http://192.168.1.13:5000/';
+  // static const String baseUrl = 'http://192.168.1.13:5000/';
 
   // new start url
-  // static const String baseUrl = 'http://newstartcrm-env.eba-mtaqwgeq.us-east-1.elasticbeanstalk.com/';
+  static const String baseUrl = 'http://newstartcrm-env.eba-mtaqwgeq.us-east-1.elasticbeanstalk.com/';
 
   // test new start url
   // static const String baseUrl = 'http://testnewstart-env.eba-ujdigsqp.us-east-1.elasticbeanstalk.com/';
