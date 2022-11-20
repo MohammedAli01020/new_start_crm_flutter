@@ -229,6 +229,51 @@ class CustomersDataTable extends DataTableSource {
                       ],
                     )
                   : const Text("مخفي")),
+
+            if (Constants.customerTableConfigModel.showDuplicateNumber)
+              DataCell(Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(currentCustomer.duplicateNo.toString()),
+                  const SizedBox(
+                    width: 10.0,
+                  ),
+                  if (Constants.currentEmployee!.permissions
+                      .contains(AppStrings.viewDuplicatesLeads))
+
+                    IconButton(
+                      onPressed: () {
+                        if (currentCustomer.duplicateNo == 0) {
+                          Constants.showToast(
+                              msg: "لا يوجد تكرارات لهذا العميل",
+                              context: context);
+                          return;
+                        }
+
+                        Constants.showDialogBox(
+                            context: context,
+                            title: "تكرارات العميل" " " +
+                                currentCustomer.duplicateNo.toString(),
+                            content: DuplicatesCustomers(
+                              phoneNumbersWrapper: PhoneNumbersWrapper(
+                                  phoneNumbers: currentCustomer.phoneNumbers),
+                              teamMembersCubit: teamMembersCubit,
+                              customerCubit: customerCubit,
+                              employeeCubit: employeeCubit,
+                            ));
+                      },
+                      icon: Icon(
+                        Icons.visibility_outlined,
+                        color: currentCustomer.duplicateNo == 0 ||
+                            !Constants.currentEmployee!.permissions
+                                .contains(AppStrings.viewDuplicatesLeads)
+                            ? Colors.grey
+                            : AppColors.primary,
+                      ),
+                    ),
+                ],
+              )),
+
             if (Constants.customerTableConfigModel.showAssignedTo)
               DataCell(Row(
                 mainAxisSize: MainAxisSize.min,
@@ -446,49 +491,9 @@ class CustomersDataTable extends DataTableSource {
                   ? Constants.dateTimeFromMilliSeconds(
                       currentCustomer.lastAction!.postponeDateTime)
                   : "لا يوجد")),
-            if (Constants.customerTableConfigModel.showDuplicateNumber)
-              DataCell(Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(currentCustomer.duplicateNo.toString()),
-                  const SizedBox(
-                    width: 10.0,
-                  ),
-                  if (Constants.currentEmployee!.permissions
-                      .contains(AppStrings.viewDuplicatesLeads))
 
-                    IconButton(
-                      onPressed: () {
-                        if (currentCustomer.duplicateNo == 0) {
-                          Constants.showToast(
-                              msg: "لا يوجد تكرارات لهذا العميل",
-                              context: context);
-                          return;
-                        }
 
-                        Constants.showDialogBox(
-                            context: context,
-                            title: "تكرارات العميل" " " +
-                                currentCustomer.duplicateNo.toString(),
-                            content: DuplicatesCustomers(
-                              phoneNumbersWrapper: PhoneNumbersWrapper(
-                                  phoneNumbers: currentCustomer.phoneNumbers),
-                              teamMembersCubit: teamMembersCubit,
-                              customerCubit: customerCubit,
-                              employeeCubit: employeeCubit,
-                            ));
-                      },
-                      icon: Icon(
-                        Icons.visibility_outlined,
-                        color: currentCustomer.duplicateNo == 0 ||
-                                !Constants.currentEmployee!.permissions
-                                    .contains(AppStrings.viewDuplicatesLeads)
-                            ? Colors.grey
-                            : AppColors.primary,
-                      ),
-                    ),
-                ],
-              ))
+
           ]);
     } catch (e) {
       return null;

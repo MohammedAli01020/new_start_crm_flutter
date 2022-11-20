@@ -717,6 +717,11 @@ class _CustomersScreenState extends State<CustomersScreen> {
                   const DataColumn(label: Text('الاسم')),
                 if (Constants.customerTableConfigModel.showPhone)
                   const DataColumn(label: Text('رقم التليفون')),
+
+                if (Constants.customerTableConfigModel.showDuplicateNumber)
+                  const DataColumn(label: Text('عدد التكرارات')),
+
+
                 if (Constants.customerTableConfigModel.showAssignedTo)
                   const DataColumn(label: Text('معين إلي')),
                 if (Constants.customerTableConfigModel.showLastAction)
@@ -741,8 +746,9 @@ class _CustomersScreenState extends State<CustomersScreen> {
                   const DataColumn(label: Text('معين بواسطة')),
                 if (Constants.customerTableConfigModel.showReminderTime)
                   const DataColumn(label: Text('موعد التذكير')),
-                if (Constants.customerTableConfigModel.showDuplicateNumber)
-                  const DataColumn(label: Text('عدد التكرارات')),
+
+
+
               ],
               header: Text("العملاء: " + cubit.customerTotalElements.toString(), style: const TextStyle(fontSize: 14.0),),
               actions: [
@@ -766,7 +772,6 @@ class _CustomersScreenState extends State<CustomersScreen> {
                   },
                   icon: const Icon(Icons.refresh))
               ],
-
               // showFirstLastButtons: true,
               showCheckboxColumn: Responsive.isDesktopDevice || cubit.selectedCustomers.isNotEmpty,
               rowsPerPage: cubit.customerFiltersModel.pageSize ~/ 2,
@@ -787,6 +792,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                   await cubit.fetchAllCustomers();
                 }
               },
+
               source: CustomersDataTable(
                 customerCubit: cubit,
                 onSelect: (val, CustomerModel currentCustomer) {

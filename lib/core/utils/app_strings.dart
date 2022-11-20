@@ -33,7 +33,7 @@ class AppStrings {
   static const String aqqaryNewsTopic = "aqqary_news";
 
 
-  static const String userNotEnabledMessage = "انتهت مدة التفعيل يرجي التفعيل لهذا الشهر, شكرا لتفهمكم";
+  static const String userNotEnabledMessage = "من المحتمل ان يكون حسابك تم ايقافة او تم تغير البيانات الخاصة بتسجيل الدخول";
 
 
   static const String noEvent = "no event";

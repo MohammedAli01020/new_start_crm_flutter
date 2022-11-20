@@ -56,6 +56,8 @@ class EmployeeRepositoryImpl implements EmployeeRepository {
       return Right(response);
     } on ServerException catch (e) {
       return Left(ServerFailure(msg: e.msg));
+    } catch(e) {
+      return Left(ServerFailure(msg: e.toString()));
     }
   }
 

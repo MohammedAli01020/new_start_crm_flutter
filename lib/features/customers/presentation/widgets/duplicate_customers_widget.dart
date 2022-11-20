@@ -1,3 +1,4 @@
+import 'package:crm_flutter_project/core/utils/constants.dart';
 import 'package:crm_flutter_project/features/customers/domain/use_cases/customer_use_cases.dart';
 import 'package:flutter/material.dart';
 
@@ -5,7 +6,6 @@ import '../../../../config/routes/app_routes.dart';
 import '../../../../core/widgets/default_user_avatar_widget.dart';
 import '../../../../core/widgets/error_item_widget.dart';
 import '../../../employees/presentation/cubit/employee_cubit.dart';
-import '../../../employees/presentation/screens/employee_details_screen.dart';
 import '../../../teams/presentation/cubit/team_members/team_members_cubit.dart';
 import '../cubit/customer_cubit.dart';
 
@@ -81,7 +81,10 @@ class DuplicatesCustomers extends StatelessWidget {
                               },
                             ),
                             const SizedBox(height: 5.0,),
-                            Text(currentCustomer.fullName)
+                            Text(currentCustomer.fullName),
+                            const SizedBox(height: 2.0,),
+                            Text(Constants.dateFromMilliSeconds(currentCustomer.createDateTime)),
+
                           ],
                         )),
                         const Text("معين إلي"),

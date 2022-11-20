@@ -236,7 +236,11 @@ class EmployeeCubit extends Cubit<EmployeeState> {
         await employeeUseCases.findRoleByEmployeeId(employeeId);
 
 
-    response.fold((failure) => emit(FindRoleByEmployeeIdError(msg: Constants.mapFailureToMsg(failure))),
+    response.fold((failure) {
+
+       currentRole = null;
+       return  emit(FindRoleByEmployeeIdError(msg: Constants.mapFailureToMsg(failure)));
+    },
             (role) {
               currentRole = role;
               return emit(EndFindRoleByEmployeeId(roleModel: role));

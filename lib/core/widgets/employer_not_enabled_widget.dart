@@ -1,14 +1,19 @@
-import 'dart:io';
 
+
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import '../../config/routes/app_routes.dart';
+import '../../features/login/presentation/cubit/login_cubit.dart';
 import 'default_button_widget.dart';
 import 'default_hieght_sized_box.dart';
 
 class EmployeeNotEnabledWidget extends StatelessWidget {
   final String message;
-  const EmployeeNotEnabledWidget({Key? key, required this.message}) : super(key: key);
+  final LoginCubit loginCubit;
+  const EmployeeNotEnabledWidget({Key? key, required this.message,
+    required this.loginCubit}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +28,12 @@ class EmployeeNotEnabledWidget extends StatelessWidget {
             const DefaultHeightSizedBox(),
             DefaultButtonWidget(onTap: () {
               exit(0);
-            }, text: "خروج")
+            }, text: "خروج"),
+
+            const DefaultHeightSizedBox(),
+            DefaultButtonWidget(onTap: () {
+              loginCubit.returnToLogin();
+            }, text: "تسجيل الدخول مرة اخرة")
           ],
         ),
 

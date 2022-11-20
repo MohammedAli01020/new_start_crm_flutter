@@ -2,6 +2,7 @@ import 'package:crm_flutter_project/core/utils/media_query_values.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:window_manager/window_manager.dart';
 import '../../../../config/locale/app_localizations.dart';
 import '../../../../config/routes/app_routes.dart';
 import '../../../../core/utils/app_colors.dart';
@@ -22,7 +23,7 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> with WindowListener {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   var formKey = GlobalKey<FormState>();
@@ -55,14 +56,14 @@ class _LoginScreenState extends State<LoginScreen> {
         }
 
         if (state is EmployeeIsNotEnabled) {
-          return EmployeeNotEnabledWidget(message: state.msg);
+          return EmployeeNotEnabledWidget(message: state.msg, loginCubit: loginCubit,);
         }
 
 
         if (state is LoginError) {
 
           return ErrorItemWidget(
-            msg: "تأكد من الايميل وكلمة السر",
+            msg: "تأكد من الايميل وكلمة السر او ربما تم قفل حسابك او تم عمل تغير للايميل او كلمة السر",
             onPress: () {
               loginCubit.init();
             },
@@ -78,6 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
             },
           );
         }
+
 
 
         return Form(
@@ -178,11 +180,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    super.initState();
 
+    windowManager.addListener(this);
     usernameController.addListener(() {
       setState(() {});
     });
+
+    super.initState();
   }
 
   @override
@@ -211,9 +215,26 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+
+  @override
+  void onWindowClose() async {
+    bool _isPreventClose = await windowManager.isPreventClose();
+    if (_isPreventClose) {
+
+      final result = await Constants.showConfirmDialog(context: context, msg: 'هل تريد تأكيد الخروج ؟');
+
+      if (result) {
+        Navigator.pop(context);
+        windowManager.destroy();
+      }
+    }
+  }
+
+
   @override
   void dispose() {
     super.dispose();
+    windowManager.removeListener(this);
     usernameController.dispose();
     passwordController.dispose();
   }

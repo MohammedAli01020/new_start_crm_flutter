@@ -25,6 +25,7 @@ class LoginCubit extends Cubit<LoginState> {
   static LoginCubit get(context) => BlocProvider.of(context);
 
   Future<void> login(LoginParam loginParam) async {
+
     emit(StartLogin());
     Either<Failure, CurrentEmployee> response =
         await loginUseCases.login(loginParam);
@@ -43,6 +44,13 @@ class LoginCubit extends Cubit<LoginState> {
         (failure) => LoginError(msg: Constants.mapFailureToMsg(failure)),
         (success) => EndLogout()));
   }
+
+
+  void returnToLogin() {
+    print("NoCachedEmployeeFound");
+    emit(NoCachedEmployeeFound(msg: "NoCachedEmployeeFound"));
+  }
+
 
   Future<void> init() async {
 
@@ -63,6 +71,8 @@ class LoginCubit extends Cubit<LoginState> {
 
       Either<Failure, Employee> response =
           await loginUseCases.getEmployeeById(currentEmployee.employeeId);
+
+
       response.fold(
           (failure) {
             loginUseCases.logout();
