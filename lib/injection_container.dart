@@ -86,10 +86,14 @@ import 'core/api/app_interceptors.dart';
 import 'core/api/dio_consumer.dart';
 import 'core/network/network_info.dart';
 import 'features/developers_and_projects/domain/repositories/developer_repository.dart';
+import 'features/login/data/data_sources/lang_local_data_source.dart';
 import 'features/login/data/data_sources/login_local_data_source.dart';
 import 'features/login/data/data_sources/login_remote_data_source.dart';
+import 'features/login/data/repositories/lang_respository_impl.dart';
 import 'features/login/data/repositories/login_repository_impl.dart';
+import 'features/login/domain/repositories/lang_repository.dart';
 import 'features/login/domain/repositories/login_repository.dart';
+import 'features/login/domain/use_cases/lang_use_cases.dart';
 import 'features/login/domain/use_cases/login_use_cases.dart';
 import 'features/login/presentation/cubit/login_cubit.dart';
 import 'features/pre_defined_roles/domain/repositories/pre_defined_roles_repository.dart';
@@ -135,7 +139,7 @@ Future<void> init() async {
   sl.registerFactory(() => OwnReportsCubit(ownReportsUseCase: sl()));
 
 
-  sl.registerFactory(() => ThemeCubit(themeUseCase: sl()));
+  sl.registerFactory(() => ThemeCubit(themeUseCase: sl(), langUseCases: sl()));
 
 
   sl.registerFactory(() => PreDefinedRolesCubit(preDefinedRolesUseCases: sl()));
@@ -206,6 +210,10 @@ Future<void> init() async {
   sl.registerLazySingleton<ReportUseCases>(
           () => ReportUseCasesImpl(reportRepository:  sl()));
 
+
+  sl.registerLazySingleton<LangUseCases>(
+          () => LangUseCasesImpl(langRepository: sl()));
+
   // Repository
   sl.registerLazySingleton<LoginRepository>(() => LoginRepositoryImpl(
       loginLocalDataSource: sl(), loginRemoteDataSource: sl()));
@@ -264,6 +272,10 @@ Future<void> init() async {
 
   sl.registerLazySingleton<ReportRepository>(() => ReportRepositoryImpl(
       reportRemoteDataSource: sl()));
+
+
+  sl.registerLazySingleton<LangRepository>(() => LangRepositoryImpl(
+      langLocalDataSource: sl()));
 
   // Data Sources
   sl.registerLazySingleton<LoginRemoteDataSource>(
@@ -329,6 +341,9 @@ Future<void> init() async {
 
   sl.registerLazySingleton<ReportRemoteDataSource>(
           () => ReportRemoteDataSourceImpl(apiConsumer: sl()));
+
+  sl.registerLazySingleton<LangLocalDataSource>(
+          () => LangLocalDataSourceImpl(sharedPreferences: sl()));
   //! Core
   sl.registerLazySingleton<NetworkInfo>(
       () => NetworkInfoImpl(internetConnectionChecker: sl()));

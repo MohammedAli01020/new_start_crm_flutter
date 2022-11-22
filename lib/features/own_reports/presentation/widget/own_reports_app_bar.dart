@@ -1,6 +1,7 @@
 import 'package:crm_flutter_project/core/utils/app_strings.dart';
 import 'package:crm_flutter_project/core/utils/constants.dart';
 import 'package:flutter/material.dart';
+import '../../../../config/locale/app_localizations.dart';
 import '../../../../config/routes/app_routes.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/utils/enums.dart';
@@ -11,9 +12,10 @@ import '../../../customers/presentation/widgets/DateFilterPicker.dart';
 import '../../../customers/presentation/widgets/filter_field.dart';
 import '../../../employees/data/models/employee_model.dart';
 import '../../../employees/presentation/screens/employee_picker_screen.dart';
+import '../../../login/presentation/cubit/theme/theme_cubit.dart';
 import '../../../teams/presentation/cubit/team_members/team_members_cubit.dart';
 import '../cubit/own_reports_cubit.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class OwnReportsAppBar extends StatefulWidget implements PreferredSizeWidget {
   final OwnReportsCubit ownReportsCubit;
@@ -41,6 +43,19 @@ class _OwnReportsAppBarState extends State<OwnReportsAppBar> {
       backgroundColor: Colors.transparent,
       elevation: 0.0,
       title: const Text("نظرة عامة"),
+      leading: IconButton(
+        icon: Icon(
+          Icons.translate_outlined,
+          color: AppColors.primary,
+        ),
+        onPressed: () {
+          if (AppLocalizations.of(context)!.isEnLocale) {
+            BlocProvider.of<ThemeCubit>(context).toArabic();
+          } else {
+            BlocProvider.of<ThemeCubit>(context).toEnglish();
+          }
+        },
+      ),
       actions: [
         IconButton(onPressed: () {
           widget.ownReportsCubit.fetchEmployeeReports();

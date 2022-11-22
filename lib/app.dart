@@ -23,9 +23,15 @@ class CrmApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => di.sl<LoginCubit>()..init()),
         BlocProvider(
-            create: (context) => di.sl<ThemeCubit>()..fetchCurrentTheme()),
+            create: (context) => di.sl<ThemeCubit>()
+              ..getSavedLang()
+              ..fetchCurrentTheme()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(
+        buildWhen: (previousState, currentState) {
+          return previousState != currentState;
+        },
+
         builder: (context, state) {
             return MaterialApp(
               restorationScopeId: 'root',
@@ -36,7 +42,7 @@ class CrmApp extends StatelessWidget {
               theme: appTheme(),
               themeMode: Constants.isDark ? ThemeMode.dark : ThemeMode.light,
               darkTheme: ThemeData.dark(),
-              locale: const Locale("ar"),
+              locale: state.locale,
               supportedLocales: AppLocalizationsSetup.supportedLocales,
               localeResolutionCallback:
               AppLocalizationsSetup.localeResolutionCallback,

@@ -2,8 +2,11 @@ part of 'theme_cubit.dart';
 
 @immutable
 abstract class ThemeState extends Equatable {
+  final Locale? locale;
+
+  const ThemeState({this.locale});
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [locale];
 }
 
 class ThemeInitial extends ThemeState {}
@@ -16,7 +19,7 @@ class EndChangeThemeToDark extends ThemeState {}
 class ChangeThemeToDarkError extends ThemeState {
   final String msg;
 
-  ChangeThemeToDarkError({required this.msg});
+  const ChangeThemeToDarkError({required this.msg});
 
   @override
   List<Object> get props => [msg];
@@ -31,7 +34,7 @@ class EndChangeThemeToLight extends ThemeState {}
 class ChangeThemeToLightError extends ThemeState {
   final String msg;
 
-  ChangeThemeToLightError({required this.msg});
+  const ChangeThemeToLightError({required this.msg});
 
   @override
   List<Object> get props => [msg];
@@ -43,7 +46,7 @@ class StartFetchCurrentTheme extends ThemeState {}
 class EndFetchCurrentTheme extends ThemeState {
   final bool currentThemeMode;
 
-  EndFetchCurrentTheme({required this.currentThemeMode});
+  const EndFetchCurrentTheme({required this.currentThemeMode});
 
 
   @override
@@ -53,8 +56,13 @@ class EndFetchCurrentTheme extends ThemeState {
 class FetchCurrentThemeError extends ThemeState {
   final String msg;
 
-  FetchCurrentThemeError({required this.msg});
+  const FetchCurrentThemeError({required this.msg});
 
   @override
   List<Object> get props => [msg];
+}
+
+// lang
+class ChangeLocaleState extends ThemeState {
+  const ChangeLocaleState(Locale selectedLocale) : super(locale: selectedLocale);
 }

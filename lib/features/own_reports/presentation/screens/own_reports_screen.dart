@@ -20,6 +20,7 @@ import '../../../customers/data/models/customer_filters_model.dart';
 import '../../../customers/presentation/screens/customers_screen.dart';
 import '../../../teams/presentation/cubit/team_members/team_members_cubit.dart';
 import '../widget/own_reports_app_bar.dart';
+import '../../../../config/locale/app_localizations.dart';
 
 class OwnReportsScreen extends StatefulWidget {
 
@@ -90,23 +91,9 @@ class _OwnReportsScreenState extends State<OwnReportsScreen>  with WindowListene
                               arguments: CustomersArgs()).then((value) {
                             ownReportsCubit.fetchEmployeeReports();
                           });
-                        }, child: const Text("الي صفحة العملاء")),
+                          // "الي صفحة العملاء"
+                        }, child: Text(AppLocalizations.of(context)!.translate('to_customers')!)),
 
-
-                        // Card(
-                        //   child: ListTile(
-                        //     onTap: () {
-                        //
-                        //       Navigator.pushNamed(context, Routes.customersRoute,
-                        //           arguments: CustomersArgs()).then((value) {
-                        //         ownReportsCubit.fetchEmployeeReports();
-                        //       });
-                        //     },
-                        //     leading: const Icon(Icons.people),
-                        //     trailing: const Icon(Icons.arrow_forward),
-                        //     title: const Text("الي صفحة العملاء"),
-                        //   ),
-                        // ),
                       ],
                     ),
 
