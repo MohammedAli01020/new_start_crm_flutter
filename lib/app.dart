@@ -28,6 +28,7 @@ class CrmApp extends StatelessWidget {
               ..fetchCurrentTheme()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(
+
         buildWhen: (previousState, currentState) {
           return previousState != currentState;
         },

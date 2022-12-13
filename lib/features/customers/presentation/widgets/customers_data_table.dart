@@ -317,7 +317,6 @@ class CustomersDataTable extends DataTableSource {
                         if (Constants.currentEmployee!.permissions
                             .contains(AppStrings.createActions)) {
 
-
                           Constants.showDialogBox(
                             context: context,
                             title: currentCustomer.lastAction == null

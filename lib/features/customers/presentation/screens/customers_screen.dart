@@ -796,7 +796,6 @@ class _CustomersScreenState extends State<CustomersScreen> {
               source: CustomersDataTable(
                 customerCubit: cubit,
                 onSelect: (val, CustomerModel currentCustomer) {
-
                   if (Responsive.isDesktopDevice) {
                     cubit.updateSelectedCustomers(currentCustomer, val);
                   } else {

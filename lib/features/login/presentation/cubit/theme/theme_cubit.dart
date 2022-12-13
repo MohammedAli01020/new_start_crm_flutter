@@ -8,13 +8,15 @@ import 'package:equatable/equatable.dart';
 
 import '../../../../../core/utils/app_strings.dart';
 import '../../../domain/use_cases/lang_use_cases.dart';
+
 part 'theme_state.dart';
 
 class ThemeCubit extends Cubit<ThemeState> {
   final ThemeUseCase themeUseCase;
   final LangUseCases langUseCases;
 
-  ThemeCubit({required this.themeUseCase, required this.langUseCases }) : super(ThemeInitial());
+  ThemeCubit({required this.themeUseCase, required this.langUseCases})
+      : super(const ChangeLocaleState(Locale(AppStrings.arabicCode)));
 
   static ThemeCubit get(context) => BlocProvider.of(context);
 
@@ -22,34 +24,34 @@ class ThemeCubit extends Cubit<ThemeState> {
     emit(StartChangeThemeToDark());
     Either<Failure, void> response = await themeUseCase.changeThemeToDark();
 
-    emit(response.fold((failure) => ChangeThemeToDarkError(msg: Constants.mapFailureToMsg(failure)),
-            (r) => EndChangeThemeToDark()));
+    emit(response.fold(
+        (failure) =>
+            ChangeThemeToDarkError(msg: Constants.mapFailureToMsg(failure)),
+        (r) => EndChangeThemeToDark()));
   }
 
+  Future<void> changeThemeToLight() async {
+    emit(StartChangeThemeToLight());
+    Either<Failure, void> response = await themeUseCase.changeThemeToLight();
 
- Future<void>  changeThemeToLight() async {
-   emit(StartChangeThemeToLight());
-   Either<Failure, void> response = await themeUseCase.changeThemeToLight();
+    emit(response.fold(
+        (failure) =>
+            ChangeThemeToLightError(msg: Constants.mapFailureToMsg(failure)),
+        (r) => EndChangeThemeToLight()));
+  }
 
-   emit(response.fold((failure) => ChangeThemeToLightError(msg: Constants.mapFailureToMsg(failure)),
-           (r) => EndChangeThemeToLight()));
- }
-
-
- Future<void> fetchCurrentTheme() async {
-
+  Future<void> fetchCurrentTheme() async {
     emit(StartFetchCurrentTheme());
-   Either<Failure, bool> response = await themeUseCase.fetchCurrentTheme();
+    Either<Failure, bool> response = await themeUseCase.fetchCurrentTheme();
 
-   emit(response.fold((failure) => FetchCurrentThemeError(msg: Constants.mapFailureToMsg(failure)),
-           (value) => EndFetchCurrentTheme(currentThemeMode: value)));
+    emit(response.fold(
+        (failure) =>
+            FetchCurrentThemeError(msg: Constants.mapFailureToMsg(failure)),
+        (value) => EndFetchCurrentTheme(currentThemeMode: value)));
+  }
 
- }
-
-
- // lang
   // lang
-  String currentLangCode = AppStrings.englishCode;
+  String currentLangCode = AppStrings.arabicCode;
 
   Future<void> getSavedLang() async {
     final response = await langUseCases.getSavedLang();

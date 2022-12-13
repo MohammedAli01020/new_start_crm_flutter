@@ -83,6 +83,7 @@ class _EmployeesAppBarState extends State<EmployeesAppBar> {
             scrollDirection: Axis.horizontal,
             children: [
           if (Constants.currentEmployee!.permissions.contains(AppStrings.viewEmployees))
+
               FilterItem(
                 currentValue:
                 widget.employeeCubit.employeeFiltersModel.employeeTypes,

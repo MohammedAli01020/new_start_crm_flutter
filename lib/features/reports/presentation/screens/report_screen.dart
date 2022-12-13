@@ -41,12 +41,11 @@ class ReportScreen extends StatelessWidget {
             child: Container(
                 width: context.width,
                 padding: const EdgeInsets.all(16.0),
-                color: Colors.blueGrey[100],
+                color: Theme.of(context).highlightColor,
                 child: const Text("تقارير اخر حدث")),
           ),
           SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
-
 
                 final currentKey = lastEvent.keys.toList();
 
@@ -78,7 +77,7 @@ class ReportScreen extends StatelessWidget {
                               ),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5.0),
-                                color: Colors.blueGrey[100]
+                                color: Theme.of(context).highlightColor
                               ),
                               padding: const EdgeInsets.all(5.0),
                               margin:  const EdgeInsets.all(5.0),
@@ -104,7 +103,7 @@ class ReportScreen extends StatelessWidget {
             child: Container(
                 width: context.width,
                 padding: const EdgeInsets.all(16.0),
-                color: Colors.blueGrey[100],
+                color: Theme.of(context).highlightColor,
                 child: const Text("تقارير انواع الوحدات")),
           ),
           SliverList(
@@ -141,7 +140,7 @@ class ReportScreen extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5.0),
-                              color: Colors.blueGrey[100]
+                              color: Theme.of(context).highlightColor
                           ),
                           padding: const EdgeInsets.all(5.0),
                           margin:  const EdgeInsets.all(5.0),
@@ -167,7 +166,7 @@ class ReportScreen extends StatelessWidget {
             child: Container(
                 width: context.width,
                 padding: const EdgeInsets.all(16.0),
-                color: Colors.blueGrey[100],
+                color: Theme.of(context).highlightColor,
                 child: const Text("تقارير مصدر العميل")),
           ),
           SliverList(
@@ -204,7 +203,7 @@ class ReportScreen extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5.0),
-                              color: Colors.blueGrey[100]
+                              color: Theme.of(context).highlightColor
                           ),
                           padding: const EdgeInsets.all(5.0),
                           margin:  const EdgeInsets.all(5.0),
@@ -230,7 +229,7 @@ class ReportScreen extends StatelessWidget {
             child: Container(
                 width: context.width,
                 padding: const EdgeInsets.all(16.0),
-                color: Colors.blueGrey[100],
+                color: Theme.of(context).highlightColor,
                 child: const Text("تقارير المشاريع")),
           ),
           SliverList(
@@ -267,7 +266,7 @@ class ReportScreen extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5.0),
-                              color: Colors.blueGrey[100]
+                              color: Theme.of(context).highlightColor
                           ),
                           padding: const EdgeInsets.all(5.0),
                           margin:  const EdgeInsets.all(5.0),

@@ -31,7 +31,6 @@ import '../../../employees/data/models/employee_model.dart';
 import '../../../employees/presentation/cubit/employee_cubit.dart';
 import '../../../employees/presentation/screens/employee_details_screen.dart';
 import '../../../sources/presentation/screens/sources_screen.dart';
-import '../../../employees/presentation/screens/employee_picker_screen.dart';
 import '../widgets/customer_log_data_table.dart';
 import '../widgets/edit_customer_phone_widget.dart';
 import '../widgets/modify_customer_name_widget.dart';
